@@ -44,10 +44,10 @@ bool App::init()
         }
 
         // Set OpenGL version
-        /*
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        /**/
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        // Set OpenGL profile
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core, comment this line for Compatible
 
         // Open window (GL canvas) with no special properties :: https://www.glfw.org/docs/latest/quick.html#quick_create_window
         window = glfwCreateWindow(800, 600, "Moje krasne okno", NULL, NULL);
@@ -99,14 +99,14 @@ int App::run(void)
             fpsSecondsCounter += elapsed_seconds.count();
             fpsFramesCounter++;
             if (fpsSecondsCounter >= 1) {
-                std::cout << fpsFramesCounter << " FPS" << std::endl;
+                std::cout << fpsFramesCounter << " FPS\n";
                 fpsSecondsCounter = 0;
                 fpsFramesCounter = 0;
             }
         }
     }
     catch (std::exception const& e) {
-        std::cerr << "App failed : " << e.what() << std::endl;
+        std::cerr << "App failed : " << e.what() << "\n";
         return EXIT_FAILURE;
     }
 
@@ -136,17 +136,15 @@ void App::getInformation() {
     
     GLint profile;
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
-
     if (const auto errorCode = glGetError()) {
-        std::cout << "Pending GL error while obtaining profile: " << errorCode << std::endl;
+        std::cout << "Pending GL error while obtaining profile: " << errorCode << "\n";
         return;
     }
-
     if (profile & GL_CONTEXT_CORE_PROFILE_BIT) {
-        std::cout << "Core profile" << std::endl;
+        std::cout << "Core profile" << "\n";
     }
     else {
-        std::cout << "Compatibility profile" << std::endl;
+        std::cout << "Compatibility profile" << "\n";
     }
     std::cout << "===================================\n\n";
 }
