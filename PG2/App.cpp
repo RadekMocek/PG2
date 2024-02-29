@@ -3,6 +3,7 @@
 #include <chrono>
 #include <stack>
 #include <random>
+#include <sstream>
 
 // OpenCV – GL independent
 //#include <opencv2\opencv.hpp>
@@ -23,6 +24,16 @@
 
 // Our app
 #include "App.hpp"
+#include "gl_err_callback.hpp"
+
+bool App::is_vsync_on = false;
+bool App::is_fullscreen_on = false;
+GLFWmonitor* App::monitor;
+const GLFWvidmode* App::mode;
+int App::win_xcor{};
+int App::win_ycor{};
+int App::win_wid = 800;
+int App::win_hei = 600;
 
 App::App()
 {
@@ -50,13 +61,31 @@ bool App::init()
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core, comment this line for Compatible
 
         // Open window (GL canvas) with no special properties :: https://www.glfw.org/docs/latest/quick.html#quick_create_window
-        window = glfwCreateWindow(800, 600, "Moje krasne okno", NULL, NULL);
+        window = glfwCreateWindow(win_wid, win_hei, "Moje krasne okno", NULL, NULL);
         if (!window) {
             glfwTerminate();
             return false;
         }
+        glfwSetWindowUserPointer(window, this);
+
+        // Fullscreen On/Off
+        monitor = glfwGetPrimaryMonitor(); // Get primary monitor
+        mode = glfwGetVideoMode(monitor); // Get resolution of the monitor
+
+        // Setup callbacks
         glfwMakeContextCurrent(window);
         glfwSetKeyCallback(window, key_callback);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+        glfwSetMouseButtonCallback(window, mouse_button_callback);
+        glfwSetCursorPosCallback(window, cursor_position_callback);
+        glfwSetScrollCallback(window, scroll_callback);
+
+        // Set V-Sync OFF.
+        glfwSwapInterval(0);
+
+        // Set V-Sync ON.
+        //glfwSwapInterval(1);
+        //isVsyncOn = true;
 
         // Init GLEW :: http://glew.sourceforge.net/basic.html
         GLenum err = glewInit();
@@ -64,6 +93,20 @@ bool App::init()
             fprintf(stderr, "Error: %s\n", glewGetErrorString(err)); /* Problem: glewInit failed, something is seriously wrong. */
         }
         wglewInit();
+
+        //...after ALL GLFW & GLEW init ...
+        if (GLEW_ARB_debug_output)
+        {
+            glDebugMessageCallback(MessageCallback, 0);
+            glEnable(GL_DEBUG_OUTPUT);
+
+            //default is asynchronous debug output, use this to simulate glGetError() functionality
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+            std::cout << "GL_DEBUG enabled.\n";
+        }
+        else
+            std::cout << "GL_DEBUG NOT SUPPORTED!\n";
     }
     catch (std::exception const& e) {
         std::cerr << "Init failed : " << e.what() << "\n";
@@ -85,6 +128,7 @@ int App::run(void)
             auto fpsStart = std::chrono::steady_clock::now();
 
             // Clear OpenGL canvas, both color buffer and Z-buffer
+            glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Swap front and back buffers
@@ -99,7 +143,10 @@ int App::run(void)
             fpsSecondsCounter += elapsed_seconds.count();
             fpsFramesCounter++;
             if (fpsSecondsCounter >= 1) {
-                std::cout << fpsFramesCounter << " FPS\n";
+                //std::cout << fpsFramesCounter << " FPS\n";
+                std::stringstream ss;
+                ss << fpsFramesCounter << " FPS";
+                glfwSetWindowTitle(window, ss.str().c_str());
                 fpsSecondsCounter = 0;
                 fpsFramesCounter = 0;
             }
@@ -110,7 +157,7 @@ int App::run(void)
         return EXIT_FAILURE;
     }
 
-    getInformation();
+    get_information();
     std::cout << "Finished OK...\n";
     return EXIT_SUCCESS;
 }
@@ -127,8 +174,8 @@ App::~App()
     std::cout << "Bye...\n";
 }
 
-void App::getInformation() {
-    std::cout << "\n========== :: GL Info :: ==========\n";
+void App::get_information() {
+    std::cout << "\n============= :: GL Info :: =============\n";
     std::cout << "GL Vendor:\t" << glGetString(GL_VENDOR) << "\n";
     std::cout << "GL Renderer:\t" << glGetString(GL_RENDERER) << "\n";
     std::cout << "GL Version:\t" << glGetString(GL_VERSION) << "\n";
@@ -146,7 +193,7 @@ void App::getInformation() {
     else {
         std::cout << "Compatibility profile" << "\n";
     }
-    std::cout << "===================================\n\n";
+    std::cout << "=========================================\n\n";
 }
 
 void App::error_callback(int error, const char* description)
@@ -156,6 +203,56 @@ void App::error_callback(int error, const char* description)
 
 void App::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
+    if ((action == GLFW_PRESS) || (action == GLFW_REPEAT)) {
+        switch (key) {
+        case GLFW_KEY_ESCAPE:
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+            break;
+        case GLFW_KEY_F:
+            is_fullscreen_on = !is_fullscreen_on;
+            if (is_fullscreen_on) {
+                glfwGetWindowFrameSize(window, &win_xcor, &win_ycor, &win_wid, &win_hei); //TODO
+                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+            }
+            else {
+                glfwSetWindowMonitor(window, nullptr, win_xcor, win_ycor, win_wid, win_hei, 0);
+            }
+            break;
+        case GLFW_KEY_V:
+            is_vsync_on = !is_vsync_on;
+            glfwSwapInterval(is_vsync_on);
+            std::cout << "VSync: " << is_vsync_on << "\n";
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    auto this_instance = static_cast<App*>(glfwGetWindowUserPointer(window));
+    if (yoffset > 0.0) {
+        //std::cout << "tocis nahoru...\n";
+        this_instance->clear_color.r = std::clamp(this_instance->clear_color.r + 0.1f, 0.0f, 1.0f);
+    }
+    else if (yoffset < 0.0) {
+        //std::cout << "tocis dolu...\n";
+        this_instance->clear_color.r = std::clamp(this_instance->clear_color.r - 0.1f, 0.0f, 1.0f);
+    }
+}
+
+void App::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
+void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        std::cout << "Right click!\n";
+    }
+}
+
+void App::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    //std::cout << xpos << " " << ypos << "\n";
 }
