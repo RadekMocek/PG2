@@ -12,10 +12,10 @@ private:
     
     static GLFWmonitor* monitor;
     static const GLFWvidmode* mode;
-    static int win_xcor;
-    static int win_ycor;
-    static int win_wid;
-    static int win_hei;
+    static int window_xcor;
+    static int window_ycor;
+    static int win_width;
+    static int win_height;
 
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);

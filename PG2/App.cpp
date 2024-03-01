@@ -30,15 +30,15 @@ bool App::is_vsync_on = false;
 bool App::is_fullscreen_on = false;
 GLFWmonitor* App::monitor;
 const GLFWvidmode* App::mode;
-int App::win_xcor{};
-int App::win_ycor{};
-int App::win_wid = 800;
-int App::win_hei = 600;
+int App::window_xcor{};
+int App::window_ycor{};
+int App::win_width = 800;
+int App::win_height = 600;
 
 App::App()
 {
     // default constructor
-    // nothing to do here (so far...)
+    // nothing to do here (for now...)
     std::cout << "Constructed...\n";
 }
 
@@ -61,7 +61,7 @@ bool App::init()
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core, comment this line for Compatible
 
         // Open window (GL canvas) with no special properties :: https://www.glfw.org/docs/latest/quick.html#quick_create_window
-        window = glfwCreateWindow(win_wid, win_hei, "Moje krasne okno", NULL, NULL);
+        window = glfwCreateWindow(win_width, win_height, "Moje krasne okno", NULL, NULL);
         if (!window) {
             glfwTerminate();
             return false;
@@ -211,11 +211,12 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
         case GLFW_KEY_F:
             is_fullscreen_on = !is_fullscreen_on;
             if (is_fullscreen_on) {
-                glfwGetWindowFrameSize(window, &win_xcor, &win_ycor, &win_wid, &win_hei); //TODO
+                glfwGetWindowPos(window, &window_xcor, &window_ycor);
+                glfwGetWindowSize(window, &win_width, &win_height);
                 glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
             }
             else {
-                glfwSetWindowMonitor(window, nullptr, win_xcor, win_ycor, win_wid, win_hei, 0);
+                glfwSetWindowMonitor(window, nullptr, window_xcor, window_ycor, win_width, win_height, 0);
             }
             break;
         case GLFW_KEY_V:
