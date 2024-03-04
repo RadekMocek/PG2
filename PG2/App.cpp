@@ -213,6 +213,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
             if (is_fullscreen_on) {
                 glfwGetWindowPos(window, &window_xcor, &window_ycor);
                 glfwGetWindowSize(window, &win_width, &win_height);
+                if (win_height == 0) win_height++;
                 glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
             }
             else {
