@@ -1,3 +1,5 @@
+#include "ShaderProgram.hpp"
+
 class App {
 public:
     App();
@@ -28,4 +30,6 @@ private:
     static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
     static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
     static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+    ShaderProgram my_shader;
 };

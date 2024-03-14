@@ -25,6 +25,7 @@
 // Our app
 #include "App.hpp"
 #include "gl_err_callback.hpp"
+#include "ShaderProgram.hpp"
 
 bool App::is_vsync_on = false;
 bool App::is_fullscreen_on = false;
@@ -107,6 +108,8 @@ bool App::init()
         }
         else
             std::cout << "GL_DEBUG NOT SUPPORTED!\n";
+
+        //my_shader = ShaderProgram("resources/shaders/basic.vert", "resources/shaders/basic.frag");
     }
     catch (std::exception const& e) {
         std::cerr << "Init failed : " << e.what() << "\n";
