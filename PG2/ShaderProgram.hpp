@@ -1,5 +1,10 @@
 #pragma once
+
+#include <glm/glm.hpp> // Haluz
+#include <GL/glew.h> // Haluz
+
 #include <filesystem>
+
 class ShaderProgram {
 public:
 	// you can add more constructors for pipeline with GS, TS etc.

@@ -143,13 +143,20 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="gl_err_callback.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="PG2.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
     <ClInclude Include="gl_err_callback.hpp" />
+    <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Model.hpp" />
+    <ClInclude Include="OBJLoader.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
+    <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
