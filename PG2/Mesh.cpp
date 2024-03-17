@@ -35,12 +35,12 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
     //attrib_location = glGetAttribLocation(shader_prog_ID, "aNormal"); //name in shader src
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, Normal)));
     glEnableVertexAttribArray(1);
-    // Set end enable Vertex Attribute forTexture Coordinates
+    // Set end enable Vertex Attribute for Texture Coordinates
     //attrib_location = glGetAttribLocation(shader_prog_ID, "aTex"); //name in shader src
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, TexCoords)));
     glEnableVertexAttribArray(2);
 
-    // Bind VBO and VAO to 0 to prevent unintended modification of VAO,VBO
+    // Bind VBO and VAO to 0 to prevent unintended modification of VAO/VBO
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -57,9 +57,9 @@ void Mesh::Draw(const ShaderProgram& shader) const { //???: consts
     //}
 
     //TODO:??? draw mesh: bind vertex array object, draw all elements with selected primitive type, unbind vertex array object
-    // USE
-    //glUseProgram(shader);
     glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
 }
 
 void Mesh::Clear(void) {

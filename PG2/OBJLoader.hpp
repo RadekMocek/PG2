@@ -7,13 +7,8 @@
 
 #include <GL/glew.h> // Haluz
 
-bool LoadOBJ(
-	const char* path,
-	std::vector<glm::vec3>& out_vertices,
-	std::vector<glm::vec2>& out_uvs,
-	std::vector<glm::vec3>& out_normals
-);
+#include "Vertex.hpp"
 
-bool LoadOBJTest(const char* path, std::vector<glm::vec3>& out_vertices, std::vector<GLuint>& out_vertex_indices);
+bool LoadOBJTest(const char* path, std::vector<Vertex>& out_vertices, std::vector<GLuint>& out_vertex_indices);
 
 #endif

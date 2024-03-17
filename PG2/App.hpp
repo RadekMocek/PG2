@@ -1,13 +1,19 @@
+#include <unordered_map>
+
+#include "Model.hpp"
 #include "ShaderProgram.hpp"
 
 class App {
 public:
     App();
 
-    bool init(void);
-    int run(void);
+    bool init();
+    void init_assets();
+    int run();
 
     ~App();
+protected:
+    std::unordered_map<std::string, Model> scene;
 private:
     static bool is_vsync_on;
     static bool is_fullscreen_on;

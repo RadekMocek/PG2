@@ -43,6 +43,19 @@ App::App()
     std::cout << "Constructed...\n";
 }
 
+void App::init_assets()
+{
+    // load models, load textures, load shaders, initialize level, etc...
+    std::filesystem::path VS_path("./resources/basic.vert");
+    std::filesystem::path FS_path("./resources/basic.frag");
+    ShaderProgram my_shader = ShaderProgram(VS_path, FS_path);
+
+    std::filesystem::path model_path("./resources/objects/cube_triangles_normals_tex.obj");
+    Model my_model = Model(model_path);    
+    
+    scene.insert({ "obj_cube", my_model });
+}
+
 // App initialization, if returns true then run run()
 bool App::init()
 {
@@ -82,11 +95,13 @@ bool App::init()
         glfwSetScrollCallback(window, scroll_callback);
 
         // Set V-Sync OFF.
-        glfwSwapInterval(0);
+        //glfwSwapInterval(0);
 
         // Set V-Sync ON.
-        //glfwSwapInterval(1);
-        //isVsyncOn = true;
+        ///*
+        glfwSwapInterval(1);
+        is_vsync_on = true;
+        /**/
 
         // Init GLEW :: http://glew.sourceforge.net/basic.html
         GLenum err = glewInit();
@@ -109,11 +124,13 @@ bool App::init()
         else
             std::cout << "GL_DEBUG NOT SUPPORTED!\n";
 
-        //my_shader = ShaderProgram("resources/shaders/basic.vert", "resources/shaders/basic.frag");
+        // first init OpenGL, THAN init assets: valid context MUST exist
+        init_assets();
     }
     catch (std::exception const& e) {
         std::cerr << "Init failed : " << e.what() << "\n";
-        throw;
+        //throw;
+        exit(-1);
     }
     std::cout << "Initialized...\n";
     return true;
@@ -125,6 +142,8 @@ int App::run(void)
         double fpsSecondsCounter = 0;
         int fpsFramesCounter = 0;
 
+        glm::vec4 my_rgba = { 1.0f, 0.0f, 0.0f, 1.0f };
+
         while (!glfwWindowShouldClose(window))
         {
             // Time/FPS measure start
@@ -134,6 +153,15 @@ int App::run(void)
             glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            // Ater clearing canvas
+            my_shader.activate();
+            //my_shader.setUniform("myrgba", my_rgba); // TODO: Make uniform variables work
+            for (auto const& model_pair : scene) {
+                auto model = model_pair.second;
+                model.Draw(my_shader);
+            }
+
+            // End of frame
             // Swap front and back buffers
             glfwSwapBuffers(window);
 
@@ -168,6 +196,8 @@ int App::run(void)
 App::~App()
 {
     // clean-up
+    my_shader.clear();
+
     if (window) {
         glfwDestroyWindow(window);
     }
