@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 #include <string>
 #include <GL/glew.h> 
@@ -84,44 +85,46 @@ bool LoadOBJTest(const char* path, std::vector<Vertex>& out_vertices, std::vecto
 
 	// unroll from indirect to direct vertex specification
 	// sometimes not necessary, definitely not optimal
-	/*
-	std::vector<glm::vec3> direct_vertices{};
-	std::vector<glm::vec2> direct_uvs{};
-	std::vector<glm::vec3> direct_normals{};
+	if (false) {
+		std::vector<glm::vec3> direct_vertices{};
+		std::vector<glm::vec2> direct_uvs{};
+		std::vector<glm::vec3> direct_normals{};
 
-	auto n_vertexIndices = vertexIndices.size();
-	auto n_uvIndices = uvIndices.size();
-	auto n_normalIndices = normalIndices.size();
+		auto n_vertexIndices = vertexIndices.size();
+		auto n_uvIndices = uvIndices.size();
+		auto n_normalIndices = normalIndices.size();
 
-	for (unsigned int u = 0; u < n_vertexIndices; u++) {
-		unsigned int vertexIndex = vertexIndices[u];
-		glm::vec3 vertex = indirect_vertices[vertexIndex - 1];
-		direct_vertices.push_back(vertex);
-	}
-	for (unsigned int u = 0; u < n_uvIndices; u++) {
-		unsigned int uvIndex = uvIndices[u];
-		glm::vec2 uv = indirect_uvs[uvIndex - 1];
-		direct_uvs.push_back(uv);
-	}
-	for (unsigned int u = 0; u < n_normalIndices; u++) {
-		unsigned int normalIndex = normalIndices[u];
-		glm::vec3 normal = indirect_normals[normalIndex - 1];
-		direct_normals.push_back(normal);
-	}
+		for (unsigned int u = 0; u < n_vertexIndices; u++) {
+			unsigned int vertexIndex = vertexIndices[u];
+			glm::vec3 vertex = indirect_vertices[vertexIndex - 1];
+			direct_vertices.push_back(vertex);
+		}
+		for (unsigned int u = 0; u < n_uvIndices; u++) {
+			unsigned int uvIndex = uvIndices[u];
+			glm::vec2 uv = indirect_uvs[uvIndex - 1];
+			direct_uvs.push_back(uv);
+		}
+		for (unsigned int u = 0; u < n_normalIndices; u++) {
+			unsigned int normalIndex = normalIndices[u];
+			glm::vec3 normal = indirect_normals[normalIndex - 1];
+			direct_normals.push_back(normal);
+		}
 
-	auto n_direct_vertices = direct_vertices.size();
-	auto n_direct_uvs = direct_uvs.size();
-	auto n_direct_normals = direct_normals.size();
+		auto n_direct_vertices = direct_vertices.size();
+		auto n_direct_uvs = direct_uvs.size();
+		auto n_direct_normals = direct_normals.size();
 
-	for (unsigned int u = 0; u < n_direct_vertices; u++) {
-		Vertex vertex{};
-		vertex.Position = direct_vertices[u];
-		if (u < n_direct_uvs) vertex.TexCoords = direct_uvs[u];
-		if (u < n_direct_normals) vertex.Normal = direct_normals[u];
-		out_vertices.push_back(vertex);
+		for (unsigned int u = 0; u < n_direct_vertices; u++) {
+			Vertex vertex{};
+			vertex.Position = direct_vertices[u];
+			if (u < n_direct_uvs) vertex.TexCoords = direct_uvs[u];
+			if (u < n_direct_normals) vertex.Normal = direct_normals[u];
+			out_vertices.push_back(vertex);
+		}
 	}
-	/**/
 
 	fclose(file);
 	return true;
 }
+
+/**/

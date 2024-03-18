@@ -1,5 +1,4 @@
 ///*
-
 #include <filesystem>
 
 #include "Vertex.hpp"
@@ -9,19 +8,25 @@
 class Model
 {
 public:
-    Model(const std::filesystem::path& filename);
+    Model(const std::filesystem::path& file_name);
     void Draw(const ShaderProgram& shader);
 private:
     std::vector<Mesh> meshes;
     std::string name;
-    void LoadOBJFile(const std::filesystem::path& filename);
-    void LoadMTLFile(const std::filesystem::path& filename);
-    //GLuint LoadTexture(const std::filesystem::path& filename);
+
+    //GLuint LoadTexture(const std::filesystem::path& file_name);
     //...
     //TODO
 
     std::vector<Vertex> vertices{};
     std::vector<GLuint> vertex_indices{};
+
+    // Reading the file
+    std::string file_line;
+    std::vector<std::string> file_lines;
+    void FillFileLines(const std::filesystem::path& file_name);
+    void LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vertex>& out_vertices, std::vector<GLuint>& out_vertex_indices);
+    void LoadMTLFile(const std::filesystem::path& file_name);
 };
 
 /**/

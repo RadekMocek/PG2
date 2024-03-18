@@ -50,10 +50,16 @@ void App::init_assets()
     std::filesystem::path FS_path("./resources/basic.frag");
     ShaderProgram my_shader = ShaderProgram(VS_path, FS_path);
 
-    std::filesystem::path model_path("./resources/objects/cube_triangles_normals_tex.obj");
+    //std::filesystem::path model_path("./resources/objects/bunny_tri_vn.obj");
+    //std::filesystem::path model_path("./resources/objects/bunny_tri_vnt.obj");
+    //std::filesystem::path model_path("./resources/objects/cube_triangles.obj");
+    //std::filesystem::path model_path("./resources/objects/cube_triangles_normals_tex.obj");
+    //std::filesystem::path model_path("./resources/objects/plane_tri_vnt.obj");
+    std::filesystem::path model_path("./resources/objects/sphere_tri_vnt.obj");
+    //std::filesystem::path model_path("./resources/objects/teapot_tri_vnt.obj");
     Model my_model = Model(model_path);    
     
-    scene.insert({ "obj_cube", my_model });
+    scene.insert({ "obj_test", my_model });
 }
 
 // App initialization, if returns true then run run()
@@ -155,7 +161,7 @@ int App::run(void)
 
             // Ater clearing canvas
             my_shader.activate();
-            //my_shader.setUniform("myrgba", my_rgba); // TODO: Make uniform variables work
+            my_shader.setUniform("myrgba", my_rgba); // TODO: Make uniform variables work
             for (auto const& model_pair : scene) {
                 auto model = model_pair.second;
                 model.Draw(my_shader);
@@ -217,8 +223,8 @@ void App::get_information() {
     GLint profile;
     glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &profile);
     if (const auto errorCode = glGetError()) {
-        std::cout << "Pending GL error while obtaining profile: " << errorCode << "\n";
-        return;
+        std::cout << "[!] Pending GL error while obtaining profile: " << errorCode << "\n";
+        //return;
     }
     if (profile & GL_CONTEXT_CORE_PROFILE_BIT) {
         std::cout << "Core profile" << "\n";
