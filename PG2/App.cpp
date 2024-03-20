@@ -48,7 +48,7 @@ void App::init_assets()
     // load models, load textures, load shaders, initialize level, etc...
     std::filesystem::path VS_path("./resources/basic.vert");
     std::filesystem::path FS_path("./resources/basic.frag");
-    ShaderProgram my_shader = ShaderProgram(VS_path, FS_path);
+    my_shader = ShaderProgram(VS_path, FS_path);
 
     //std::filesystem::path model_path("./resources/objects/bunny_tri_vn.obj");
     //std::filesystem::path model_path("./resources/objects/bunny_tri_vnt.obj");
@@ -148,7 +148,7 @@ int App::run(void)
         double fpsSecondsCounter = 0;
         int fpsFramesCounter = 0;
 
-        glm::vec4 my_rgba = { 1.0f, 0.0f, 0.0f, 1.0f };
+        glm::vec4 my_rgba = { 1.0f, 0.5f, 0.0f, 1.0f };
 
         while (!glfwWindowShouldClose(window))
         {

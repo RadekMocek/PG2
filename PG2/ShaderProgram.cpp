@@ -19,11 +19,11 @@ ShaderProgram::ShaderProgram(const std::filesystem::path& VS_file, const std::fi
 	shader_ids.push_back(compile_shader(FS_file, GL_FRAGMENT_SHADER));
 
 	ID = link_shader(shader_ids);
-	std::cout << "Instantiated shader ID=" << ID << "\n";
+	//std::cout << "Instantiated shader ID=" << ID << "\n";
 }
 
 void ShaderProgram::activate(void) {
-	std::cout << "Activating shader ID=" << ID << "\n";
+	//std::cout << "Activating shader ID=" << ID << "\n";
 	glUseProgram(ID);
 }
 
