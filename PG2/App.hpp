@@ -2,6 +2,7 @@
 
 #include "Model.hpp"
 #include "ShaderProgram.hpp"
+#include "Camera.hpp"
 
 class App {
 public:
@@ -22,11 +23,17 @@ private:
     static const GLFWvidmode* mode;
     static int window_xcor;
     static int window_ycor;
-    static int win_width;
-    static int win_height;
+    static int window_width;
+    static int window_height;
+
+    float FOV = 89.0f;
+    glm::mat4 projection_matrix = glm::identity<glm::mat4>();
+    //Camera camera;
 
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);
+
+    void update_projection_matrix();
 
     void get_information();
 

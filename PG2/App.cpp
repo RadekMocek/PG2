@@ -33,8 +33,8 @@ GLFWmonitor* App::monitor;
 const GLFWvidmode* App::mode;
 int App::window_xcor{};
 int App::window_ycor{};
-int App::win_width = 800;
-int App::win_height = 600;
+int App::window_width = 800;
+int App::window_height = 600;
 
 App::App()
 {
@@ -81,7 +81,7 @@ bool App::init()
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core, comment this line for Compatible
 
         // Open window (GL canvas) with no special properties :: https://www.glfw.org/docs/latest/quick.html#quick_create_window
-        window = glfwCreateWindow(win_width, win_height, "Moje krasne okno", NULL, NULL);
+        window = glfwCreateWindow(window_width, window_height, "Moje krasne okno", NULL, NULL);
         if (!window) {
             glfwTerminate();
             return false;
@@ -98,7 +98,7 @@ bool App::init()
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
         glfwSetMouseButtonCallback(window, mouse_button_callback);
         glfwSetCursorPosCallback(window, cursor_position_callback);
-        glfwSetScrollCallback(window, scroll_callback);
+        glfwSetScrollCallback(window, scroll_callback);                     // Mousewheel
 
         // Set V-Sync OFF.
         //glfwSwapInterval(0);
@@ -130,6 +130,8 @@ bool App::init()
         else
             std::cout << "GL_DEBUG NOT SUPPORTED!\n";
 
+        // set GL params
+        glEnable(GL_DEPTH_TEST);
         // first init OpenGL, THAN init assets: valid context MUST exist
         init_assets();
     }
@@ -161,7 +163,7 @@ int App::run(void)
 
             // Ater clearing canvas
             my_shader.activate();
-            my_shader.setUniform("myrgba", my_rgba); // TODO: Make uniform variables work
+            my_shader.setUniform("myrgba", my_rgba);
             for (auto const& model_pair : scene) {
                 auto model = model_pair.second;
                 model.Draw(my_shader);
@@ -213,6 +215,21 @@ App::~App()
     std::cout << "Bye...\n";
 }
 
+void App::update_projection_matrix(void)
+{
+    if (window_height < 1)
+        window_height = 1;   // avoid division by 0
+
+    float ratio = static_cast<float>(window_width) / window_height;
+
+    projection_matrix = glm::perspective(
+        glm::radians(FOV),   // The vertical Field of View
+        ratio,               // Aspect Ratio. Depends on the size of your window.
+        0.1f,                // Near clipping plane. Keep as big as possible, or you'll get precision issues.
+        20000.0f             // Far clipping plane. Keep as little as possible.
+    );
+}
+
 void App::get_information() {
     std::cout << "\n============= :: GL Info :: =============\n";
     std::cout << "GL Vendor:\t" << glGetString(GL_VENDOR) << "\n";
@@ -251,12 +268,12 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
             is_fullscreen_on = !is_fullscreen_on;
             if (is_fullscreen_on) {
                 glfwGetWindowPos(window, &window_xcor, &window_ycor);
-                glfwGetWindowSize(window, &win_width, &win_height);
-                if (win_height == 0) win_height++;
+                glfwGetWindowSize(window, &window_width, &window_height);
+                if (window_height == 0) window_height++;
                 glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
             }
             else {
-                glfwSetWindowMonitor(window, nullptr, window_xcor, window_ycor, win_width, win_height, 0);
+                glfwSetWindowMonitor(window, nullptr, window_xcor, window_ycor, window_width, window_height, 0);
             }
             break;
         case GLFW_KEY_V:
@@ -271,19 +288,20 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 }
 
 void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    auto this_instance = static_cast<App*>(glfwGetWindowUserPointer(window));
-    if (yoffset > 0.0) {
-        //std::cout << "tocis nahoru...\n";
-        this_instance->clear_color.r = std::clamp(this_instance->clear_color.r + 0.1f, 0.0f, 1.0f);
-    }
-    else if (yoffset < 0.0) {
-        //std::cout << "tocis dolu...\n";
-        this_instance->clear_color.r = std::clamp(this_instance->clear_color.r - 0.1f, 0.0f, 1.0f);
-    }
+    auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
+    this_inst->FOV += 10 * yoffset;
+    this_inst->FOV = std::clamp(this_inst->FOV, 20.0f, 170.0f); // limit FOV to reasonable values...
+    this_inst->update_projection_matrix();
 }
 
 void App::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
+    this_inst->window_width = width;
+    this_inst->window_height = height;
+    // set viewport
     glViewport(0, 0, width, height);
+    //now your canvas has [0,0] in bottom left corner, and its size is [width x height] 
+    this_inst->update_projection_matrix();
 }
 
 void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
