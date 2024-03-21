@@ -1,5 +1,3 @@
-///*
-
 #include "ShaderProgram.hpp"
 
 #include "Mesh.hpp"
@@ -28,16 +26,16 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
 
     //GLint attrib_location;
     //attrib_location = glGetAttribLocation(shader_prog_ID, "aPos"); //name in shader src
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, Position)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, position)));
     // Enable the Vertex Attribute for position
     glEnableVertexAttribArray(0);
     // Set end enable Vertex Attribute for Normal
     //attrib_location = glGetAttribLocation(shader_prog_ID, "aNormal"); //name in shader src
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, Normal)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, normal)));
     glEnableVertexAttribArray(1);
     // Set end enable Vertex Attribute for Texture Coordinates
     //attrib_location = glGetAttribLocation(shader_prog_ID, "aTex"); //name in shader src
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, TexCoords)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, tex_coords)));
     glEnableVertexAttribArray(2);
 
     // Bind VBO and VAO to 0 to prevent unintended modification of VAO/VBO
@@ -76,5 +74,3 @@ void Mesh::Clear(void) {
     glDeleteVertexArrays(1, &VAO);
     // Destruktor ne-e
 };
-
-/**/

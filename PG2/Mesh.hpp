@@ -1,5 +1,3 @@
-///*
-
 #pragma once
 
 //#include <glm/glm.hpp> 
@@ -32,5 +30,3 @@ private:
     // ID = 0 is reserved (i.e. uninitalized)
     unsigned int VAO{ 0 }, VBO{ 0 }, EBO{ 0 };
 };
-
-/**/

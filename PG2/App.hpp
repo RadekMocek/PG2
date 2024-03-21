@@ -1,3 +1,5 @@
+#pragma once
+
 #include <unordered_map>
 
 #include "Model.hpp"
@@ -8,9 +10,9 @@ class App {
 public:
     App();
 
-    bool init();
-    void init_assets();
-    int run();
+    bool Init();
+    void InitAssets();
+    int Run();
 
     ~App();
 protected:
@@ -33,9 +35,9 @@ private:
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);
 
-    void update_projection_matrix();
+    void UpdateProjectionMatrix();
 
-    void get_information();
+    void GetInformation();
 
     static void error_callback(int error, const char* description);
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

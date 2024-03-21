@@ -1,4 +1,5 @@
-///*
+#pragma once
+
 #include <filesystem>
 
 #include "Vertex.hpp"
@@ -28,5 +29,3 @@ private:
     void LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vertex>& out_vertices, std::vector<GLuint>& out_vertex_indices);
     void LoadMTLFile(const std::filesystem::path& file_name);
 };
-
-/**/

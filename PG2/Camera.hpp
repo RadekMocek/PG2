@@ -1,4 +1,5 @@
 #pragma once
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -7,18 +8,18 @@ class Camera
 {
 public:
     // Camera Attributes
-    glm::vec3 Position;
-    glm::vec3 Front;
-    glm::vec3 Right;
-    glm::vec3 Up; // camera local UP vector
+    glm::vec3 position;
+    glm::vec3 front;
+    glm::vec3 right;
+    glm::vec3 up; // camera local UP vector
 
-    GLfloat Yaw = -90.0f;
-    GLfloat Pitch = 0.0f;
-    GLfloat Roll = 0.0f;
+    GLfloat yaw = -90.0f;
+    GLfloat pitch = 0.0f;
+    GLfloat roll = 0.0f;
 
     // Camera options
-    GLfloat MovementSpeed = 1.0f;
-    GLfloat MouseSensitivity = 0.25f;
+    GLfloat movement_speed = 1.0f;
+    GLfloat mouse_sensitivity = 0.25f;
 
     Camera(glm::vec3 position);
     glm::mat4 GetViewMatrix();
@@ -26,7 +27,7 @@ public:
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constraintPitch);
 
 private:
-    glm::vec3 WorldUp;
+    glm::vec3 world_up;
 
     void UpdateCameraVectors();
 };

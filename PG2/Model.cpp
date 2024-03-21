@@ -1,4 +1,3 @@
-///*
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -143,9 +142,9 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
     auto n_indirect_normals = vertex_normals.size();
     for (unsigned int u = 0; u < n_indirect_vertices; u++) {
         Vertex vertex{};
-        vertex.Position = vertices[u];
-        if (u < n_indirect_uvs) vertex.TexCoords = texture_coordinates[u];
-        if (u < n_indirect_normals) vertex.Normal = vertex_normals[u];
+        vertex.position = vertices[u];
+        if (u < n_indirect_uvs) vertex.tex_coords = texture_coordinates[u];
+        if (u < n_indirect_normals) vertex.normal = vertex_normals[u];
         out_vertices.push_back(vertex);
     }
 
@@ -158,5 +157,3 @@ void Model::LoadMTLFile(const std::filesystem::path& file_name)
     FillFileLines(file_name);
     // TODO
 }
-
-/**/

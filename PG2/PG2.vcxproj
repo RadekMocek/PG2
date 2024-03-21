@@ -142,11 +142,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="AppCallbacks.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="gl_err_callback.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
-    <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="PG2.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
   </ItemGroup>
@@ -156,7 +156,6 @@
     <ClInclude Include="gl_err_callback.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Model.hpp" />
-    <ClInclude Include="OBJLoader.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="Vertex.hpp" />
   </ItemGroup>

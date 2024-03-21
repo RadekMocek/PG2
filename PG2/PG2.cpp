@@ -22,7 +22,7 @@ App app;
 
 int main()
 {
-    if (app.init()) {
-        return app.run();
+    if (app.Init()) {
+        return app.Run();
     }
 }
