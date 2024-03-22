@@ -27,8 +27,11 @@ public:
     glm::vec3 ProcessInput(GLFWwindow* window, GLfloat deltaTime);
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset);
 
+    void ToggleSprint();
 private:
-    glm::vec3 world_up;
+    //glm::vec3 world_up;
+
+    bool is_sprint_toggled;
 
     void UpdateCameraVectors();
 };

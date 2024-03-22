@@ -11,7 +11,7 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
     indices(indices),
     texture_id(texture_id)
 {
-    // TODO:??? create and initialize VAO, VBO, EBO and parameters
+    //???: create and initialize VAO, VBO, EBO and parameters
     // Generate the VAO and VBO
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -47,9 +47,9 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 };
 
-void Mesh::Draw(const ShaderProgram& shader) const { //???: consts
-    // TODO: set uniform variables: color
-
+void Mesh::Draw(const ShaderProgram& shader) const {
+    // TODO: Mesh::Draw
+    // set uniform variables: color
     //set texture id etc...
     //if (texture_id > 0) {
     //    glActiveTexture(GL_TEXTURE0);
@@ -57,7 +57,7 @@ void Mesh::Draw(const ShaderProgram& shader) const { //???: consts
     //    shader.setUniform("mytexture", 0);
     //}
 
-    //TODO:??? draw mesh: bind vertex array object, draw all elements with selected primitive type, unbind vertex array object
+    //???: draw mesh: bind vertex array object, draw all elements with selected primitive type, unbind vertex array object
     glBindVertexArray(VAO);
     glDrawElements(primitive_type, indices.size(), GL_UNSIGNED_INT, 0);
     //print(vertices.size() << " " << indices.size());

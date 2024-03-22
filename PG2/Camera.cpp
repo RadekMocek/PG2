@@ -8,9 +8,11 @@
 
 Camera::Camera(glm::vec3 position) : position(position)
 {
-    this->world_up = glm::vec3(0.0f, 1.0f, 0.0f);
+    //this->world_up = glm::vec3(0.0f, 1.0f, 0.0f);
     // initialization of the camera reference system
     this->UpdateCameraVectors();
+
+    is_sprint_toggled = false;
 }
 
 glm::mat4 Camera::GetViewMatrix()
@@ -23,31 +25,36 @@ glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
     glm::vec3 direction(0,0,0);
     glm::vec3 zero(0,0,0);
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         direction += front;
+    }
 
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         direction += -front;
+    }
 
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        direction += -right;       // add unit vector to final direction ???
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        direction += -right;
+    }
 
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         direction += right;
+    }
 
-    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         direction += up;
+    }
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
         direction += -up;
+    }
 
-    float movement_speed = movement_speed_normal;
+    if (direction == zero) {
+        is_sprint_toggled = false;
+    }
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        movement_speed = movement_speed_sprint;
+    float movement_speed = (is_sprint_toggled) ? movement_speed_sprint : movement_speed_normal;
 
-    //... right, up, down, diagonal, ... 
-    
     return direction == zero ? zero : glm::normalize(direction) * movement_speed * delta_time;
 }
 
@@ -77,4 +84,9 @@ void Camera::UpdateCameraVectors()
     this->front = glm::normalize(front);
     this->right = glm::normalize(glm::cross(this->front, glm::vec3(0.0f, 1.0f, 0.0f)));
     this->up = glm::normalize(glm::cross(this->right, this->front));
+}
+
+void Camera::ToggleSprint()
+{
+    is_sprint_toggled = !is_sprint_toggled;
 }

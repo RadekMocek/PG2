@@ -9,7 +9,7 @@
 
 Model::Model(const std::filesystem::path& file_name) {
     // load mesh (all meshes) of the model, load material of each mesh, load textures...
-    // TODO:??? call LoadOBJFile, LoadMTLFile, process data, create mesh and set its properties
+    //???: call LoadOBJFile, LoadMTLFile, process data, create mesh and set its properties
 
     LoadOBJFile(file_name, vertices, vertex_indices);
 
@@ -160,7 +160,6 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
     }
     else {
         // INDIRECT DRAW
-        // Set output vertex indices
         out_vertex_indices = indices_vertex;
     }
 
@@ -171,5 +170,5 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
 void Model::LoadMTLFile(const std::filesystem::path& file_name)
 {
     FillFileLines(file_name);
-    // TODO
+    //TODO: Model::LoadMTLFile
 }

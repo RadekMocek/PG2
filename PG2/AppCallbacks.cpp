@@ -31,9 +31,12 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
             glfwSwapInterval(is_vsync_on);
             std::cout << "VSync: " << is_vsync_on << "\n";
             break;
-        default:
-            break;
         }
+    }
+    
+    // Minecraft sprint
+    if (action == GLFW_PRESS && key == GLFW_KEY_LEFT_CONTROL) {
+        camera.ToggleSprint();
     }
 }
 
