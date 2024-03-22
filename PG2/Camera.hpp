@@ -18,13 +18,14 @@ public:
     GLfloat roll = 0.0f;
 
     // Camera options
-    GLfloat movement_speed = 1.0f;
+    GLfloat movement_speed_normal = 1.0f;
+    GLfloat movement_speed_sprint = 3.5f;
     GLfloat mouse_sensitivity = 0.25f;
 
     Camera(glm::vec3 position);
     glm::mat4 GetViewMatrix();
     glm::vec3 ProcessInput(GLFWwindow* window, GLfloat deltaTime);
-    void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constraintPitch);
+    void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset);
 
 private:
     glm::vec3 world_up;

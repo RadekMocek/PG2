@@ -1,6 +1,7 @@
 #version 460 core
 
 in vec4 color; // input from vertex stage of graphics pipeline, automatically interpolated
+
 out vec4 FragColor; // output color of current fragment: MUST be written
 
 void main()

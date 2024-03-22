@@ -27,6 +27,8 @@
 #include "gl_err_callback.hpp"
 #include "ShaderProgram.hpp"
 
+#define print(x) std::cout << x << "\n"
+
 bool App::is_vsync_on = false;
 bool App::is_fullscreen_on = false;
 GLFWmonitor* App::monitor;
@@ -35,6 +37,12 @@ int App::window_xcor{};
 int App::window_ycor{};
 int App::window_width = 800;
 int App::window_height = 600;
+int App::window_width_return_from_fullscreen{};
+int App::window_height_return_from_fullscreen{};
+
+Camera App::camera = Camera(glm::vec3(0, 0, 1000));
+double App::last_cursor_xpos{};
+double App::last_cursor_ypos{};
 
 App::App()
 {
@@ -51,15 +59,15 @@ void App::InitAssets()
     my_shader = ShaderProgram(VS_path, FS_path);
 
     //std::filesystem::path model_path("./resources/objects/bunny_tri_vn.obj");
-    //std::filesystem::path model_path("./resources/objects/bunny_tri_vnt.obj");
+    std::filesystem::path model_path("./resources/objects/bunny_tri_vnt.obj");
     //std::filesystem::path model_path("./resources/objects/cube_triangles.obj");
     //std::filesystem::path model_path("./resources/objects/cube_triangles_normals_tex.obj");
     //std::filesystem::path model_path("./resources/objects/plane_tri_vnt.obj");
-    std::filesystem::path model_path("./resources/objects/sphere_tri_vnt.obj");
+    //std::filesystem::path model_path("./resources/objects/sphere_tri_vnt.obj");
     //std::filesystem::path model_path("./resources/objects/teapot_tri_vnt.obj");
     Model my_model = Model(model_path);    
     
-    scene.insert({ "obj_test", my_model });
+    scene_lite.push_back(my_model);
 }
 
 // App initialization, if returns true then run run()
@@ -109,6 +117,8 @@ bool App::Init()
         is_vsync_on = true;
         /**/
 
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         // Init GLEW :: http://glew.sourceforge.net/basic.html
         GLenum err = glewInit();
         if (GLEW_OK != err) {
@@ -131,6 +141,11 @@ bool App::Init()
             std::cout << "GL_DEBUG NOT SUPPORTED!\n";
 
         // set GL params
+        /*
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+        /**/
         glEnable(GL_DEPTH_TEST);
         // first init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
@@ -147,25 +162,50 @@ bool App::Init()
 int App::Run(void)
 {
     try {
-        double fpsSecondsCounter = 0;
-        int fpsFramesCounter = 0;
+        double fps_counter_seconds = 0;
+        int fps_counter_frames = 0;
+
+        UpdateProjectionMatrix();
+        glViewport(0, 0, window_width, window_height);
+        camera.position = glm::vec3(0, 0, 10);
+        double last_frame_time = glfwGetTime();
+        glm::vec3 camera_movement{};
 
         glm::vec4 my_rgba = { 1.0f, 0.5f, 0.0f, 1.0f };
 
         while (!glfwWindowShouldClose(window))
         {
             // Time/FPS measure start
-            auto fpsStart = std::chrono::steady_clock::now();
+            auto fps_frame_start_timestamp = std::chrono::steady_clock::now();
 
             // Clear OpenGL canvas, both color buffer and Z-buffer
             glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // Ater clearing canvas
+            // After clearing the canvas:
+
+            // React to user ;; Create View Matrix according to camera settings
+            double delta_time = glfwGetTime() - last_frame_time;
+            last_frame_time = glfwGetTime();
+            camera_movement = camera.ProcessInput(window, static_cast<float>(delta_time));
+            camera.position += camera_movement;
+            //print(delta_time);
+            //print(camera.position.x << " " << camera.position.y << " " << camera.position.z << " (" << camera_movement.x << " " << camera_movement.y << " " << camera_movement.z << ")");
+            glm::mat4 mx_view = camera.GetViewMatrix();
+
+            // Set Model Matrix
+            glm::mat4 mx_model = glm::identity<glm::mat4>();
+            //mx_model = glm::rotate(mx_model, glm::radians(static_cast<float>(90 * glfwGetTime())), glm::vec3(0.0f, 0.0f, 1.0f));
+
+            // Activate shader, set uniform vars
             my_shader.Activate();
-            my_shader.SetUniform("myrgba", my_rgba);
-            for (auto const& model_pair : scene) {
-                auto model = model_pair.second;
+            my_shader.SetUniform("uRGBA", my_rgba);
+            my_shader.SetUniform("uMx_projection", mx_projection);
+            my_shader.SetUniform("uMx_model", mx_model);
+            my_shader.SetUniform("uMx_view", mx_view);
+
+            // Draw the scene
+            for (auto& model : scene_lite) {
                 model.Draw(my_shader);
             }
 
@@ -175,19 +215,19 @@ int App::Run(void)
 
             // Poll for and process events
             glfwPollEvents();
-
+            
             // Time/FPS measure end
-            auto fpsEnd = std::chrono::steady_clock::now();
-            std::chrono::duration<double> elapsed_seconds = fpsEnd - fpsStart;
-            fpsSecondsCounter += elapsed_seconds.count();
-            fpsFramesCounter++;
-            if (fpsSecondsCounter >= 1) {
-                //std::cout << fpsFramesCounter << " FPS\n";
+            auto fps_frame_end_timestamp = std::chrono::steady_clock::now();
+            std::chrono::duration<double> fps_elapsed_seconds = fps_frame_end_timestamp - fps_frame_start_timestamp;
+            fps_counter_seconds += fps_elapsed_seconds.count();
+            fps_counter_frames++;
+            if (fps_counter_seconds >= 1) {
+                //std::cout << fps_counter_frames << " FPS\n";
                 std::stringstream ss;
-                ss << fpsFramesCounter << " FPS";
+                ss << fps_counter_frames << " FPS";
                 glfwSetWindowTitle(window, ss.str().c_str());
-                fpsSecondsCounter = 0;
-                fpsFramesCounter = 0;
+                fps_counter_seconds = 0;
+                fps_counter_frames = 0;
             }
         }
     }
@@ -217,12 +257,11 @@ App::~App()
 
 void App::UpdateProjectionMatrix(void)
 {
-    if (window_height < 1)
-        window_height = 1;   // avoid division by 0
+    if (window_height < 1) window_height = 1; // avoid division by 0
 
     float ratio = static_cast<float>(window_width) / window_height;
 
-    projection_matrix = glm::perspective(
+    mx_projection = glm::perspective(
         glm::radians(FOV),   // The vertical Field of View
         ratio,               // Aspect Ratio. Depends on the size of your window.
         0.1f,                // Near clipping plane. Keep as big as possible, or you'll get precision issues.

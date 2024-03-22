@@ -1,6 +1,10 @@
+#include <iostream>
+
 #include <glm/ext/matrix_transform.hpp>
 
 #include "Camera.hpp"
+
+#define print(x) std::cout << x << "\n"
 
 Camera::Camera(glm::vec3 position) : position(position)
 {
@@ -14,9 +18,10 @@ glm::mat4 Camera::GetViewMatrix()
     return glm::lookAt(this->position, this->position + this->front, this->up);
 }
 
-glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat deltaTime)
+glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
 {
-    glm::vec3 direction{ 0 };
+    glm::vec3 direction(0,0,0);
+    glm::vec3 zero(0,0,0);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         direction += front;
@@ -25,25 +30,39 @@ glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat deltaTime)
         direction += -front;
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        direction += -right;       // add unit vector to final direction  
+        direction += -right;       // add unit vector to final direction ???
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        direction += right;
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        direction += up;
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        direction += -up;
+
+    float movement_speed = movement_speed_normal;
+
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        movement_speed = movement_speed_sprint;
 
     //... right, up, down, diagonal, ... 
-
-    return glm::normalize(direction) * movement_speed * deltaTime;
+    
+    return direction == zero ? zero : glm::normalize(direction) * movement_speed * delta_time;
 }
 
-void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset, GLboolean constraintPitch = GL_TRUE)
+void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset)
 {
     xoffset *= this->mouse_sensitivity;
     yoffset *= this->mouse_sensitivity;
 
     this->yaw += xoffset;
-    this->pitch += yoffset;
+    //this->pitch += yoffset;
+    this->pitch -= yoffset;
 
-    if (constraintPitch) {
-        if (this->pitch > 89.0f) this->pitch = 89.0f;
-        if (this->pitch < -89.0f) this->pitch = -89.0f;
-    }
+    // Constraint Pitch
+    if (this->pitch > 89.0f) this->pitch = 89.0f;
+    if (this->pitch < -89.0f) this->pitch = -89.0f;
 
     this->UpdateCameraVectors();
 }

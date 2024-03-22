@@ -1,6 +1,9 @@
-#include "ShaderProgram.hpp"
+#include <iostream>
 
+#include "ShaderProgram.hpp"
 #include "Mesh.hpp"
+
+#define print(x) std::cout << x << "\n"
 
 Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLuint>& indices, GLuint texture_id) :
     primitive_type(primitive_type),
@@ -56,7 +59,8 @@ void Mesh::Draw(const ShaderProgram& shader) const { //???: consts
 
     //TODO:??? draw mesh: bind vertex array object, draw all elements with selected primitive type, unbind vertex array object
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(primitive_type, indices.size(), GL_UNSIGNED_INT, 0);
+    //print(vertices.size() << " " << indices.size());
     glBindVertexArray(0);
 }
 

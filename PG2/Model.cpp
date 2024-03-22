@@ -43,6 +43,9 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
 {
     FillFileLines(file_name);
 
+    out_vertices.clear();
+    out_vertex_indices.clear();
+
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> texture_coordinates;
     std::vector<glm::vec3> vertex_normals;
@@ -133,9 +136,6 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
         }
     }
 
-    // Set output vertex indices
-    out_vertex_indices = indices_vertex;
-
     // Set output vertices
     auto n_indirect_vertices = vertices.size();
     auto n_indirect_uvs = texture_coordinates.size();
@@ -146,6 +146,22 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
         if (u < n_indirect_uvs) vertex.tex_coords = texture_coordinates[u];
         if (u < n_indirect_normals) vertex.normal = vertex_normals[u];
         out_vertices.push_back(vertex);
+    }
+
+    bool use_direct = true;
+    if (use_direct) {
+        // RETARDED DRAW
+        std::vector<Vertex> temp_vertices(out_vertices);
+        out_vertices.clear();
+        for (unsigned int u = 0; u < indices_vertex.size(); u++) {
+            out_vertices.push_back(temp_vertices[indices_vertex[u] - 1]);
+            out_vertex_indices.push_back(u);
+        }
+    }
+    else {
+        // INDIRECT DRAW
+        // Set output vertex indices
+        out_vertex_indices = indices_vertex;
     }
 
     // Print done

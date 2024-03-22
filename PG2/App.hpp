@@ -15,9 +15,9 @@ public:
     int Run();
 
     ~App();
-protected:
-    std::unordered_map<std::string, Model> scene;
 private:
+    std::vector<Model> scene_lite;
+
     static bool is_vsync_on;
     static bool is_fullscreen_on;
     
@@ -27,10 +27,14 @@ private:
     static int window_ycor;
     static int window_width;
     static int window_height;
+    static int window_width_return_from_fullscreen;
+    static int window_height_return_from_fullscreen;
 
     float FOV = 89.0f;
-    glm::mat4 projection_matrix = glm::identity<glm::mat4>();
-    //Camera camera;
+    glm::mat4 mx_projection = glm::identity<glm::mat4>();
+    static Camera camera;
+    static double last_cursor_xpos;
+    static double last_cursor_ypos;
 
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);
