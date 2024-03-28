@@ -160,6 +160,7 @@
     <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="resources\all.frag" />
     <None Include="resources\basic.frag" />
     <None Include="resources\basic.vert" />
   </ItemGroup>

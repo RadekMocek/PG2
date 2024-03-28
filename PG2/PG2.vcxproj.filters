@@ -70,5 +70,8 @@
     <None Include="resources\basic.vert">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\all.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -141,11 +141,7 @@ bool App::Init()
             std::cout << "GL_DEBUG NOT SUPPORTED!\n";
 
         // set GL params
-        /*
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CCW);
-        /**/
         glEnable(GL_DEPTH_TEST);
         // first init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
@@ -195,7 +191,7 @@ int App::Run(void)
 
             // Set Model Matrix
             glm::mat4 mx_model = glm::identity<glm::mat4>();
-            //mx_model = glm::rotate(mx_model, glm::radians(static_cast<float>(90 * glfwGetTime())), glm::vec3(0.0f, 0.0f, 1.0f));
+            mx_model = glm::rotate(mx_model, glm::radians(static_cast<float>(90 * glfwGetTime())), glm::vec3(0.0f, 1.0f, 0.0f));
 
             // Activate shader, set uniform vars
             my_shader.Activate();
