@@ -59,7 +59,7 @@ void Mesh::Draw(const ShaderProgram& shader) const {
 
     //???: draw mesh: bind vertex array object, draw all elements with selected primitive type, unbind vertex array object
     glBindVertexArray(VAO);
-    glDrawElements(primitive_type, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(primitive_type, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
     //print(vertices.size() << " " << indices.size());
     glBindVertexArray(0);
 }

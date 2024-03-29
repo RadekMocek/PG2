@@ -6,7 +6,7 @@
 #include <sstream>
 
 // OpenCV – GL independent
-//#include <opencv2\opencv.hpp>
+#include <opencv2/opencv.hpp>
 
 // OpenGL Extension Wrangler: allow all multiplatform GL functions
 #include <GL/glew.h> 
