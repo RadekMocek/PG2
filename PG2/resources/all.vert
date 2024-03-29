@@ -1,22 +1,42 @@
 #version 460 core
 
-in vec3 aPos;   // position: MUST exist
-//in vec3 aColor; // any additional attributes are optional, any data type, etc.
+// Vertex attributes
+layout (location = 0) in vec4 aPosition;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoord;
 
+// Matrices
 uniform mat4 uMx_projection = mat4(1.0);
 uniform mat4 uMx_model      = mat4(1.0);
 uniform mat4 uMx_view       = mat4(1.0);
 
-uniform vec4 uRGBA;
+// Light properties
+uniform vec3 light_position;
 
-out vec4 color; // optional output attribute
-
-void main()
+// Outputs to the fragment shader
+out VS_OUT
 {
-    // Outputs the positions/coordinates of all vertices, MUST WRITE
-    //gl_Position = vec4(aPos, 1.0f);
-    gl_Position = uMx_projection * uMx_view * uMx_model * vec4(aPos, 1.0f);
-    
-    //color = aColor; // copy color to output
-    color = uRGBA;
+    vec3 N; // normal vector
+    vec3 L; // vector from point on object (vertex or rasterised point) towards light source
+    vec3 V; // vector towards viewer
+} vs_out;
+
+out vec2 texCoord;
+
+void main(void)
+{
+    // Create Model-View matrix
+    mat4 mx_modelView = uMx_view * uMx_model;
+    // Calculate view-space coordinate - in P point we are computing the color
+    vec4 P = mx_modelView * aPosition;
+    // Calculate normal in view space
+    vs_out.N = mat3(mx_modelView) * aNormal;
+    // Calculate view-space light vector
+    vs_out.L = light_position - P.xyz;
+    // Calculate view vector (negative of the view-space position)
+    vs_out.V = -P.xyz;
+    // Calculate the clip-space position of each vertex
+    gl_Position = uMx_projection * P;
+
+    texCoord = aTexCoord;
 }

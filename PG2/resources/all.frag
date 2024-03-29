@@ -3,13 +3,12 @@
 // Outputs colors in RGBA
 out vec4 FragColor;
 
-
 // Imports the color from the Vertex Shader
-in vec3 color;
+in vec4 color;
 // Imports the texture coordinates from the Vertex Shader
 in vec2 texCoord;
 // Imports the normal from the Vertex Shader
-in vec3 Normal;
+//in vec3 Normal;
 // Imports the current position from the Vertex Shader
 in vec3 crntPos;
 
@@ -21,18 +20,25 @@ uniform sampler2D tex1;
 // Gets the color of the light from the main function
 uniform vec4 lightColor;
 // Gets the position of the light from the main function
-uniform vec3 lightPos;
+//uniform vec3 lightPos;
 // Gets the position of the camera from the main function
-uniform vec3 camPos;
+//uniform vec3 camPos;
 
+// Input from vertex shader
+in VS_OUT
+{
+    vec3 N; // normal vector
+    vec3 L; // vector from point on object (vertex or rasterised point) towards light source
+    vec3 V; // vector towards viewer
+} fs_in;
 
 vec4 pointLight()
-{	
+{
 	// used in two variables so I calculate it here to not have to do it twice
-	vec3 lightVec = lightPos - crntPos;
+	//vec3 lightVec = lightPos - crntPos;
 
 	// intensity of light with respect to distance
-	float dist = length(lightVec);
+	float dist = length(fs_in.L);
 	float a = 3.0;
 	float b = 0.7;
 	float inten = 1.0f / (a * dist * dist + b * dist + 1.0f);
@@ -41,15 +47,17 @@ vec4 pointLight()
 	float ambient = 0.20f;
 
 	// diffuse lighting
-	vec3 normal = normalize(Normal);
-	vec3 lightDirection = normalize(lightVec);
+	vec3 normal = normalize(fs_in.N);
+	vec3 lightDirection = normalize(fs_in.L);
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
+
+	vec3 V = normalize(fs_in.V);
 
 	// specular lighting
 	float specularLight = 0.50f;
-	vec3 viewDirection = normalize(camPos - crntPos);
+	//vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
+	float specAmount = pow(max(dot(V, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
 	return (texture(tex0, texCoord) * (diffuse * inten + ambient) + texture(tex1, texCoord).r * specular * inten) * lightColor;
@@ -61,15 +69,17 @@ vec4 direcLight()
 	float ambient = 0.20f;
 
 	// diffuse lighting
-	vec3 normal = normalize(Normal);
+	vec3 normal = normalize(fs_in.N);
 	vec3 lightDirection = normalize(vec3(1.0f, 1.0f, 0.0f));
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
+	vec3 V = normalize(fs_in.V);
+
 	// specular lighting
 	float specularLight = 0.50f;
-	vec3 viewDirection = normalize(camPos - crntPos);
+	//vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
+	float specAmount = pow(max(dot(V, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
 	return (texture(tex0, texCoord) * (diffuse + ambient) + texture(tex1, texCoord).r * specular) * lightColor;
@@ -85,15 +95,17 @@ vec4 spotLight()
 	float ambient = 0.20f;
 
 	// diffuse lighting
-	vec3 normal = normalize(Normal);
-	vec3 lightDirection = normalize(lightPos - crntPos);
+	vec3 normal = normalize(fs_in.N);
+	vec3 lightDirection = normalize(fs_in.L);
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
+
+	vec3 V = normalize(fs_in.V);
 
 	// specular lighting
 	float specularLight = 0.50f;
-	vec3 viewDirection = normalize(camPos - crntPos);
+	//vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
+	float specAmount = pow(max(dot(V, reflectionDirection), 0.0f), 16);
 	float specular = specAmount * specularLight;
 
 	// calculates the intensity of the crntPos based on its angle to the center of the light cone
@@ -102,7 +114,6 @@ vec4 spotLight()
 
 	return (texture(tex0, texCoord) * (diffuse * inten + ambient) + texture(tex1, texCoord).r * specular * inten) * lightColor;
 }
-
 
 void main()
 {

@@ -54,8 +54,8 @@ App::App()
 void App::InitAssets()
 {
     // load models, load textures, load shaders, initialize level, etc...
-    std::filesystem::path VS_path("./resources/basic.vert");
-    std::filesystem::path FS_path("./resources/basic.frag");
+    std::filesystem::path VS_path("./resources/all.vert");
+    std::filesystem::path FS_path("./resources/bruh.frag");
     my_shader = ShaderProgram(VS_path, FS_path);
 
     //std::filesystem::path model_path("./resources/objects/bunny_tri_vn.obj");
@@ -167,7 +167,10 @@ int App::Run(void)
         double last_frame_time = glfwGetTime();
         glm::vec3 camera_movement{};
 
-        glm::vec4 my_rgba = { 1.0f, 0.5f, 0.0f, 1.0f };
+        glm::vec3 rgb_orange = { 1.0f, 0.5f, 0.0f };
+        glm::vec3 rgb_white = { 1.0f, 1.0f, 1.0f };
+        
+        glm::vec4 rgba_white = { 1.0f, 1.0f, 1.0f, 1.0f};
 
         while (!glfwWindowShouldClose(window))
         {
@@ -185,8 +188,6 @@ int App::Run(void)
             last_frame_time = glfwGetTime();
             camera_movement = camera.ProcessInput(window, static_cast<float>(delta_time));
             camera.position += camera_movement;
-            //print(delta_time);
-            //print(camera.position.x << " " << camera.position.y << " " << camera.position.z << " (" << camera_movement.x << " " << camera_movement.y << " " << camera_movement.z << ")");
             glm::mat4 mx_view = camera.GetViewMatrix();
 
             // Set Model Matrix
@@ -195,10 +196,18 @@ int App::Run(void)
 
             // Activate shader, set uniform vars
             my_shader.Activate();
-            my_shader.SetUniform("uRGBA", my_rgba);
             my_shader.SetUniform("uMx_projection", mx_projection);
             my_shader.SetUniform("uMx_model", mx_model);
             my_shader.SetUniform("uMx_view", mx_view);
+
+            ///*
+            my_shader.SetUniform("ambient_material", rgb_orange);
+            my_shader.SetUniform("diffuse_material", rgb_orange);
+            my_shader.SetUniform("specular_material", rgb_white);
+            my_shader.SetUniform("specular_shinines", 10.0f);
+            /**/
+
+            //my_shader.SetUniform("lightColor", rgba_white);
 
             // Draw the scene
             for (auto& model : scene_lite) {
