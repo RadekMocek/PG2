@@ -172,6 +172,11 @@ int App::Run(void)
         
         glm::vec4 rgba_white = { 1.0f, 1.0f, 1.0f, 1.0f};
 
+        /*
+        cv::Mat maze = cv::Mat(10, 25, CV_8U);
+        MazeGenerate(maze);
+        /**/
+        
         while (!glfwWindowShouldClose(window))
         {
             // Time/FPS measure start
@@ -205,6 +210,9 @@ int App::Run(void)
             my_shader.SetUniform("diffuse_material", rgb_orange);
             my_shader.SetUniform("specular_material", rgb_white);
             my_shader.SetUniform("specular_shinines", 10.0f);
+
+            glm::vec3 light_position(-1000000, 0, 100000);
+            my_shader.SetUniform("light_position", light_position);
             /**/
 
             //my_shader.SetUniform("lightColor", rgba_white);

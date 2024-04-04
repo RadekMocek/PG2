@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 
+#include <opencv2/opencv.hpp>
+
 #include "Model.hpp"
 #include "ShaderProgram.hpp"
 #include "Camera.hpp"
@@ -51,4 +53,10 @@ private:
     static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
     ShaderProgram my_shader;
+
+    // Maze
+    ///*
+    uchar MapGet(cv::Mat& map, int x, int y);
+    void MazeGenerate(cv::Mat& map);
+    /**/
 };
