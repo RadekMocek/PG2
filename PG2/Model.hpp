@@ -9,10 +9,10 @@
 class Model
 {
 public:
-    Model(const std::filesystem::path& file_name);
+    Model(const std::filesystem::path& file_name, const std::filesystem::path& path_tex);
     void Draw(const ShaderProgram& shader);
 private:
-    std::vector<Mesh> meshes;
+    Mesh mesh;
     std::string name;
 
     //GLuint LoadTexture(const std::filesystem::path& file_name);
@@ -25,7 +25,7 @@ private:
     // Reading the file
     std::string file_line;
     std::vector<std::string> file_lines;
-    void FillFileLines(const std::filesystem::path& file_name);
+    void FillFileLines(const std::filesystem::path& path_obj);
     void LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vertex>& out_vertices, std::vector<GLuint>& out_vertex_indices);
     void LoadMTLFile(const std::filesystem::path& file_name);
 };

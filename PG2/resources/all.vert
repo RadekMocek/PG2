@@ -19,9 +19,8 @@ out VS_OUT
     vec3 N; // normal vector
     vec3 L; // vector from point on object (vertex or rasterised point) towards light source
     vec3 V; // vector towards viewer
+    vec2 texCoord;
 } vs_out;
-
-out vec2 texCoord;
 
 void main(void)
 {
@@ -38,5 +37,6 @@ void main(void)
     // Calculate the clip-space position of each vertex
     gl_Position = uMx_projection * P;
 
-    texCoord = aTexCoord;
+    // Texture coordinates
+    vs_out.texCoord = aTexCoord;
 }

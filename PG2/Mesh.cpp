@@ -11,7 +11,7 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
     indices(indices),
     texture_id(texture_id)
 {
-    //???: create and initialize VAO, VBO, EBO and parameters
+    // Create and initialize VAO, VBO, EBO and parameters
     // Generate the VAO and VBO
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -42,22 +42,20 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
     glEnableVertexAttribArray(2);
 
     // Bind VBO and VAO to 0 to prevent unintended modification of VAO/VBO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 };
 
 void Mesh::Draw(const ShaderProgram& shader) const {
-    // TODO: Mesh::Draw
-    // set uniform variables: color
-    //set texture id etc...
-    //if (texture_id > 0) {
-    //    glActiveTexture(GL_TEXTURE0);
-    //    glBindTexture(GL_TEXTURE_2D, texture_id);
-    //    shader.setUniform("mytexture", 0);
-    //}
+    // set uniform variables: color; set texture id etc...
+    if (texture_id > 0) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        shader.SetUniform("uTexture", 0);
+    }
 
-    //???: draw mesh: bind vertex array object, draw all elements with selected primitive type, unbind vertex array object
+    // draw mesh: bind vertex array object, draw all elements with selected primitive type, unbind vertex array object
     glBindVertexArray(VAO);
     glDrawElements(primitive_type, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
     //print(vertices.size() << " " << indices.size());
@@ -67,14 +65,18 @@ void Mesh::Draw(const ShaderProgram& shader) const {
 void Mesh::Clear(void) {
     vertices.clear();
     indices.clear();
-    texture_id = 0;
-    primitive_type = GL_POINT;
+    //texture_id = 0;
+    primitive_type = GL_POINTS;
 
     // delete all allocations 
     //glDeleteBuffers... //VBO a EBO
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     //glDeleteVertexArrays... // VAO
-    glDeleteVertexArrays(1, &VAO);
+    //glDeleteVertexArrays(1, &VAO);
+
+    if (VAO) { glDeleteVertexArrays(1, &VAO); VAO = 0; }
+    if (texture_id) { glDeleteTextures(1, &texture_id); texture_id = 0; }
+
     // Destruktor ne-e
 };

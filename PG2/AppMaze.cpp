@@ -1,4 +1,3 @@
-///*
 #include <random>
 
 #include <opencv2/opencv.hpp>
@@ -85,8 +84,9 @@ void App::MazeGenerate(cv::Mat& map) {
 	}
 
 	//set player position in 3D space (transform X-Y in map to XYZ in GL)
+	/*
 	camera.position.x = (start_position.x) + 1.0 / 2.0f;
 	camera.position.z = (start_position.y) + 1.0 / 2.0f;
 	camera.position.y = 0.0f;
+	/**/
 }
-/**/

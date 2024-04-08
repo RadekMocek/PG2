@@ -1,4 +1,4 @@
-/*
+///*
 #pragma once
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
@@ -7,10 +7,10 @@
 #include <GL/glew.h>
 
 // generate GL texture from image file
-GLuint textureInit(const char* filepath);
+GLuint TextureInit(const char* filepath);
 
 // generate GL texture from OpenCV image
-GLuint tex_gen(cv::Mat& image);
+GLuint TextureGen(cv::Mat& image);
 
 #endif
 /**/

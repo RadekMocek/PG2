@@ -16,7 +16,7 @@ public:
     std::vector<Vertex> vertices;
     std::vector<GLuint> indices;
     GLuint texture_id{ 0 }; // texture id=0  means no texture
-    GLenum primitive_type = GL_POINT;
+    GLenum primitive_type = GL_POINTS;
     // mesh material
     glm::vec4 diffuse_color{ 1.0f }; // white, non-transparent 
 
@@ -25,6 +25,8 @@ public:
     void Draw(const ShaderProgram& shader) const;
     void Clear(void);
 
+    // Tell the compiler to do what it would have if we didn't define a ctor:
+    Mesh() = default;
 private:
     // OpenGL buffer IDs
     // ID = 0 is reserved (i.e. uninitalized)

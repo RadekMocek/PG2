@@ -2,31 +2,25 @@
 #include <fstream>
 #include <string>
 
-//#include "OBJLoader.hpp"
 #include "Model.hpp"
+#include "Texture.hpp"
 
 #define print(x) std::cout << x << "\n"
 
-Model::Model(const std::filesystem::path& file_name) {
+Model::Model(const std::filesystem::path& path_obj, const std::filesystem::path& path_tex) {
     // load mesh (all meshes) of the model, load material of each mesh, load textures...
     //???: call LoadOBJFile, LoadMTLFile, process data, create mesh and set its properties
 
-    LoadOBJFile(file_name, vertices, vertex_indices);
+    LoadOBJFile(path_obj, vertices, vertex_indices);
 
-    /*
-    bool is_loadobj_success = LoadOBJTest(file_name.string().c_str(), vertices, vertex_indices);
-    if (!is_loadobj_success) throw std::exception("OBJ file load err.\n");
-    /**/
+    GLuint texture_id = TextureInit(path_tex.string().c_str());
 
-    Mesh mesh = Mesh(GL_TRIANGLES, vertices, vertex_indices, 0);
-    meshes.push_back(mesh);
+    mesh = Mesh(GL_TRIANGLES, vertices, vertex_indices, texture_id);
 }
 
-void Model::Draw(const ShaderProgram& shader) {
-    // call Draw() on all meshes
-    for (auto const& mesh : meshes) {
-        mesh.Draw(shader);
-    }
+void Model::Draw(const ShaderProgram& shader)
+{
+    mesh.Draw(shader);
 }
 
 void Model::FillFileLines(const std::filesystem::path& file_name)

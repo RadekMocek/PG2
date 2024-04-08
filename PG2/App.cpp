@@ -51,25 +51,6 @@ App::App()
     std::cout << "Constructed...\n";
 }
 
-void App::InitAssets()
-{
-    // load models, load textures, load shaders, initialize level, etc...
-    std::filesystem::path VS_path("./resources/all.vert");
-    std::filesystem::path FS_path("./resources/bruh.frag");
-    my_shader = ShaderProgram(VS_path, FS_path);
-
-    //std::filesystem::path model_path("./resources/objects/bunny_tri_vn.obj");
-    std::filesystem::path model_path("./resources/objects/bunny_tri_vnt.obj");
-    //std::filesystem::path model_path("./resources/objects/cube_triangles.obj");
-    //std::filesystem::path model_path("./resources/objects/cube_triangles_normals_tex.obj");
-    //std::filesystem::path model_path("./resources/objects/plane_tri_vnt.obj");
-    //std::filesystem::path model_path("./resources/objects/sphere_tri_vnt.obj");
-    //std::filesystem::path model_path("./resources/objects/teapot_tri_vnt.obj");
-    Model my_model = Model(model_path);    
-    
-    scene_lite.push_back(my_model);
-}
-
 // App initialization, if returns true then run run()
 bool App::Init()
 {
@@ -141,8 +122,12 @@ bool App::Init()
             std::cout << "GL_DEBUG NOT SUPPORTED!\n";
 
         // set GL params
-        glEnable(GL_CULL_FACE);
         glEnable(GL_DEPTH_TEST);
+
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_POLYGON_SMOOTH);
+
+        glEnable(GL_CULL_FACE); // assuming ALL objects are non-transparent 
         // first init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
     }
@@ -153,6 +138,32 @@ bool App::Init()
     }
     std::cout << "Initialized...\n";
     return true;
+}
+
+// Load models, load textures, load shaders, initialize level, etc.
+void App::InitAssets()
+{
+    // Load shaders and create ShaderProgram
+    std::filesystem::path VS_path("./resources/all.vert");
+    std::filesystem::path FS_path("./resources/bruh.frag");
+    my_shader = ShaderProgram(VS_path, FS_path);
+
+    // obj file paths (obsolete)
+    //std::filesystem::path model_path("./resources/objects/bunny_tri_vn.obj");
+    //std::filesystem::path model_path("./resources/objects/bunny_tri_vnt.obj");
+    //std::filesystem::path model_path("./resources/objects/cube_triangles.obj");
+    //std::filesystem::path model_path("./resources/objects/plane_tri_vnt.obj");
+    //std::filesystem::path model_path("./resources/objects/sphere_tri_vnt.obj");
+    //std::filesystem::path model_path("./resources/objects/teapot_tri_vnt.obj");
+    
+    auto CreateObject = [](std::string obj, std::string tex) {
+        std::filesystem::path modelpath("./resources/objects/" + obj);
+        std::filesystem::path texturepath("./resources/textures/" + tex);
+        return Model(modelpath, texturepath);
+    };
+
+    // Box
+    scene_lite.push_back(CreateObject("cube_triangles_normals_tex.obj", "box_rgb888.png"));
 }
 
 int App::Run(void)
@@ -283,7 +294,7 @@ void App::UpdateProjectionMatrix(void)
 }
 
 void App::GetInformation() {
-    std::cout << "\n============= :: GL Info :: =============\n";
+    std::cout << "\n=================== :: GL Info :: ===================\n";
     std::cout << "GL Vendor:\t" << glGetString(GL_VENDOR) << "\n";
     std::cout << "GL Renderer:\t" << glGetString(GL_RENDERER) << "\n";
     std::cout << "GL Version:\t" << glGetString(GL_VERSION) << "\n";
@@ -301,5 +312,5 @@ void App::GetInformation() {
     else {
         std::cout << "Compatibility profile" << "\n";
     }
-    std::cout << "=========================================\n\n";
+    std::cout << "=====================================================\n\n";
 }
