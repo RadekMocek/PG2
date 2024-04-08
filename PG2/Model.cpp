@@ -125,7 +125,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
             }
 
             if (!line_success && first_two_chars != "# ") {
-                print("LoadOBJFile: Ignoring line '" << line << "' in file" << file_name);
+                print("LoadOBJFile: Ignoring line '" << line << "' in file '" << file_name << "'");
             }
         }
     }
@@ -145,7 +145,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
         vertex_normals_direct.push_back(vertex_normals[indices_vertex_normal[u] - 1]);
     }
 
-    /* Uncomment these if you don't like to live dangerously
+    ///* Uncomment these if you don't like to live dangerously
     auto n_direct_uvs = texture_coordinates_direct.size();
     auto n_direct_normals = vertex_normals_direct.size();
     /**/
@@ -153,14 +153,14 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
     for (unsigned int u = 0; u < vertices_direct.size(); u++) {
         Vertex vertex{};
         vertex.position = vertices_direct[u];
-        /*if (u < n_direct_uvs)*/ vertex.tex_coords = texture_coordinates_direct[u];
-        /*if (u < n_direct_normals)*/ vertex.normal = vertex_normals_direct[u];
+        if (u < n_direct_uvs) vertex.tex_coords = texture_coordinates_direct[u];
+        if (u < n_direct_normals) vertex.normal = vertex_normals_direct[u];
         out_vertices.push_back(vertex);
         out_vertex_indices.push_back(u);
     }  
 
     // What's said is said, what's done is done.
-    print("LoadOBJFile: Loaded OBJ file " << file_name);
+    print("LoadOBJFile: Loaded OBJ file " << file_name << "\n");
 }
 
 void Model::LoadMTLFile(const std::filesystem::path& file_name)

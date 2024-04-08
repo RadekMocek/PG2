@@ -128,6 +128,10 @@ bool App::Init()
         glEnable(GL_POLYGON_SMOOTH);
 
         glEnable(GL_CULL_FACE); // assuming ALL objects are non-transparent 
+
+        // Transparency blending function
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         // first init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
     }
@@ -136,7 +140,7 @@ bool App::Init()
         //throw;
         exit(-1);
     }
-    std::cout << "Initialized...\n";
+    std::cout << "--------------\nInitialized...\n";
     return true;
 }
 
@@ -155,15 +159,18 @@ void App::InitAssets()
         return Model(modelpath, texturepath);
     };
 
-    //auto obj_name = "bunny_tri_vn.obj";
-    //auto obj_name = "bunny_tri_vnt.obj";
-    //auto obj_name = "cube_triangles.obj";
-    //auto obj_name = "cube_triangles_normals_tex.obj";
-    //auto obj_name = "plane_tri_vnt.obj";
-    //auto obj_name = "sphere_tri_vnt.obj";
-    auto obj_name = "teapot_tri_vnt.obj";
+    // WORKING OBJECTS:
+    //scene_opaque.push_back(CreateObject("bunny_tri_vnt.obj", "box_rgb888.png"));
+    //scene_opaque.push_back(CreateObject("cube_triangles.obj", "box_rgb888.png"));
+    //scene_opaque.push_back(CreateObject("cube_triangles_normals_tex.obj", "TextureDouble_A.png"));
+    //scene_opaque.push_back(CreateObject("sphere_tri_vnt.obj", "box_rgb888.png"));
+    ///*
+    scene_opaque.push_back(CreateObject("plane_tri_vnt.obj", "box_rgb888.png"));
+    scene_transparent.push_back(CreateObject("teapot_tri_vnt.obj", "Glass.png"));
+    /**/
 
-    scene_lite.push_back(CreateObject(obj_name, "box_rgb888.png")); // Box
+    // TODO: PROBLEMATIC OBJECTS:
+    //scene_opaque.push_back(CreateObject("bunny_tri_vn.obj", "box_rgb888.png"));
 }
 
 int App::Run(void)
@@ -187,6 +194,8 @@ int App::Run(void)
         cv::Mat maze = cv::Mat(10, 25, CV_8U);
         MazeGenerate(maze);
         /**/
+        camera.position.y = 6.0f;
+        camera.position.z = 15.0f;
         
         while (!glfwWindowShouldClose(window))
         {
@@ -208,7 +217,7 @@ int App::Run(void)
 
             // Set Model Matrix
             glm::mat4 mx_model = glm::identity<glm::mat4>();
-            mx_model = glm::rotate(mx_model, glm::radians(static_cast<float>(90 * glfwGetTime())), glm::vec3(0.0f, 1.0f, 0.0f));
+            mx_model = glm::rotate(mx_model, glm::radians(static_cast<float>(45 * glfwGetTime())), glm::vec3(0.0f, 1.0f, 0.0f));
 
             // Activate shader, set uniform vars
             my_shader.Activate();
@@ -217,21 +226,31 @@ int App::Run(void)
             my_shader.SetUniform("uMx_view", mx_view);
 
             ///*
-            my_shader.SetUniform("ambient_material", rgb_orange);
-            my_shader.SetUniform("diffuse_material", rgb_orange);
+            my_shader.SetUniform("ambient_material", rgb_white);
+            my_shader.SetUniform("diffuse_material", rgb_white);
             my_shader.SetUniform("specular_material", rgb_white);
-            my_shader.SetUniform("specular_shinines", 10.0f);
+            my_shader.SetUniform("specular_shinines", 5.0f);
 
             glm::vec3 light_position(-1000000, 0, 100000);
             my_shader.SetUniform("light_position", light_position);
             /**/
 
-            //my_shader.SetUniform("lightColor", rgba_white);
-
             // Draw the scene
-            for (auto& model : scene_lite) {
+            // - Draw opaque objects
+            for (auto& model : scene_opaque) {
                 model.Draw(my_shader);
             }
+            // - Draw transparent objects
+            glEnable(GL_BLEND);         // enable blending
+            glDisable(GL_CULL_FACE);    // no polygon removal
+            glDepthMask(GL_FALSE);      // set Z to read-only
+            // TODO: sort by distance from camera, from far to near
+            for (auto& model : scene_transparent) {
+                model.Draw(my_shader);
+            }
+            glDisable(GL_BLEND);
+            glEnable(GL_CULL_FACE);
+            glDepthMask(GL_TRUE);
 
             // End of frame
             // Swap front and back buffers

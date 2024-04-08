@@ -18,7 +18,8 @@ public:
 
     ~App();
 private:
-    std::vector<Model> scene_lite;
+    std::vector<Model> scene_opaque;
+    std::vector<Model> scene_transparent;
 
     static bool is_vsync_on;
     static bool is_fullscreen_on;

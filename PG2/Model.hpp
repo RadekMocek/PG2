@@ -15,10 +15,6 @@ private:
     Mesh mesh;
     std::string name;
 
-    //GLuint LoadTexture(const std::filesystem::path& file_name);
-    //...
-    //TODO GLuint Model::LoadTexture ?
-
     std::vector<Vertex> vertices{};
     std::vector<GLuint> vertex_indices{};
 
