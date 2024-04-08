@@ -147,23 +147,23 @@ void App::InitAssets()
     std::filesystem::path VS_path("./resources/all.vert");
     std::filesystem::path FS_path("./resources/bruh.frag");
     my_shader = ShaderProgram(VS_path, FS_path);
-
-    // obj file paths (obsolete)
-    //std::filesystem::path model_path("./resources/objects/bunny_tri_vn.obj");
-    //std::filesystem::path model_path("./resources/objects/bunny_tri_vnt.obj");
-    //std::filesystem::path model_path("./resources/objects/cube_triangles.obj");
-    //std::filesystem::path model_path("./resources/objects/plane_tri_vnt.obj");
-    //std::filesystem::path model_path("./resources/objects/sphere_tri_vnt.obj");
-    //std::filesystem::path model_path("./resources/objects/teapot_tri_vnt.obj");
     
+    // Create objects
     auto CreateObject = [](std::string obj, std::string tex) {
         std::filesystem::path modelpath("./resources/objects/" + obj);
         std::filesystem::path texturepath("./resources/textures/" + tex);
         return Model(modelpath, texturepath);
     };
 
-    // Box
-    scene_lite.push_back(CreateObject("cube_triangles_normals_tex.obj", "box_rgb888.png"));
+    //auto obj_name = "bunny_tri_vn.obj";
+    //auto obj_name = "bunny_tri_vnt.obj";
+    //auto obj_name = "cube_triangles.obj";
+    //auto obj_name = "cube_triangles_normals_tex.obj";
+    //auto obj_name = "plane_tri_vnt.obj";
+    //auto obj_name = "sphere_tri_vnt.obj";
+    auto obj_name = "teapot_tri_vnt.obj";
+
+    scene_lite.push_back(CreateObject(obj_name, "box_rgb888.png")); // Box
 }
 
 int App::Run(void)

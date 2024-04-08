@@ -130,34 +130,36 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
         }
     }
 
-    // Set output vertices
-    auto n_indirect_vertices = vertices.size();
-    auto n_indirect_uvs = texture_coordinates.size();
-    auto n_indirect_normals = vertex_normals.size();
-    for (unsigned int u = 0; u < n_indirect_vertices; u++) {
+    // RETARDED DRAW ™ 2.0
+    std::vector<glm::vec3> vertices_direct;
+    std::vector<glm::vec2> texture_coordinates_direct;
+    std::vector<glm::vec3> vertex_normals_direct;
+
+    for (unsigned int u = 0; u < indices_vertex.size(); u++) {
+        vertices_direct.push_back(vertices[indices_vertex[u] - 1]);
+    }
+    for (unsigned int u = 0; u < indices_texture_coordinate.size(); u++) {
+        texture_coordinates_direct.push_back(texture_coordinates[indices_texture_coordinate[u] - 1]);
+    }
+    for (unsigned int u = 0; u < indices_vertex_normal.size(); u++) {
+        vertex_normals_direct.push_back(vertex_normals[indices_vertex_normal[u] - 1]);
+    }
+
+    /* Uncomment these if you don't like to live dangerously
+    auto n_direct_uvs = texture_coordinates_direct.size();
+    auto n_direct_normals = vertex_normals_direct.size();
+    /**/
+
+    for (unsigned int u = 0; u < vertices_direct.size(); u++) {
         Vertex vertex{};
-        vertex.position = vertices[u];
-        if (u < n_indirect_uvs) vertex.tex_coords = texture_coordinates[u];
-        if (u < n_indirect_normals) vertex.normal = vertex_normals[u];
+        vertex.position = vertices_direct[u];
+        /*if (u < n_direct_uvs)*/ vertex.tex_coords = texture_coordinates_direct[u];
+        /*if (u < n_direct_normals)*/ vertex.normal = vertex_normals_direct[u];
         out_vertices.push_back(vertex);
-    }
+        out_vertex_indices.push_back(u);
+    }  
 
-    bool use_direct = true;
-    if (use_direct) {
-        // RETARDED DRAW
-        std::vector<Vertex> temp_vertices(out_vertices);
-        out_vertices.clear();
-        for (unsigned int u = 0; u < indices_vertex.size(); u++) {
-            out_vertices.push_back(temp_vertices[indices_vertex[u] - 1]);
-            out_vertex_indices.push_back(u);
-        }
-    }
-    else {
-        // INDIRECT DRAW
-        out_vertex_indices = indices_vertex;
-    }
-
-    // Print done
+    // What's said is said, what's done is done.
     print("LoadOBJFile: Loaded OBJ file " << file_name);
 }
 
