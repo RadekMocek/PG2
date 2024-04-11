@@ -7,7 +7,8 @@
 
 #define print(x) std::cout << x << "\n"
 
-Model::Model(const std::filesystem::path& path_obj, const std::filesystem::path& path_tex) {
+Model::Model(const std::filesystem::path& path_obj, const std::filesystem::path& path_tex)
+{
     // load mesh (all meshes) of the model, load material of each mesh, load textures...
     //???: call LoadOBJFile, LoadMTLFile, process data, create mesh and set its properties
 

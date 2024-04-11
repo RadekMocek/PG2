@@ -47,7 +47,8 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 };
 
-void Mesh::Draw(const ShaderProgram& shader) const {
+void Mesh::Draw(const ShaderProgram& shader) const
+{
     // set uniform variables: color; set texture id etc...
     if (texture_id > 0) {
         glActiveTexture(GL_TEXTURE0);
@@ -62,7 +63,24 @@ void Mesh::Draw(const ShaderProgram& shader) const {
     glBindVertexArray(0);
 }
 
-void Mesh::Clear(void) {
+// TODO udìlat variantu kam narvu kromì shaderu modelovací matici
+// OR udìlat si pøímo v mesh glm::vec4 transforms nebo nìco
+/*
+void Mesh::Draw(ShaderProgram& shader, glm::mat4 mx_model)
+{
+    if (texture_id > 0) {
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        shader.SetUniform("uTexture", 0);
+    }
+    shader.SetUniform("uMx_model", mx_model);
+    glBindVertexArray(VAO);
+    glDrawElements(primitive_type, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
+*/
+void Mesh::Clear(void)
+{
     vertices.clear();
     indices.clear();
     //texture_id = 0;

@@ -22,22 +22,26 @@ ShaderProgram::ShaderProgram(const std::filesystem::path& VS_file, const std::fi
 	//std::cout << "Instantiated shader ID=" << ID << "\n";
 }
 
-void ShaderProgram::Activate(void) {
+void ShaderProgram::Activate(void)
+{
 	//std::cout << "Activating shader ID=" << ID << "\n";
 	glUseProgram(ID);
 }
 
-void ShaderProgram::Deactivate(void) {
+void ShaderProgram::Deactivate(void)
+{
 	glUseProgram(0);
 }
 
-void ShaderProgram::Clear(void) {
+void ShaderProgram::Clear(void)
+{
 	Deactivate();
 	glDeleteProgram(ID);
 	ID = 0;
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const float val) {
+void ShaderProgram::SetUniform(const std::string& name, const float val)
+{
 	auto loc = glGetUniformLocation(ID, name.c_str());
 	if (loc == -1) {
 		std::cerr << "no uniform with name: '" << name << "' (ID=" << ID << ")\n";
@@ -46,7 +50,8 @@ void ShaderProgram::SetUniform(const std::string& name, const float val) {
 	glUniform1f(loc, val);
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const int val) const {
+void ShaderProgram::SetUniform(const std::string& name, const int val) const
+{
 	auto loc = glGetUniformLocation(ID, name.c_str());
 	if (loc == -1) {
 		std::cerr << "no uniform with name: '" << name << "' (ID=" << ID << ")\n";
@@ -55,7 +60,8 @@ void ShaderProgram::SetUniform(const std::string& name, const int val) const {
 	glUniform1i(loc, val);
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::vec3 val) {
+void ShaderProgram::SetUniform(const std::string& name, const glm::vec3 val)
+{
 	auto loc = glGetUniformLocation(ID, name.c_str());
 	if (loc == -1) {
 		std::cerr << "no uniform with name: '" << name << "' (ID=" << ID << ")\n";
@@ -64,7 +70,8 @@ void ShaderProgram::SetUniform(const std::string& name, const glm::vec3 val) {
 	glUniform3fv(loc, 1, glm::value_ptr(val));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::vec4 val) {
+void ShaderProgram::SetUniform(const std::string& name, const glm::vec4 val)
+{
 	auto loc = glGetUniformLocation(ID, name.c_str());
 	if (loc == -1) {
 		std::cerr << "no uniform with name: '" << name << "' (ID=" << ID << ")\n";
@@ -73,7 +80,8 @@ void ShaderProgram::SetUniform(const std::string& name, const glm::vec4 val) {
 	glUniform4fv(loc, 1, glm::value_ptr(val));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::mat3 val) {
+void ShaderProgram::SetUniform(const std::string& name, const glm::mat3 val)
+{
 	auto loc = glGetUniformLocation(ID, name.c_str());
 	if (loc == -1) {
 		std::cerr << "no uniform with name: '" << name << "' (ID=" << ID << ")\n";
@@ -82,7 +90,8 @@ void ShaderProgram::SetUniform(const std::string& name, const glm::mat3 val) {
 	glUniformMatrix3fv(loc, 1, GL_FALSE, glm::value_ptr(val));
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const glm::mat4 val) {
+void ShaderProgram::SetUniform(const std::string& name, const glm::mat4 val)
+{
 	auto loc = glGetUniformLocation(ID, name.c_str());
 	if (loc == -1) {
 		std::cerr << "no uniform with name: '" << name << "' (ID=" << ID << ")\n";
@@ -91,7 +100,8 @@ void ShaderProgram::SetUniform(const std::string& name, const glm::mat4 val) {
 	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(val));
 }
 
-std::string ShaderProgram::GetShaderInfoLog(const GLuint obj) {
+std::string ShaderProgram::GetShaderInfoLog(const GLuint obj)
+{
 	int infologLength = 0;
 	std::string s;
 	glGetShaderiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
@@ -103,7 +113,8 @@ std::string ShaderProgram::GetShaderInfoLog(const GLuint obj) {
 	return s;
 }
 
-std::string ShaderProgram::GetProgramInfoLog(const GLuint obj) {
+std::string ShaderProgram::GetProgramInfoLog(const GLuint obj)
+{
 	int infologLength = 0;
 	std::string s;
 	glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infologLength);
@@ -157,7 +168,8 @@ GLuint ShaderProgram::LinkShader(const std::vector<GLuint> shader_ids)
 	return prog_h;
 }
 
-std::string ShaderProgram::TextFileRead(const std::filesystem::path& fn) {
+std::string ShaderProgram::TextFileRead(const std::filesystem::path& fn)
+{
 	std::ifstream file(fn);
 	if (!file.is_open())
 		throw std::exception("Error opening file.\n");

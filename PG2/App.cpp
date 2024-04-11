@@ -160,17 +160,18 @@ void App::InitAssets()
     };
 
     // WORKING OBJECTS:
-    //scene_opaque.push_back(CreateObject("bunny_tri_vnt.obj", "box_rgb888.png"));
     //scene_opaque.push_back(CreateObject("cube_triangles.obj", "box_rgb888.png"));
     //scene_opaque.push_back(CreateObject("cube_triangles_normals_tex.obj", "TextureDouble_A.png"));
     //scene_opaque.push_back(CreateObject("sphere_tri_vnt.obj", "box_rgb888.png"));
+    //scene_opaque.push_back(CreateObject("bunny_tri_vn.obj", "box_rgb888.png")); // big
     ///*
     scene_opaque.push_back(CreateObject("plane_tri_vnt.obj", "box_rgb888.png"));
     scene_transparent.push_back(CreateObject("teapot_tri_vnt.obj", "Glass.png"));
     /**/
-
-    // TODO: PROBLEMATIC OBJECTS:
-    //scene_opaque.push_back(CreateObject("bunny_tri_vn.obj", "box_rgb888.png"));
+    /*
+    scene_opaque.push_back(CreateObject("cube_triangles_normals_tex.obj", "box_rgb888.png"));
+    scene_transparent.push_back(CreateObject("bunny_tri_vnt.obj", "Glass.png"));
+    /**/
 }
 
 int App::Run(void)
@@ -196,9 +197,9 @@ int App::Run(void)
         /**/
         camera.position.y = 6.0f;
         camera.position.z = 15.0f;
+        glm::vec3 light_position(-1000000, 0, 100000);
         
-        while (!glfwWindowShouldClose(window))
-        {
+        while (!glfwWindowShouldClose(window)) {
             // Time/FPS measure start
             auto fps_frame_start_timestamp = std::chrono::steady_clock::now();
 
@@ -206,9 +207,9 @@ int App::Run(void)
             glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // After clearing the canvas:
+            // === After clearing the canvas ===
 
-            // React to user ;; Create View Matrix according to camera settings
+            // React to user :: Create View Matrix according to camera settings
             double delta_time = glfwGetTime() - last_frame_time;
             last_frame_time = glfwGetTime();
             camera_movement = camera.ProcessInput(window, static_cast<float>(delta_time));
@@ -221,17 +222,15 @@ int App::Run(void)
 
             // Activate shader, set uniform vars
             my_shader.Activate();
-            my_shader.SetUniform("uMx_projection", mx_projection);
-            my_shader.SetUniform("uMx_model", mx_model);
-            my_shader.SetUniform("uMx_view", mx_view);
+            my_shader.SetUniform("uMx_model", mx_model); // Object local coor space -> World space
+            my_shader.SetUniform("uMx_view", mx_view); // World space -> Camera space
+            my_shader.SetUniform("uMx_projection", mx_projection); // Camera space -> Screen
 
             ///*
             my_shader.SetUniform("ambient_material", rgb_white);
             my_shader.SetUniform("diffuse_material", rgb_white);
             my_shader.SetUniform("specular_material", rgb_white);
-            my_shader.SetUniform("specular_shinines", 5.0f);
-
-            glm::vec3 light_position(-1000000, 0, 100000);
+            my_shader.SetUniform("specular_shinines", 5.0f);            
             my_shader.SetUniform("light_position", light_position);
             /**/
 
@@ -252,7 +251,7 @@ int App::Run(void)
             glEnable(GL_CULL_FACE);
             glDepthMask(GL_TRUE);
 
-            // End of frame
+            // === End of frame ===
             // Swap front and back buffers
             glfwSwapBuffers(window);
 
@@ -312,7 +311,8 @@ void App::UpdateProjectionMatrix(void)
     );
 }
 
-void App::GetInformation() {
+void App::GetInformation()
+{
     std::cout << "\n=================== :: GL Info :: ===================\n";
     std::cout << "GL Vendor:\t" << glGetString(GL_VENDOR) << "\n";
     std::cout << "GL Renderer:\t" << glGetString(GL_RENDERER) << "\n";

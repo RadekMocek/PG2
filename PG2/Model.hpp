@@ -18,6 +18,8 @@ private:
     std::vector<Vertex> vertices{};
     std::vector<GLuint> vertex_indices{};
 
+    glm::mat4 mx_model{};
+
     // Reading the file
     std::string file_line;
     std::vector<std::string> file_lines;

@@ -40,14 +40,16 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
     }
 }
 
-void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
     auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
     this_inst->FOV += 10.0f * static_cast<float>(yoffset);
     this_inst->FOV = std::clamp(this_inst->FOV, 20.0f, 170.0f); // limit FOV to reasonable values...
     this_inst->UpdateProjectionMatrix();
 }
 
-void App::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+void App::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
     ///*
     auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
     this_inst->window_width = width;

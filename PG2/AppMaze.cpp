@@ -21,7 +21,8 @@ uchar App::MapGet(cv::Mat& map, int x, int y)
 }
 
 // Random map gen
-void App::MazeGenerate(cv::Mat& map) {
+void App::MazeGenerate(cv::Mat& map)
+{
 	cv::Point2i start_position, end_position;
 
 	// C++ random numbers
