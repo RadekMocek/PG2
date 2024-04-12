@@ -73,13 +73,19 @@ void App::MazeGenerate(cv::Mat& map)
 	std::cout << "Start: " << start_position << "\n";
 	std::cout << "End: " << end_position << "\n";
 
-	//print map
+	// spawn maze
+	int wall_counter = 0;
+	glm::vec3 position{};
+	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	glm::vec4 rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	for (int j = 0; j < map.rows; j++) {
 		for (int i = 0; i < map.cols; i++) {
-			if ((i == start_position.x) && (j == start_position.y))
-				std::cout << 'X';
-			else
-				std::cout << MapGet(map, i, j);
+			auto c = MapGet(map, i, j);
+			if (c == '#') {
+				position = glm::vec3(i, 0, j);
+				CreateModel("obj_maze_wall_" + wall_counter++, "cube_triangles_normals_tex.obj", "box_rgb888.png", true, position, scale, rotation);
+			}
+			std::cout << c;
 		}
 		std::cout << "\n";
 	}

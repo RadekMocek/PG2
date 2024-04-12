@@ -40,16 +40,12 @@ void App::InitAssets()
 	position = glm::vec3(1.0f, 1.0f, 1.0f);
 	scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_plane", "plane_tri_vnt.obj", "box_rgb888.png", true, position, scale, rotation);
+	CreateModel("obj_bunny", "bunny_tri_vnt.obj", "TextureDouble_A.png", true, position, scale, rotation);
 	
 	position = glm::vec3(2.0f, 2.0f, 2.0f);
 	scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	CreateModel("obj_teapot", "teapot_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
-	/**/
-	/*
-	CreateModel("cube_triangles_normals_tex.obj", "box_rgb888.png", true);
-	CreateModel("bunny_tri_vnt.obj", "Glass.png", false);
 	/**/
 }
 

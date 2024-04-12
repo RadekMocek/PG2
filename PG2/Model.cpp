@@ -5,7 +5,7 @@
 #include "Model.hpp"
 #include "Texture.hpp"
 
-#define print(x) std::cout << x << "\n"
+#define print(x) //std::cout << x << "\n"
 
 Model::Model(const std::filesystem::path& path_obj, const std::filesystem::path& path_tex)
 {

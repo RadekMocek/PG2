@@ -8,7 +8,7 @@
 
 Camera::Camera(glm::vec3 position) : position(position)
 {
-    //this->world_up = glm::vec3(0.0f, 1.0f, 0.0f);
+    this->world_up = glm::vec3(0.0f, 1.0f, 0.0f);
     // initialization of the camera reference system
     this->UpdateCameraVectors();
 
@@ -25,28 +25,31 @@ glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
     glm::vec3 direction(0,0,0);
     glm::vec3 zero(0,0,0);
 
+    glm::vec3 pseudo_front(front.x, 0, front.z);
+    glm::vec3 pseudo_right(right.x, 0, right.z);
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        direction += front;
+        direction += pseudo_front;
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        direction += -front;
+        direction += -pseudo_front;
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        direction += -right;
+        direction += -pseudo_right;
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        direction += right;
+        direction += pseudo_right;
     }
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        direction += up;
+        direction += world_up;
     }
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        direction += -up;
+        direction += -world_up;
     }
 
     if (direction == zero) {

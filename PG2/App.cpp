@@ -161,7 +161,7 @@ int App::Run(void)
         
         glm::vec4 rgba_white = { 1.0f, 1.0f, 1.0f, 1.0f};
 
-        /*
+        ///*
         cv::Mat maze = cv::Mat(10, 25, CV_8U);
         MazeGenerate(maze);
         /**/

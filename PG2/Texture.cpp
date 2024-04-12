@@ -1,7 +1,8 @@
-///*
 #include <opencv2\opencv.hpp>
 
 #include "texture.hpp"
+
+#define print(x) //std::cout << x << "\n"
 
 GLuint TextureInit(const char* filepath)
 {
@@ -10,7 +11,7 @@ GLuint TextureInit(const char* filepath)
 		std::cerr << "TextureInit: No texture " << filepath << "\n";
 		exit(1);
 	}
-	std::cout << "TextureInit: Started generating texture with TextureGen(" << filepath << "):\n";
+	print("TextureInit: Started generating texture with TextureGen(" << filepath << "):\n");
 	return TextureGen(image);
 }
 
@@ -59,7 +60,7 @@ GLuint TextureGen(cv::Mat& image)
 	if (num_compressed_format > 0) {
 		GLint compressed, internalformat, compressed_size;
 
-		std::cout << "TextureGen: COMPRESSION supported; total available formats: " << num_compressed_format << "\n";
+		print("TextureGen: COMPRESSION supported; total available formats: " << num_compressed_format << "\n");
 
 		// try to load compressed texture
 		//glHint(GL_TEXTURE_COMPRESSION_HINT, GL_FASTEST);
@@ -73,7 +74,7 @@ GLuint TextureGen(cv::Mat& image)
 		if (compressed == GL_TRUE) {
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &internalformat);
 			glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_COMPRESSED_IMAGE_SIZE, &compressed_size);
-			std::cout << "TextureGen: ORIGINAL: " << image.total() * image.elemSize() << " COMPRESSED: " << compressed_size << " INTERNAL FORMAT: " << internalformat << "\n\n";
+			print("TextureGen: ORIGINAL: " << image.total() * image.elemSize() << " COMPRESSED: " << compressed_size << " INTERNAL FORMAT: " << internalformat << "\n\n");
 		}
 	}
 	else {
@@ -106,4 +107,3 @@ GLuint TextureGen(cv::Mat& image)
 
 	return texture;
 }
-/**/

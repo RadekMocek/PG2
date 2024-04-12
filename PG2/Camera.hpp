@@ -29,7 +29,7 @@ public:
 
     void ToggleSprint();
 private:
-    //glm::vec3 world_up;
+    glm::vec3 world_up;
 
     bool is_sprint_toggled;
 
