@@ -10,7 +10,7 @@
 Model::Model(const std::filesystem::path& path_obj, const std::filesystem::path& path_tex)
 {
     // load mesh (all meshes) of the model, load material of each mesh, load textures...
-    //???: call LoadOBJFile, LoadMTLFile, process data, create mesh and set its properties
+    // call LoadOBJFile, LoadMTLFile, process data, create mesh and set its properties
 
     LoadOBJFile(path_obj, vertices, vertex_indices);
 
@@ -19,9 +19,16 @@ Model::Model(const std::filesystem::path& path_obj, const std::filesystem::path&
     mesh = Mesh(GL_TRIANGLES, vertices, vertex_indices, texture_id);
 }
 
-void Model::Draw(const ShaderProgram& shader)
+void Model::Draw(ShaderProgram& shader)
 {
-    mesh.Draw(shader);
+    mx_model = glm::identity<glm::mat4>();
+
+    mx_model = glm::translate(mx_model, position);
+    mx_model = glm::scale(mx_model, scale);
+    rotation_axes = glm::vec3(rotation.x, rotation.y, rotation.z);
+    mx_model = glm::rotate(mx_model, glm::radians(rotation.w), rotation_axes);
+
+    mesh.Draw(shader, mx_model);
 }
 
 void Model::FillFileLines(const std::filesystem::path& file_name)

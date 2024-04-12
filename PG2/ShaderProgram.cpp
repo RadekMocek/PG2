@@ -50,7 +50,7 @@ void ShaderProgram::SetUniform(const std::string& name, const float val)
 	glUniform1f(loc, val);
 }
 
-void ShaderProgram::SetUniform(const std::string& name, const int val) const
+void ShaderProgram::SetUniform(const std::string& name, const int val)
 {
 	auto loc = glGetUniformLocation(ID, name.c_str());
 	if (loc == -1) {

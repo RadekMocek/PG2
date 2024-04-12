@@ -10,7 +10,11 @@ class Model
 {
 public:
     Model(const std::filesystem::path& file_name, const std::filesystem::path& path_tex);
-    void Draw(const ShaderProgram& shader);
+    void Draw(ShaderProgram& shader);
+    
+    glm::vec3 position{};
+    glm::vec3 scale{};
+    glm::vec4 rotation{}; // axes xyz + angle
 private:
     Mesh mesh;
     std::string name;
@@ -19,6 +23,7 @@ private:
     std::vector<GLuint> vertex_indices{};
 
     glm::mat4 mx_model{};
+    glm::vec3 rotation_axes{};
 
     // Reading the file
     std::string file_line;

@@ -144,36 +144,6 @@ bool App::Init()
     return true;
 }
 
-// Load models, load textures, load shaders, initialize level, etc.
-void App::InitAssets()
-{
-    // Load shaders and create ShaderProgram
-    std::filesystem::path VS_path("./resources/all.vert");
-    std::filesystem::path FS_path("./resources/bruh.frag");
-    my_shader = ShaderProgram(VS_path, FS_path);
-    
-    // Create objects
-    auto CreateObject = [](std::string obj, std::string tex) {
-        std::filesystem::path modelpath("./resources/objects/" + obj);
-        std::filesystem::path texturepath("./resources/textures/" + tex);
-        return Model(modelpath, texturepath);
-    };
-
-    // WORKING OBJECTS:
-    //scene_opaque.push_back(CreateObject("cube_triangles.obj", "box_rgb888.png"));
-    //scene_opaque.push_back(CreateObject("cube_triangles_normals_tex.obj", "TextureDouble_A.png"));
-    //scene_opaque.push_back(CreateObject("sphere_tri_vnt.obj", "box_rgb888.png"));
-    //scene_opaque.push_back(CreateObject("bunny_tri_vn.obj", "box_rgb888.png")); // big
-    ///*
-    scene_opaque.push_back(CreateObject("plane_tri_vnt.obj", "box_rgb888.png"));
-    scene_transparent.push_back(CreateObject("teapot_tri_vnt.obj", "Glass.png"));
-    /**/
-    /*
-    scene_opaque.push_back(CreateObject("cube_triangles_normals_tex.obj", "box_rgb888.png"));
-    scene_transparent.push_back(CreateObject("bunny_tri_vnt.obj", "Glass.png"));
-    /**/
-}
-
 int App::Run(void)
 {
     try {
@@ -182,7 +152,7 @@ int App::Run(void)
 
         UpdateProjectionMatrix();
         glViewport(0, 0, window_width, window_height);
-        camera.position = glm::vec3(0, 0, 10);
+        camera.position = glm::vec3(0, 0, 0);
         double last_frame_time = glfwGetTime();
         glm::vec3 camera_movement{};
 
@@ -195,9 +165,11 @@ int App::Run(void)
         cv::Mat maze = cv::Mat(10, 25, CV_8U);
         MazeGenerate(maze);
         /**/
-        camera.position.y = 6.0f;
-        camera.position.z = 15.0f;
-        glm::vec3 light_position(-1000000, 0, 100000);
+        // Set camera position
+        camera.position.y = 2.0f;
+        camera.position.z = 5.0f;
+        // Set light position
+        glm::vec3 light_position(-100000, 0, 100000);
         
         while (!glfwWindowShouldClose(window)) {
             // Time/FPS measure start
@@ -217,12 +189,11 @@ int App::Run(void)
             glm::mat4 mx_view = camera.GetViewMatrix();
 
             // Set Model Matrix
-            glm::mat4 mx_model = glm::identity<glm::mat4>();
-            mx_model = glm::rotate(mx_model, glm::radians(static_cast<float>(45 * glfwGetTime())), glm::vec3(0.0f, 1.0f, 0.0f));
+            UpdateModels();
 
             // Activate shader, set uniform vars
             my_shader.Activate();
-            my_shader.SetUniform("uMx_model", mx_model); // Object local coor space -> World space
+            //my_shader.SetUniform("uMx_model", mx_model); // Object local coor space -> World space
             my_shader.SetUniform("uMx_view", mx_view); // World space -> Camera space
             my_shader.SetUniform("uMx_projection", mx_projection); // Camera space -> Screen
 
@@ -236,16 +207,16 @@ int App::Run(void)
 
             // Draw the scene
             // - Draw opaque objects
-            for (auto& model : scene_opaque) {
-                model.Draw(my_shader);
+            for (auto& [key, value] : scene_opaque) {
+                value.Draw(my_shader);
             }
             // - Draw transparent objects
             glEnable(GL_BLEND);         // enable blending
             glDisable(GL_CULL_FACE);    // no polygon removal
             glDepthMask(GL_FALSE);      // set Z to read-only
             // TODO: sort by distance from camera, from far to near
-            for (auto& model : scene_transparent) {
-                model.Draw(my_shader);
+            for (auto& [key, value] : scene_transparent) {
+                value.Draw(my_shader);
             }
             glDisable(GL_BLEND);
             glEnable(GL_CULL_FACE);

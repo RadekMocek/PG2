@@ -17,7 +17,7 @@ public:
 
 	// set uniform according to name :: https://docs.gl/gl4/glUniform
 	void SetUniform(const std::string& name, const float val);
-	void SetUniform(const std::string& name, const int val) const;
+	void SetUniform(const std::string& name, const int val);
 	void SetUniform(const std::string& name, const glm::vec3 val);
 	void SetUniform(const std::string& name, const glm::vec4 val);
 	void SetUniform(const std::string& name, const glm::mat3 val);

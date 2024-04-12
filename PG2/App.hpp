@@ -15,11 +15,13 @@ public:
     bool Init();
     void InitAssets();
     int Run();
+    void CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, glm::vec3 scale, glm::vec4 rotation);
+    void UpdateModels();
 
     ~App();
 private:
-    std::vector<Model> scene_opaque;
-    std::vector<Model> scene_transparent;
+    std::map<std::string, Model> scene_opaque;
+    std::map<std::string, Model> scene_transparent;
 
     static bool is_vsync_on;
     static bool is_fullscreen_on;
