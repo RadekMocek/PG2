@@ -48,7 +48,7 @@ App::App()
 {
     // default constructor
     // nothing to do here (for now...)
-    std::cout << "Constructed...\n";
+    std::cout << "Constructed...\n--------------\n";
 }
 
 // App initialization, if returns true then run run()
@@ -160,11 +160,7 @@ int App::Run(void)
         glm::vec3 rgb_white = { 1.0f, 1.0f, 1.0f };
         
         glm::vec4 rgba_white = { 1.0f, 1.0f, 1.0f, 1.0f};
-
-        ///*
-        cv::Mat maze = cv::Mat(10, 25, CV_8U);
-        MazeGenerate(maze);
-        /**/
+        
         // Set camera position
         camera.position.y = 2.0f;
         camera.position.z = 5.0f;

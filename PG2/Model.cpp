@@ -5,18 +5,20 @@
 #include "Model.hpp"
 #include "Texture.hpp"
 
-#define print(x) //std::cout << x << "\n"
+#define print(x) std::cout << x << "\n"
 
-Model::Model(const std::filesystem::path& path_obj, const std::filesystem::path& path_tex)
+Model::Model(const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map)
 {
-    // load mesh (all meshes) of the model, load material of each mesh, load textures...
-    // call LoadOBJFile, LoadMTLFile, process data, create mesh and set its properties
-
-    LoadOBJFile(path_obj, vertices, vertex_indices);
-
-    GLuint texture_id = TextureInit(path_tex.string().c_str());
-
-    mesh = Mesh(GL_TRIANGLES, vertices, vertex_indices, texture_id);
+    if (!is_height_map) {
+        LoadOBJFile(path_main);
+        GLuint texture_id = TextureInit(path_tex.string().c_str());
+        mesh = Mesh(GL_TRIANGLES, mesh_vertices, mesh_vertex_indices, texture_id);
+    }
+    else {
+        HeightMap_Load(path_main);
+        GLuint texture_id = TextureInit(path_tex.string().c_str());
+        mesh = Mesh(GL_TRIANGLES, mesh_vertices, mesh_vertex_indices, texture_id);
+    }
 }
 
 void Model::Draw(ShaderProgram& shader)
@@ -41,12 +43,12 @@ void Model::FillFileLines(const std::filesystem::path& file_name)
     file_reader.close();
 }
 
-void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vertex>& out_vertices, std::vector<GLuint>& out_vertex_indices)
+void Model::LoadOBJFile(const std::filesystem::path& file_name)
 {
     FillFileLines(file_name);
 
-    out_vertices.clear();
-    out_vertex_indices.clear();
+    mesh_vertices.clear();
+    mesh_vertex_indices.clear();
 
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> texture_coordinates;
@@ -163,8 +165,8 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name, std::vector<Vert
         vertex.position = vertices_direct[u];
         if (u < n_direct_uvs) vertex.tex_coords = texture_coordinates_direct[u];
         if (u < n_direct_normals) vertex.normal = vertex_normals_direct[u];
-        out_vertices.push_back(vertex);
-        out_vertex_indices.push_back(u);
+        mesh_vertices.push_back(vertex);
+        mesh_vertex_indices.push_back(u);
     }  
 
     // What's said is said, what's done is done.
@@ -175,4 +177,92 @@ void Model::LoadMTLFile(const std::filesystem::path& file_name)
 {
     FillFileLines(file_name);
     //TODO: Model::LoadMTLFile
+}
+
+void Model::HeightMap_Load(const std::filesystem::path& file_name)
+{
+    mesh_vertices.clear();
+    mesh_vertex_indices.clear();
+
+    cv::Mat hmap = cv::imread(file_name.u8string(), cv::IMREAD_GRAYSCALE);
+    if (hmap.empty()) std::cerr << "HeightMap: [!] Height map empty? File: " << file_name << "\n";
+
+    const unsigned int mesh_step_size = 10;
+
+    print("HeightMap: heightmap size: " << hmap.size << ", channels: " << hmap.channels());
+
+    if (hmap.channels() != 1) std::cerr << "HeightMap: [!] requested 1 channel, got: " << hmap.channels() << "\n";
+
+    // Create heightmap mesh from TRIANGLES in XZ plane, Y is UP (right hand rule)
+    //
+    //   3-----2
+    //   |    /|
+    //   |  /  |
+    //   |/    |
+    //   0-----1
+    //
+    //   012,023
+    //
+
+    glm::vec3 normal(0, 1, 0); // TODO
+    unsigned int indices_counter = 0;
+
+    for (unsigned int x_coord = 0; x_coord < (hmap.cols - mesh_step_size); x_coord += mesh_step_size) {
+        for (unsigned int z_coord = 0; z_coord < (hmap.rows - mesh_step_size); z_coord += mesh_step_size) {
+			// Get The (X, Y, Z) Value For The Bottom Left Vertex = 0
+			glm::vec3 p0(x_coord, hmap.at<uchar>(cv::Point(x_coord, z_coord)), z_coord);
+			// Get The (X, Y, Z) Value For The Bottom Right Vertex = 1
+			glm::vec3 p1(x_coord + mesh_step_size, hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)), z_coord);
+			// Get The (X, Y, Z) Value For The Top Right Vertex = 2
+			glm::vec3 p2(x_coord + mesh_step_size, hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)), z_coord + mesh_step_size);
+			// Get The (X, Y, Z) Value For The Top Left Vertex = 3
+			glm::vec3 p3(x_coord, hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)), z_coord + mesh_step_size);
+
+			// Get max normalized height for tile, set texture accordingly
+			// Grayscale image returns 0..256, normalize to 0.0f..1.0f by dividing by 256 (255 ?)
+			float max_h = std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord)) / 255.0f,
+				std::max(hmap.at<uchar>(cv::Point(x_coord, z_coord + mesh_step_size)) / 255.0f,
+					std::max(hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord + mesh_step_size)) / 255.0f,
+						hmap.at<uchar>(cv::Point(x_coord + mesh_step_size, z_coord)) / 255.0f
+					)));
+
+            // Get texture coords in vertices, bottom left of geometry == bottom left of texture
+            glm::vec2 tc0 = HeightMap_GetSubtexByHeight(max_h);
+            glm::vec2 tc1 = tc0 + glm::vec2(1.0f / 16, 0.0f);		// add offset for bottom right corner
+            glm::vec2 tc2 = tc0 + glm::vec2(1.0f / 16, 1.0f / 16);  // add offset for top right corner
+            glm::vec2 tc3 = tc0 + glm::vec2(0.0f, 1.0f / 16);       // add offset for bottom left corner
+
+            // RETARDED HEIGHT MAP ™ 1.0
+            // place vertices and ST to mesh
+            mesh_vertices.emplace_back(Vertex{ p0, normal, tc0 });
+            mesh_vertices.emplace_back(Vertex{ p1, normal, tc1 });
+            mesh_vertices.emplace_back(Vertex{ p2, normal, tc2 });
+            mesh_vertices.emplace_back(Vertex{ p3, normal, tc3 });
+            
+            // place indices
+            indices_counter += 4;
+            mesh_vertex_indices.emplace_back(indices_counter - 4);
+            mesh_vertex_indices.emplace_back(indices_counter - 3);
+            mesh_vertex_indices.emplace_back(indices_counter - 2);
+            mesh_vertex_indices.emplace_back(indices_counter - 4);
+            mesh_vertex_indices.emplace_back(indices_counter - 2);
+            mesh_vertex_indices.emplace_back(indices_counter - 1);
+        }
+    }
+
+    print("HeightMap: height map vertices: " << mesh_vertices.size());
+}
+
+glm::vec2 Model::HeightMap_GetSubtexST(const int x, const int y)
+{
+    return glm::vec2(x * 1.0f / 16, y * 1.0f / 16);
+}
+
+glm::vec2 Model::HeightMap_GetSubtexByHeight(float height)
+{
+    if (height > 0.9) return HeightMap_GetSubtexST(2, 4); //snow
+    else if (height > 0.8) return HeightMap_GetSubtexST(3, 4); //ice
+    else if (height > 0.5) return HeightMap_GetSubtexST(5, 0); //rock
+    else if (height > 0.3) return HeightMap_GetSubtexST(2, 0); //soil
+    else return HeightMap_GetSubtexST(0, 0); //grass
 }

@@ -18,7 +18,6 @@ public:
     GLenum primitive_type = GL_POINTS;
 
     Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLuint>& indices, GLuint texture_id);
-    void Draw(ShaderProgram& shader);
     void Draw(ShaderProgram& shader, glm::mat4 mx_model);
     void Clear(void);
 
