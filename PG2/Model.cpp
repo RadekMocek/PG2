@@ -5,7 +5,7 @@
 #include "Model.hpp"
 #include "Texture.hpp"
 
-#define print(x) std::cout << x << "\n"
+#define print(x) //std::cout << x << "\n"
 
 Model::Model(const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map)
 {
@@ -204,7 +204,7 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
     //   012,023
     //
 
-    glm::vec3 normal(0, 1, 0); // TODO
+    glm::vec3 normal{};
     unsigned int indices_counter = 0;
 
     for (unsigned int x_coord = 0; x_coord < (hmap.cols - mesh_step_size); x_coord += mesh_step_size) {
@@ -232,21 +232,24 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             glm::vec2 tc2 = tc0 + glm::vec2(1.0f / 16, 1.0f / 16);  // add offset for top right corner
             glm::vec2 tc3 = tc0 + glm::vec2(0.0f, 1.0f / 16);       // add offset for bottom left corner
 
-            // RETARDED HEIGHT MAP ™ 1.0
+            // RETARDED HEIGHT MAP ™ 1.1
+            // calculate normal vector            
+            normal = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+    
             // place vertices and ST to mesh
             mesh_vertices.emplace_back(Vertex{ p0, normal, tc0 });
             mesh_vertices.emplace_back(Vertex{ p1, normal, tc1 });
             mesh_vertices.emplace_back(Vertex{ p2, normal, tc2 });
             mesh_vertices.emplace_back(Vertex{ p3, normal, tc3 });
-            
+
             // place indices
             indices_counter += 4;
             mesh_vertex_indices.emplace_back(indices_counter - 4);
+            mesh_vertex_indices.emplace_back(indices_counter - 2);
             mesh_vertex_indices.emplace_back(indices_counter - 3);
-            mesh_vertex_indices.emplace_back(indices_counter - 2);
             mesh_vertex_indices.emplace_back(indices_counter - 4);
-            mesh_vertex_indices.emplace_back(indices_counter - 2);
             mesh_vertex_indices.emplace_back(indices_counter - 1);
+            mesh_vertex_indices.emplace_back(indices_counter - 2);
         }
     }
 
