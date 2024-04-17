@@ -170,8 +170,7 @@
   <ItemGroup>
     <None Include="resources\all.frag" />
     <None Include="resources\all.vert" />
-    <None Include="resources\basic.frag" />
-    <None Include="resources\basic.vert" />
+    <None Include="resources\bruh.vert" />
     <None Include="resources\bruh.frag" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

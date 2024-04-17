@@ -16,11 +16,10 @@ uniform vec3 light_position;
 // Outputs to the fragment shader
 out VS_OUT
 {
-    vec3 Normal;    // normal vector
+    vec3 N;         // normal vector
     vec3 L;         // vector from point on object (vertex or rasterised point) towards light source
     vec3 V;         // vector towards viewer
     vec2 texCoord;  // texture coordinates
-    vec3 crntPos;
 } vs_out;
 
 void main(void)
@@ -30,7 +29,7 @@ void main(void)
     // Calculate view-space coordinate - in P point we are computing the color
     vec4 P = mx_modelView * aPosition;
     // Calculate normal in view space
-    vs_out.Normal = mat3(mx_modelView) * aNormal;
+    vs_out.N = mat3(mx_modelView) * aNormal;
     // Calculate view-space light vector
     vs_out.L = light_position - P.xyz;
     // Calculate view vector (negative of the view-space position)
@@ -40,7 +39,4 @@ void main(void)
 
     // Texture coordinates
     vs_out.texCoord = aTexCoord;
-
-    // Position ???
-    vs_out.crntPos = aPosition.xyz;
 }

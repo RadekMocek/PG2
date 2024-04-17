@@ -76,19 +76,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\basic.frag">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\basic.vert">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="resources\all.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\all.vert">
+    <None Include="resources\bruh.vert">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\bruh.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\all.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

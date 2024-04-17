@@ -165,7 +165,7 @@ int App::Run(void)
         camera.position.y = 2.0f;
         camera.position.z = 5.0f;
         // Set light position
-        glm::vec3 light_position(-100000, 0, 100000);
+        glm::vec3 light_position(0, 0, 0);
         
         while (!glfwWindowShouldClose(window)) {
             // Time/FPS measure start

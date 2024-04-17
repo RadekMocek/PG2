@@ -82,7 +82,8 @@ void App::MazeGenerate(cv::Mat& map)
 		for (int i = 0; i < map.cols; i++) {
 			auto c = MapGet(map, i, j);
 			if (c == '#') {
-				position = glm::vec3(i, 0, j);
+				//position = glm::vec3(i, 0, j);
+				position = glm::vec3(-i, 0, -j);
 				CreateModel("obj_maze_wall_" + wall_counter++, "cube_triangles_normals_tex.obj", "box_rgb888.png", true, position, scale, rotation);
 			}
 			std::cout << c;
