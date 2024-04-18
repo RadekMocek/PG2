@@ -58,7 +58,7 @@ void App::InitAssets()
 	/**/
 
 	// == MAZE ==
-	///*
+	/*
 	cv::Mat maze = cv::Mat(10, 25, CV_8U);
 	MazeGenerate(maze);
 	/**/

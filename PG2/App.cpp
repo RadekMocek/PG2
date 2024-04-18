@@ -87,7 +87,7 @@ bool App::Init()
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
         glfwSetMouseButtonCallback(window, mouse_button_callback);
         glfwSetCursorPosCallback(window, cursor_position_callback);
-        glfwSetScrollCallback(window, scroll_callback);                     // Mousewheel
+        glfwSetScrollCallback(window, scroll_callback);
 
         // Set V-Sync OFF.
         //glfwSwapInterval(0);
@@ -233,7 +233,7 @@ int App::Run(void)
             if (fps_counter_seconds >= 1) {
                 //std::cout << fps_counter_frames << " FPS\n";
                 std::stringstream ss;
-                ss << fps_counter_frames << " FPS";
+                ss << fps_counter_frames << " FPS | " << FOV << " FOV";
                 glfwSetWindowTitle(window, ss.str().c_str());
                 fps_counter_seconds = 0;
                 fps_counter_frames = 0;
