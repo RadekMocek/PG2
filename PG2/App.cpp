@@ -44,6 +44,8 @@ Camera App::camera = Camera(glm::vec3(0, 0, 1000));
 double App::last_cursor_xpos{};
 double App::last_cursor_ypos{};
 
+AudioSlave App::audio;
+
 App::App()
 {
     // default constructor
@@ -166,7 +168,10 @@ int App::Run(void)
         camera.position.z = 5.0f;
         // Set light position
         glm::vec3 light_position(0, 0, 0);
-        
+
+        // Music
+        audio.PlayMusic3D();
+
         while (!glfwWindowShouldClose(window)) {
             // Time/FPS measure start
             auto fps_frame_start_timestamp = std::chrono::steady_clock::now();
@@ -183,6 +188,8 @@ int App::Run(void)
             camera_movement = camera.ProcessInput(window, static_cast<float>(delta_time));
             camera.position += camera_movement;
             glm::mat4 mx_view = camera.GetViewMatrix();
+            // 3D Audio
+            camera.UpdateListenerPosition(audio);
 
             // Set Model Matrix
             UpdateModels();

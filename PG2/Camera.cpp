@@ -93,3 +93,8 @@ void Camera::ToggleSprint()
 {
     is_sprint_toggled = !is_sprint_toggled;
 }
+
+void Camera::UpdateListenerPosition(AudioSlave& audio)
+{
+    audio.UpdateListenerPosition(position, front, world_up);
+}

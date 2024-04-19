@@ -30,6 +30,9 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
             is_vsync_on = !is_vsync_on;
             glfwSwapInterval(is_vsync_on);
             std::cout << "VSync: " << is_vsync_on << "\n";
+
+            audio.PlayWalk();
+
             break;
         }
     }

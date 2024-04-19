@@ -1,12 +1,13 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 
 #include <opencv2/opencv.hpp>
 
 #include "Model.hpp"
 #include "ShaderProgram.hpp"
 #include "Camera.hpp"
+#include "AudioSlave.hpp"
 
 class App {
 public:
@@ -56,6 +57,8 @@ private:
     static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
     ShaderProgram my_shader;
+
+    static AudioSlave audio;
 
     // Maze
     ///*

@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "AudioSlave.hpp"
+
 class Camera
 {
 public:
@@ -28,6 +30,8 @@ public:
     void ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset);
 
     void ToggleSprint();
+
+    void UpdateListenerPosition(AudioSlave& audio);
 private:
     glm::vec3 world_up;
 
