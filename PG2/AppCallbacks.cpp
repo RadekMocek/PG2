@@ -14,7 +14,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
         case GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(window, GLFW_TRUE);
             break;
-        case GLFW_KEY_F:
+        case GLFW_KEY_F11:
             is_fullscreen_on = !is_fullscreen_on;
             if (is_fullscreen_on) {
                 glfwGetWindowPos(window, &window_xcor, &window_ycor);

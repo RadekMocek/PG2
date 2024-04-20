@@ -60,9 +60,9 @@ private:
 
     static AudioSlave audio;
 
-    // Maze
-    ///*
+    // AppMisc.cpp
     uchar MapGet(cv::Mat& map, int x, int y);
     void MazeGenerate(cv::Mat& map);
-    /**/
+    glm::vec3 ball_position = glm::vec3(0, 0, 0);
+    glm::vec3 BallMovement(GLfloat delta_time);
 };

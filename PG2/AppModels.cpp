@@ -40,7 +40,6 @@ void App::InitAssets()
 
 	//CreateModel("cube_triangles.obj", "box_rgb888.png", true);
 	//CreateModel("cube_triangles_normals_tex.obj", "TextureDouble_A.png", true);
-	//CreateModel("sphere_tri_vnt.obj", "box_rgb888.png", true);
 	//CreateModel("bunny_tri_vn.obj", "box_rgb888.png", true); // big
 	///*
 
@@ -55,6 +54,13 @@ void App::InitAssets()
 	scale = glm::vec3(0.2f, 0.2f, 0.2f);
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	CreateModel("obj_teapot", "teapot_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
+	
+	// GREEN BALL
+	position = glm::vec3(0.0f, 0.0f, 0.0f);
+	scale = glm::vec3(0.2f, 0.2f, 0.2f);
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	CreateModel("obj_sphere_0", "sphere_tri_vnt.obj", "Green.png", true, position, scale, rotation);
+
 	/**/
 
 	// == MAZE ==
@@ -79,6 +85,10 @@ void App::UpdateModels()
 	glm::vec3 scale{};
 	glm::vec4 rotation{};
 
+	// rotate the teapot
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 45 * glfwGetTime());
 	scene_transparent.find("obj_teapot")->second.rotation = rotation;
+
+	// move green ball
+	scene_opaque.find("obj_sphere_0")->second.position = ball_position;
 }

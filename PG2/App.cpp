@@ -154,7 +154,7 @@ int App::Run(void)
         camera.position.y = 2.0f;
         camera.position.z = 5.0f;
         // Set light position
-        glm::vec3 light_position(0, 0, 0);
+        glm::vec3 ball_movement{};        
 
         // Music
         audio.PlayMusic3D();
@@ -171,13 +171,18 @@ int App::Run(void)
             // === After clearing the canvas ===
 
             // React to user :: Create View Matrix according to camera settings
-            double delta_time = glfwGetTime() - last_frame_time;
+            float delta_time = static_cast<float>(glfwGetTime() - last_frame_time);
             last_frame_time = glfwGetTime();
-            camera_movement = camera.ProcessInput(window, static_cast<float>(delta_time));
+            camera_movement = camera.ProcessInput(window, delta_time);
             camera.position += camera_movement;
             glm::mat4 mx_view = camera.GetViewMatrix();
+            
             // 3D Audio
             camera.UpdateListenerPosition(audio);
+
+            // Misc Input
+            ball_movement = BallMovement(delta_time);
+            ball_position += ball_movement;
 
             // Set Model Matrix
             UpdateModels();
@@ -187,20 +192,31 @@ int App::Run(void)
             my_shader.SetUniform("u_mx_view", mx_view); // World space -> Camera space
             my_shader.SetUniform("u_mx_projection", mx_projection); // Camera space -> Screen
 
-            ///*
+            ///* über.vert + über.frac
             my_shader.SetUniform("u_diffuse_alpha", 0.66f);
             
             my_shader.SetUniform("u_camera_position", camera.position);
 
-            //my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-            my_shader.SetUniform("u_material.ambient", rgb_white);
+            // AMBIENT
+            my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+            //my_shader.SetUniform("u_material.ambient", rgb_white);
             //my_shader.SetUniform("u_material.specular", glm::vec3(0.8f, 0.8f, 0.8f));
             my_shader.SetUniform("u_material.specular", rgb_white);
             my_shader.SetUniform("u_material.shininess", 32.0f);
 
+            // DIRECTION (SUN O))))
             my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
             my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
             my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.1f, 0.1f, 0.1f));
+            
+            // POINT LIGHT #0 :: GREEN-ISH
+            my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.1f));
+            my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+            my_shader.SetUniform("u_point_lights[0].position", ball_position);
+            //my_shader.SetUniform("u_point_lights[0].position", glm::vec3(0.0f, 0.0f, 0.0f));
+            my_shader.SetUniform("u_point_lights[0].constant", 1.0f);
+            my_shader.SetUniform("u_point_lights[0].linear", 0.22f);
+            my_shader.SetUniform("u_point_lights[0].exponent", 0.20f);
             /**/
 
             /* bruh.vert + bruh.frac

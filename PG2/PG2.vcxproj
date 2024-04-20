@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppCallbacks.cpp" />
-    <ClCompile Include="AppMaze.cpp" />
+    <ClCompile Include="AppMisc.cpp" />
     <ClCompile Include="AppModels.cpp" />
     <ClCompile Include="AudioSlave.cpp" />
     <ClCompile Include="Camera.cpp" />
