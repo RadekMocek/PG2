@@ -10,8 +10,7 @@
 
 // OpenGL Extension Wrangler: allow all multiplatform GL functions
 #include <GL/glew.h> 
-// WGLEW = Windows GL Extension Wrangler (change for different platform) 
-// platform specific functions (in this case Windows)
+// WGLEW = Windows GL Extension Wrangler :: platform specific functions (in this case Windows)
 #include <GL/wglew.h> 
 
 // GLFW toolkit
@@ -29,6 +28,7 @@
 
 #define print(x) std::cout << x << "\n"
 
+// Static
 bool App::is_vsync_on = false;
 bool App::is_fullscreen_on = false;
 GLFWmonitor* App::monitor;
@@ -48,8 +48,6 @@ AudioSlave App::audio;
 
 App::App()
 {
-    // default constructor
-    // nothing to do here (for now...)
     std::cout << "Constructed...\n--------------\n";
 }
 
@@ -91,16 +89,9 @@ bool App::Init()
         glfwSetCursorPosCallback(window, cursor_position_callback);
         glfwSetScrollCallback(window, scroll_callback);
 
-        // Set V-Sync OFF.
-        //glfwSwapInterval(0);
-
         // Set V-Sync ON.
-        ///*
         glfwSwapInterval(1);
         is_vsync_on = true;
-        /**/
-
-        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // Init GLEW :: http://glew.sourceforge.net/basic.html
         GLenum err = glewInit();
@@ -120,10 +111,9 @@ bool App::Init()
 
             std::cout << "GL_DEBUG enabled.\n";
         }
-        else
-            std::cout << "GL_DEBUG NOT SUPPORTED!\n";
+        else std::cout << "GL_DEBUG NOT SUPPORTED!\n";
 
-        // set GL params
+        // Set GL params
         glEnable(GL_DEPTH_TEST);
 
         glEnable(GL_LINE_SMOOTH);
@@ -134,12 +124,11 @@ bool App::Init()
         // Transparency blending function
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // first init OpenGL, THAN init assets: valid context MUST exist
+        // First init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
     }
     catch (std::exception const& e) {
         std::cerr << "Init failed : " << e.what() << "\n";
-        //throw;
         exit(-1);
     }
     std::cout << "--------------\nInitialized...\n";
@@ -161,8 +150,6 @@ int App::Run(void)
         glm::vec3 rgb_orange = { 1.0f, 0.5f, 0.0f };
         glm::vec3 rgb_white = { 1.0f, 1.0f, 1.0f };
         
-        glm::vec4 rgba_white = { 1.0f, 1.0f, 1.0f, 1.0f};
-        
         // Set camera position
         camera.position.y = 2.0f;
         camera.position.z = 5.0f;
@@ -172,6 +159,7 @@ int App::Run(void)
         // Music
         audio.PlayMusic3D();
 
+        // Main loop
         while (!glfwWindowShouldClose(window)) {
             // Time/FPS measure start
             auto fps_frame_start_timestamp = std::chrono::steady_clock::now();
@@ -196,11 +184,26 @@ int App::Run(void)
 
             // Activate shader, set uniform vars
             my_shader.Activate();
-            //my_shader.SetUniform("uMx_model", mx_model); // Object local coor space -> World space
-            my_shader.SetUniform("uMx_view", mx_view); // World space -> Camera space
-            my_shader.SetUniform("uMx_projection", mx_projection); // Camera space -> Screen
+            my_shader.SetUniform("u_mx_view", mx_view); // World space -> Camera space
+            my_shader.SetUniform("u_mx_projection", mx_projection); // Camera space -> Screen
 
             ///*
+            my_shader.SetUniform("u_diffuse_alpha", 0.66f);
+            
+            my_shader.SetUniform("u_camera_position", camera.position);
+
+            //my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+            my_shader.SetUniform("u_material.ambient", rgb_white);
+            //my_shader.SetUniform("u_material.specular", glm::vec3(0.8f, 0.8f, 0.8f));
+            my_shader.SetUniform("u_material.specular", rgb_white);
+            my_shader.SetUniform("u_material.shininess", 32.0f);
+
+            my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
+            my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+            my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.1f, 0.1f, 0.1f));
+            /**/
+
+            /* bruh.vert + bruh.frac
             my_shader.SetUniform("ambient_material", rgb_white);
             my_shader.SetUniform("diffuse_material", rgb_white);
             my_shader.SetUniform("specular_material", rgb_white);
@@ -217,7 +220,7 @@ int App::Run(void)
             glEnable(GL_BLEND);         // enable blending
             glDisable(GL_CULL_FACE);    // no polygon removal
             glDepthMask(GL_FALSE);      // set Z to read-only
-            // TODO: sort by distance from camera, from far to near
+            // TODO (FRFR): sort by distance from camera, from far to near
             for (auto& [key, value] : scene_transparent) {
                 value.Draw(my_shader);
             }
@@ -238,7 +241,6 @@ int App::Run(void)
             fps_counter_seconds += fps_elapsed_seconds.count();
             fps_counter_frames++;
             if (fps_counter_seconds >= 1) {
-                //std::cout << fps_counter_frames << " FPS\n";
                 std::stringstream ss;
                 ss << fps_counter_frames << " FPS | " << FOV << " FOV";
                 glfwSetWindowTitle(window, ss.str().c_str());

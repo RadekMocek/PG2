@@ -23,13 +23,13 @@ void App::InitAssets()
 {
 	// == SHADERS ==
 	// Load shaders and create ShaderProgram
-	///*
+	/*
 	std::filesystem::path VS_path("./resources/bruh.vert");
 	std::filesystem::path FS_path("./resources/bruh.frag");
 	/**/
-	/*
-	std::filesystem::path VS_path("./resources/all.vert");
-	std::filesystem::path FS_path("./resources/all.frag");
+	///*
+	std::filesystem::path VS_path("./resources/uber.vert");
+	std::filesystem::path FS_path("./resources/uber.frag");
 	/**/
 	my_shader = ShaderProgram(VS_path, FS_path);
 
@@ -48,7 +48,7 @@ void App::InitAssets()
 	position = glm::vec3(1.0f, 1.0f, 1.0f);
 	scale = glm::vec3(0.5f, 0.5f, 0.5f);
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_bunny", "bunny_tri_vnt.obj", "TextureDouble_A.png", true, position, scale, rotation);
+	CreateModel("obj_bunny", "bunny_tri_vnt.obj", "box_rgb888.png", true, position, scale, rotation);
 	
 	// TEAPOT
 	position = glm::vec3(2.0f, 2.0f, 2.0f);
@@ -58,7 +58,7 @@ void App::InitAssets()
 	/**/
 
 	// == MAZE ==
-	/*
+	///*
 	cv::Mat maze = cv::Mat(10, 25, CV_8U);
 	MazeGenerate(maze);
 	/**/

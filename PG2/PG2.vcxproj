@@ -170,10 +170,10 @@
     <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\all.frag" />
-    <None Include="resources\all.vert" />
     <None Include="resources\bruh.vert" />
     <None Include="resources\bruh.frag" />
+    <None Include="resources\uber.frag" />
+    <None Include="resources\uber.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

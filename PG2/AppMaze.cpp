@@ -78,12 +78,12 @@ void App::MazeGenerate(cv::Mat& map)
 	glm::vec3 position{};
 	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	glm::vec4 rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	for (int j = 0; j < map.rows; j++) {
-		for (int i = 0; i < map.cols; i++) {
-			auto c = MapGet(map, i, j);
-			if (c == '#') {
-				//position = glm::vec3(i, 0, j);
-				position = glm::vec3(-i, 0, -j);
+	for (int row_n = 0; row_n < map.rows; row_n++) {
+		for (int col_n = 0; col_n < map.cols; col_n++) {
+			auto c = MapGet(map, col_n, row_n);
+			if (c == '#' && row_n!=0 && row_n!=map.rows-1) {
+				//position = glm::vec3(col_n, 0, row_n);
+				position = glm::vec3(-col_n, 0, -row_n);
 				CreateModel("obj_maze_wall_" + wall_counter++, "cube_triangles_normals_tex.obj", "box_rgb888.png", true, position, scale, rotation);
 			}
 			std::cout << c;

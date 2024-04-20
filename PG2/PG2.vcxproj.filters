@@ -82,16 +82,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\all.frag">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="resources\bruh.vert">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\bruh.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\all.vert">
+    <None Include="resources\uber.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\uber.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -52,9 +52,9 @@ void Mesh::Draw(ShaderProgram& shader, glm::mat4 mx_model)
     if (texture_id > 0) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture_id);
-        shader.SetUniform("uTexture", 0);
+        shader.SetUniform("u_material.textura", 0);
     }
-    shader.SetUniform("uMx_model", mx_model);
+    shader.SetUniform("u_mx_model", mx_model);
     glBindVertexArray(VAO);
     glDrawElements(primitive_type, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
