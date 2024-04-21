@@ -21,6 +21,8 @@ public:
 
     ~App();
 private:
+    bool IS_UBER = true;
+
     std::map<std::string, Model> scene_opaque;
     std::map<std::string, Model> scene_transparent;
 
@@ -36,7 +38,7 @@ private:
     static int window_width_return_from_fullscreen;
     static int window_height_return_from_fullscreen;
 
-    float FOV = 89.0f;
+    float FOV = 110.0f;
     glm::mat4 mx_projection = glm::identity<glm::mat4>();
     static Camera camera;
     static double last_cursor_xpos;

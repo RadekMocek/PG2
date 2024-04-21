@@ -228,19 +228,19 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
 
             // Get texture coords in vertices, bottom left of geometry == bottom left of texture
             glm::vec2 tc0 = HeightMap_GetSubtexByHeight(max_h);
-            glm::vec2 tc1 = tc0 + glm::vec2(1.0f / 16, 0.0f);		// add offset for bottom right corner
-            glm::vec2 tc2 = tc0 + glm::vec2(1.0f / 16, 1.0f / 16);  // add offset for top right corner
-            glm::vec2 tc3 = tc0 + glm::vec2(0.0f, 1.0f / 16);       // add offset for bottom left corner
+            glm::vec2 tc1 = tc0 + glm::vec2((1.0f / 16), 0.0f);		    // add offset for bottom right corner
+            glm::vec2 tc2 = tc0 + glm::vec2((1.0f / 16), (1.0f / 16));  // add offset for top right corner
+            glm::vec2 tc3 = tc0 + glm::vec2(0.0f, (1.0f / 16));         // add offset for bottom left corner
 
             // RETARDED HEIGHT MAP ™ 1.1
             // calculate normal vector            
             normal = glm::normalize(glm::cross(p1 - p0, p2 - p0));
     
             // place vertices and ST to mesh
-            mesh_vertices.emplace_back(Vertex{ p0, normal, tc0 });
-            mesh_vertices.emplace_back(Vertex{ p1, normal, tc1 });
-            mesh_vertices.emplace_back(Vertex{ p2, normal, tc2 });
-            mesh_vertices.emplace_back(Vertex{ p3, normal, tc3 });
+            mesh_vertices.emplace_back(Vertex{ p0, -normal, tc0 });
+            mesh_vertices.emplace_back(Vertex{ p1, -normal, tc1 });
+            mesh_vertices.emplace_back(Vertex{ p2, -normal, tc2 });
+            mesh_vertices.emplace_back(Vertex{ p3, -normal, tc3 });
 
             // place indices
             indices_counter += 4;
@@ -258,14 +258,14 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
 
 glm::vec2 Model::HeightMap_GetSubtexST(const int x, const int y)
 {
-    return glm::vec2(x * 1.0f / 16, y * 1.0f / 16);
+    return glm::vec2((x * 1.0f / 16), (y * 1.0f / 16));
 }
 
 glm::vec2 Model::HeightMap_GetSubtexByHeight(float height)
 {
-    if (height > 0.9) return HeightMap_GetSubtexST(2, 4); //snow
-    else if (height > 0.8) return HeightMap_GetSubtexST(3, 4); //ice
-    else if (height > 0.5) return HeightMap_GetSubtexST(5, 0); //rock
-    else if (height > 0.3) return HeightMap_GetSubtexST(2, 0); //soil
-    else return HeightMap_GetSubtexST(0, 0); //grass
+    if (height > 0.9) return HeightMap_GetSubtexST(4, 4);
+    else if (height > 0.8) return HeightMap_GetSubtexST(1, 4);
+    else if (height > 0.5) return HeightMap_GetSubtexST(7, 1);
+    else if (height > 0.3) return HeightMap_GetSubtexST(4, 1);
+    else return HeightMap_GetSubtexST(1, 1);
 }

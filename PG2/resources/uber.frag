@@ -7,7 +7,9 @@ in vec2 o_texture_coordinate;
 
 //
 uniform vec3 u_camera_position;
+uniform float u_ambient_alpha;
 uniform float u_diffuse_alpha;
+uniform float u_specular_alpha;
 
 // FS ->
 out vec4 frag_color;
@@ -35,7 +37,7 @@ vec4 calcDirectionalLightColor(DirectionalLight directional_light, vec3 normal, 
 	vec3 frag2light = normalize(-directional_light.direction);
     vec4 diffuse = vec4(directional_light.diffuse * max(dot(normal, frag2light), 0.0), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
 	vec3 specular = directional_light.specular * u_material.specular * pow(max(dot(normal, normalize(frag2light + frag2camera)), 0.0f), u_material.shininess);
-	return (diffuse + vec4(specular, 0.0f));
+	return (diffuse + vec4(specular, u_specular_alpha));
 }
 
 // === Point lights ===
@@ -60,7 +62,7 @@ vec4 calcPointLightColor(PointLight point_light, vec3 normal, vec3 fragment_posi
 	float attenuation = 1.0f / (point_light.constant + point_light.linear * d + point_light.exponent * (d * d));
 	diffuse *= attenuation;
 	specular *= attenuation;
-	return (diffuse + vec4(specular, 0.0f));
+	return (diffuse + vec4(specular, u_specular_alpha));
 }
 
 // === Spotlight ===
@@ -89,7 +91,7 @@ vec4 calcSpotLightColor(Spotlight spotlight, vec3 normal, vec3 fragment_position
 	float spotIntensity = smoothstep(spotlight.cos_outer_cone, spotlight.cos_inner_cone, dot(-frag2light, normalize(spotlight.direction)));
 	diffuse *= attenuation * spotIntensity;
 	specular *= attenuation * spotIntensity;	
-	return (diffuse + vec4(specular, 0.0f));
+	return (diffuse + vec4(specular, u_specular_alpha));
 }
 
 // === Main ===
@@ -100,7 +102,7 @@ void main()
 	vec4 out_color = vec4(0.0f);
 
 	// Ambient light
-	vec4 ambient = vec4(u_material.ambient, 1.0f) * texture(u_material.textura, o_texture_coordinate);
+	vec4 ambient = vec4(u_material.ambient, u_ambient_alpha) * texture(u_material.textura, o_texture_coordinate);
 
 	// Directional light
 	out_color += calcDirectionalLightColor(u_directional_light, normal, frag2camera);

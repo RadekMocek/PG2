@@ -21,7 +21,7 @@ public:
 
     // Camera options
     GLfloat movement_speed_normal = 1.0f;
-    GLfloat movement_speed_sprint = 3.5f;
+    GLfloat movement_speed_sprint = 5.0f;
     GLfloat mouse_sensitivity = 0.25f;
 
     Camera(glm::vec3 position);

@@ -35,8 +35,8 @@ GLFWmonitor* App::monitor;
 const GLFWvidmode* App::mode;
 int App::window_xcor{};
 int App::window_ycor{};
-int App::window_width = 800;
-int App::window_height = 600;
+int App::window_width = 1280;
+int App::window_height = 800;
 int App::window_width_return_from_fullscreen{};
 int App::window_height_return_from_fullscreen{};
 
@@ -155,11 +155,12 @@ int App::Run(void)
         // Set camera position
         camera.position.y = 2.0f;
         camera.position.z = 5.0f;
-        // Set light position
-        glm::vec3 ball_movement{};        
 
         // Music
         audio.PlayMusic3D();
+
+        // Misc
+        glm::vec3 ball_movement{};
 
         // Main loop
         while (!glfwWindowShouldClose(window)) {
@@ -194,53 +195,53 @@ int App::Run(void)
             my_shader.SetUniform("u_mx_view", mx_view); // World space -> Camera space
             my_shader.SetUniform("u_mx_projection", mx_projection); // Camera space -> Screen
 
-            ///* über.vert + über.frac
-            my_shader.SetUniform("u_diffuse_alpha", 0.66f);
-            
-            my_shader.SetUniform("u_camera_position", camera.position);
+            if (IS_UBER) {
+                my_shader.SetUniform("u_ambient_alpha", 0.0f);
+                my_shader.SetUniform("u_diffuse_alpha", 0.66f);
+                my_shader.SetUniform("u_specular_alpha", 0.0f);
 
-            // AMBIENT
-            my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-            //my_shader.SetUniform("u_material.ambient", rgb_white);
-            //my_shader.SetUniform("u_material.specular", glm::vec3(0.8f, 0.8f, 0.8f));
-            my_shader.SetUniform("u_material.specular", rgb_white);
-            my_shader.SetUniform("u_material.shininess", 32.0f);
+                my_shader.SetUniform("u_camera_position", camera.position);
 
-            // DIRECTION (SUN O))))
-            my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
-            my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-            my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.1f, 0.1f, 0.1f));
-            
-            // POINT LIGHT #0 :: GREEN-ISH
-            my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.1f));
-            my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
-            my_shader.SetUniform("u_point_lights[0].position", ball_position);
-            //my_shader.SetUniform("u_point_lights[0].position", glm::vec3(0.0f, 0.0f, 0.0f));
-            my_shader.SetUniform("u_point_lights[0].constant", 1.0f);
-            my_shader.SetUniform("u_point_lights[0].linear", 0.22f);
-            my_shader.SetUniform("u_point_lights[0].exponent", 0.20f);
-            
-            // SPOTLIGHT
-            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-            my_shader.SetUniform("u_spotlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-            my_shader.SetUniform("u_spotlight.position", camera.position);
-            my_shader.SetUniform("u_spotlight.direction", camera.front);
-            my_shader.SetUniform("u_spotlight.cos_inner_cone", glm::cos(glm::radians(15.0f)));
-            my_shader.SetUniform("u_spotlight.cos_outer_cone", glm::cos(glm::radians(20.0f)));
-            my_shader.SetUniform("u_spotlight.constant", 1.0f);
-            my_shader.SetUniform("u_spotlight.linear", 0.07f);
-            my_shader.SetUniform("u_spotlight.exponent", 0.017f);
-            my_shader.SetUniform("u_spotlight.on", is_flashlight_on);
+                // AMBIENT
+                my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+                //my_shader.SetUniform("u_material.ambient", rgb_white);
+                //my_shader.SetUniform("u_material.specular", glm::vec3(0.8f, 0.8f, 0.8f));
+                my_shader.SetUniform("u_material.specular", rgb_white);
+                my_shader.SetUniform("u_material.shininess", 32.0f);
 
-            /**/
+                // DIRECTION (SUN O))))
+                my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
+                my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+                my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.1f, 0.1f, 0.1f));
 
-            /* bruh.vert + bruh.frac
-            my_shader.SetUniform("ambient_material", rgb_white);
-            my_shader.SetUniform("diffuse_material", rgb_white);
-            my_shader.SetUniform("specular_material", rgb_white);
-            my_shader.SetUniform("specular_shinines", 5.0f);            
-            my_shader.SetUniform("light_position", glm::vec3(0, 0, 0));
-            /**/
+                // POINT LIGHT #0 :: GREEN-ISH
+                my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.1f));
+                my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+                my_shader.SetUniform("u_point_lights[0].position", ball_position);
+                //my_shader.SetUniform("u_point_lights[0].position", glm::vec3(0.0f, 0.0f, 0.0f));
+                my_shader.SetUniform("u_point_lights[0].constant", 1.0f);
+                my_shader.SetUniform("u_point_lights[0].linear", 0.22f);
+                my_shader.SetUniform("u_point_lights[0].exponent", 0.20f);
+
+                // SPOTLIGHT
+                my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+                my_shader.SetUniform("u_spotlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+                my_shader.SetUniform("u_spotlight.position", camera.position);
+                my_shader.SetUniform("u_spotlight.direction", camera.front);
+                my_shader.SetUniform("u_spotlight.cos_inner_cone", glm::cos(glm::radians(15.0f)));
+                my_shader.SetUniform("u_spotlight.cos_outer_cone", glm::cos(glm::radians(20.0f)));
+                my_shader.SetUniform("u_spotlight.constant", 1.0f);
+                my_shader.SetUniform("u_spotlight.linear", 0.07f);
+                my_shader.SetUniform("u_spotlight.exponent", 0.017f);
+                my_shader.SetUniform("u_spotlight.on", is_flashlight_on);
+            }
+            else {
+                my_shader.SetUniform("ambient_material", rgb_white);
+                my_shader.SetUniform("diffuse_material", rgb_white);
+                my_shader.SetUniform("specular_material", rgb_white);
+                my_shader.SetUniform("specular_shinines", 5.0f);
+                my_shader.SetUniform("light_position", glm::vec3(0, 0, 0));
+            }
 
             // Draw the scene
             // - Draw opaque objects
