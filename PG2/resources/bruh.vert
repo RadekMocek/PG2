@@ -6,9 +6,9 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
 
 // Matrices
-uniform mat4 uMx_projection = mat4(1.0); // Camera space -> Screen
-uniform mat4 uMx_model      = mat4(1.0); // Object local coor space -> World space
-uniform mat4 uMx_view       = mat4(1.0); // World space -> Camera space
+uniform mat4 u_mx_projection = mat4(1.0); // Camera space -> Screen
+uniform mat4 u_mx_model      = mat4(1.0); // Object local coor space -> World space
+uniform mat4 u_mx_view       = mat4(1.0); // World space -> Camera space
 
 // Light properties
 uniform vec3 light_position;
@@ -25,7 +25,7 @@ out VS_OUT
 void main(void)
 {
     // Create Model-View matrix
-    mat4 mx_modelView = uMx_view * uMx_model;
+    mat4 mx_modelView = u_mx_view * u_mx_model;
     // Calculate view-space coordinate - in P point we are computing the color
     vec4 P = mx_modelView * aPosition;
     // Calculate normal in view space
@@ -35,7 +35,7 @@ void main(void)
     // Calculate view vector (negative of the view-space position)
     vs_out.V = -P.xyz;
     // Calculate the clip-space position of each vertex
-    gl_Position = uMx_projection * P;
+    gl_Position = u_mx_projection * P;
 
     // Texture coordinates
     vs_out.texCoord = aTexCoord;

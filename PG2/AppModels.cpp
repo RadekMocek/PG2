@@ -76,7 +76,7 @@ void App::InitAssets()
 	model.position = glm::vec3(1.0f, 1.0f, 1.0f);
 	model.scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	model.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	scene_opaque.insert({ "hightmap", model });
+	scene_opaque.insert({ "heightmap", model });
 }
 
 void App::UpdateModels()

@@ -60,6 +60,8 @@ private:
 
     static AudioSlave audio;
 
+    static int is_flashlight_on;
+
     // AppMisc.cpp
     uchar MapGet(cv::Mat& map, int x, int y);
     void MazeGenerate(cv::Mat& map);

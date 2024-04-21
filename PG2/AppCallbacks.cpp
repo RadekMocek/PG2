@@ -34,6 +34,9 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
             audio.PlayWalk();
 
             break;
+        case GLFW_KEY_F:
+            is_flashlight_on = (is_flashlight_on + 1) % 2;
+            break;
         }
     }
     

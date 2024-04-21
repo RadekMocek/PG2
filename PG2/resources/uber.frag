@@ -63,6 +63,35 @@ vec4 calcPointLightColor(PointLight point_light, vec3 normal, vec3 fragment_posi
 	return (diffuse + vec4(specular, 0.0f));
 }
 
+// === Spotlight ===
+struct Spotlight
+{
+	vec3 position;
+	vec3 direction;
+	float cos_inner_cone;
+	float cos_outer_cone;
+	vec3 diffuse;
+	vec3 specular;
+	int on;
+
+	float constant;
+	float linear;
+	float exponent;
+};
+uniform Spotlight u_spotlight;
+vec4 calcSpotLightColor(Spotlight spotlight, vec3 normal, vec3 fragment_position, vec3 frag2camera)
+{
+	vec3 frag2light = normalize(spotlight.position - fragment_position);
+    vec4 diffuse = vec4(u_spotlight.diffuse * max(dot(normal, frag2light), 0.0), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
+	vec3 specular = u_spotlight.specular * u_material.specular * pow(max(dot(normal, normalize(frag2light + frag2camera)), 0.0f), u_material.shininess);
+	float d = length(spotlight.position - fragment_position);
+	float attenuation = 1.0f / (spotlight.constant + spotlight.linear * d + spotlight.exponent * (d * d));
+	float spotIntensity = smoothstep(spotlight.cos_outer_cone, spotlight.cos_inner_cone, dot(-frag2light, normalize(spotlight.direction)));
+	diffuse *= attenuation * spotIntensity;
+	specular *= attenuation * spotIntensity;	
+	return (diffuse + vec4(specular, 0.0f));
+}
+
 // === Main ===
 void main()
 {
@@ -79,6 +108,9 @@ void main()
 	// Point lights
 	for (int i = 0; i < MAX_POINT_LIGHTS; i++) out_color += calcPointLightColor(u_point_lights[i], normal, o_fragment_position, frag2camera);  
 
-	//
+	// Spotlight
+	if (u_spotlight.on == 1) out_color += calcSpotLightColor(u_spotlight, normal, o_fragment_position, frag2camera);
+
+	// Amen
 	frag_color = ambient + out_color;
 }

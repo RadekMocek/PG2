@@ -46,6 +46,8 @@ double App::last_cursor_ypos{};
 
 AudioSlave App::audio;
 
+int App::is_flashlight_on = 1;
+
 App::App()
 {
     std::cout << "Constructed...\n--------------\n";
@@ -217,6 +219,19 @@ int App::Run(void)
             my_shader.SetUniform("u_point_lights[0].constant", 1.0f);
             my_shader.SetUniform("u_point_lights[0].linear", 0.22f);
             my_shader.SetUniform("u_point_lights[0].exponent", 0.20f);
+            
+            // SPOTLIGHT
+            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+            my_shader.SetUniform("u_spotlight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+            my_shader.SetUniform("u_spotlight.position", camera.position);
+            my_shader.SetUniform("u_spotlight.direction", camera.front);
+            my_shader.SetUniform("u_spotlight.cos_inner_cone", glm::cos(glm::radians(15.0f)));
+            my_shader.SetUniform("u_spotlight.cos_outer_cone", glm::cos(glm::radians(20.0f)));
+            my_shader.SetUniform("u_spotlight.constant", 1.0f);
+            my_shader.SetUniform("u_spotlight.linear", 0.07f);
+            my_shader.SetUniform("u_spotlight.exponent", 0.017f);
+            my_shader.SetUniform("u_spotlight.on", is_flashlight_on);
+
             /**/
 
             /* bruh.vert + bruh.frac
@@ -224,7 +239,7 @@ int App::Run(void)
             my_shader.SetUniform("diffuse_material", rgb_white);
             my_shader.SetUniform("specular_material", rgb_white);
             my_shader.SetUniform("specular_shinines", 5.0f);            
-            my_shader.SetUniform("light_position", light_position);
+            my_shader.SetUniform("light_position", glm::vec3(0, 0, 0));
             /**/
 
             // Draw the scene

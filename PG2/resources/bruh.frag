@@ -8,7 +8,11 @@ out vec4 color;
 uniform vec3 ambient_material, diffuse_material, specular_material;
 uniform float specular_shinines;
 // Texture file from cpp
-uniform sampler2D uTexture;
+struct Material 
+{
+    sampler2D textura;
+};
+uniform Material u_material;
 
 // = INPUT FROM VERTEX SHADER =
 in VS_OUT
@@ -34,5 +38,5 @@ void main(void)
 	vec3 diffuse = max(dot(N, L), 0.0) * diffuse_material;
 	vec3 specular = pow(max(dot(R, V), 0.0), specular_shinines) * specular_material;
 	
-	color = vec4(ambient + diffuse + specular, 1.0) * texture(uTexture, fs_in.texCoord);
+	color = vec4(ambient + diffuse + specular, 1.0) * texture(u_material.textura, fs_in.texCoord);
 }
