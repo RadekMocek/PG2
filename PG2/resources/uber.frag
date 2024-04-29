@@ -1,5 +1,7 @@
 #version 460 core
 
+// Inspired by "lighting_dir_point_spot.frag by Steve Jones, Game Institute"
+
 // VS -> FS
 in vec3 o_fragment_position;
 in vec3 o_normal;

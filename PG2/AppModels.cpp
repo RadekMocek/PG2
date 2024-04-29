@@ -25,10 +25,6 @@ void App::InitAssets()
 	// Load shaders and create ShaderProgram
 	std::filesystem::path VS_path("./resources/uber.vert");
 	std::filesystem::path FS_path("./resources/uber.frag");
-	if (!IS_UBER) {
-		VS_path = std::filesystem::path("./resources/bruh.vert");
-		FS_path = std::filesystem::path("./resources/bruh.frag");
-	}
 	my_shader = ShaderProgram(VS_path, FS_path);
 
 	// == MODELS ==
@@ -58,7 +54,9 @@ void App::InitAssets()
 	position = glm::vec3(0.0f, 3.0f, 4.0f);
 	rotation = glm::vec4(1.0f, 0.0f, 0.0f, 90.0f);
 	CreateModel("obj_glass", "plane_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
-
+	position = glm::vec3(1.0f, 4.0f, 3.0f);
+	rotation = glm::vec4(1.0f, 0.0f, 0.0f, 90.0f);
+	CreateModel("obj_glass2", "plane_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
 
 	// == MAZE ==
 	/*

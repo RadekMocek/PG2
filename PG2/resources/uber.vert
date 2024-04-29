@@ -1,5 +1,7 @@
 #version 460 core
 
+// Inspired by "lighting_dir_point_spot.vert by Steve Jones, Game Institute"
+
 // Vertex attributes
 layout (location = 0) in vec4 a_position;
 layout (location = 1) in vec3 a_normal;

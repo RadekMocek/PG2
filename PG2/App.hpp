@@ -21,8 +21,6 @@ public:
 
     ~App();
 private:
-    bool IS_UBER = true;
-
     std::map<std::string, Model> scene_opaque;
     std::map<std::string, Model> scene_transparent;
 

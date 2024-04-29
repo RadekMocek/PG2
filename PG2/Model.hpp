@@ -30,7 +30,6 @@ private:
     std::vector<std::string> file_lines;
     void FillFileLines(const std::filesystem::path& path_obj);
     void LoadOBJFile(const std::filesystem::path& file_name);
-    void LoadMTLFile(const std::filesystem::path& file_name);
 
     // HeightMap
     void HeightMap_Load(const std::filesystem::path& file_name);

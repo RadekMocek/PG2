@@ -173,12 +173,6 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     print("LoadOBJFile: Loaded OBJ file " << file_name << "\n");
 }
 
-void Model::LoadMTLFile(const std::filesystem::path& file_name)
-{
-    FillFileLines(file_name);
-    //TODO: Model::LoadMTLFile
-}
-
 void Model::HeightMap_Load(const std::filesystem::path& file_name)
 {
     mesh_vertices.clear();
@@ -202,8 +196,9 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
     //   0-----1
     //
     //   012,023
-    //
 
+    glm::vec3 normalA{};
+    glm::vec3 normalB{};
     glm::vec3 normal{};
     unsigned int indices_counter = 0;
 
@@ -232,10 +227,12 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             glm::vec2 tc2 = tc0 + glm::vec2((1.0f / 16), (1.0f / 16));  // add offset for top right corner
             glm::vec2 tc3 = tc0 + glm::vec2(0.0f, (1.0f / 16));         // add offset for bottom left corner
 
-            // RETARDED HEIGHT MAP ™ 1.1
+            // RETARDED HEIGHT MAP ™ 1.2
             // calculate normal vector            
-            normal = glm::normalize(glm::cross(p1 - p0, p2 - p0));
-    
+            normalA = glm::normalize(glm::cross(p1 - p0, p2 - p0));
+            normalB = glm::normalize(glm::cross(p2 - p0, p3 - p0));
+            normal = (normalA + normalB) / 2.0f;
+
             // place vertices and ST to mesh
             mesh_vertices.emplace_back(Vertex{ p0, -normal, tc0 });
             mesh_vertices.emplace_back(Vertex{ p1, -normal, tc1 });
