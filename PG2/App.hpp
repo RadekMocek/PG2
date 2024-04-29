@@ -23,6 +23,7 @@ public:
 private:
     std::map<std::string, Model> scene_opaque;
     std::map<std::string, Model> scene_transparent;
+    std::vector<std::pair<const std::string, Model>*> scene_transparent_pairs; // for sorting
 
     static bool is_vsync_on;
     static bool is_fullscreen_on;

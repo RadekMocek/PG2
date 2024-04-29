@@ -240,9 +240,17 @@ int App::Run(void)
             glEnable(GL_BLEND);         // enable blending
             glDisable(GL_CULL_FACE);    // no polygon removal
             glDepthMask(GL_FALSE);      // set Z to read-only
-            // TODO (FRFR): sort by distance from camera, from far to near
-            for (auto& [key, value] : scene_transparent) {
-                value.Draw(my_shader);
+            // - - Calculate distace from camera for all transparent objects
+            for (auto& transparent_pair : scene_transparent_pairs) {
+                transparent_pair->second._distance_from_camera = glm::length(camera.position - transparent_pair->second.position);
+            }
+            // - - Sort all transparent objects in vector by their distance from camera (far to near)
+			std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(), [](std::pair<const std::string, Model>*& a, std::pair<const std::string, Model>*& b) {
+				return a->second._distance_from_camera > b->second._distance_from_camera;
+			});
+            // - - Draw all transparent objects in sorted order
+            for (auto& transparent_pair : scene_transparent_pairs) {
+                transparent_pair->second.Draw(my_shader);
             }
             glDisable(GL_BLEND);
             glEnable(GL_CULL_FACE);

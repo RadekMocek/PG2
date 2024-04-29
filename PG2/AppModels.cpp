@@ -72,6 +72,11 @@ void App::InitAssets()
 	model.scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	model.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	scene_opaque.insert({ "heightmap", model });
+
+	// == for TRANSPARENT OBJECTS sorting ==	
+	for (auto i = scene_transparent.begin(); i != scene_transparent.end(); i++) {
+		scene_transparent_pairs.push_back(&*i);
+	}
 }
 
 void App::UpdateModels()

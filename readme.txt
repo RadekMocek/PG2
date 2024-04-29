@@ -1,16 +1,15 @@
-# PG2 OpenGL 3D app
+.: PG2 :: OpenGL 3D app :.
 
-## Dependencies
+## Dependencies ##
 
-openCV not included
+openCV not included, has to be installed separately:
+    add system variable:
+        Name:  OPENCV_DIR
+        Value: ...\opencv\build
+    add item to PATH:
+        %OPENCV_DIR%\x64\vc16\bin
 
-add system variable:
-    Name:  OPENCV_DIR
-    Value: ...\opencv\build
-add item to PATH:
-    %OPENCV_DIR%\x64\vc16\bin
-
-## Controls
+## Controls ##
 
 * WASD – movement
 * F    – flashlight on/off
@@ -20,7 +19,7 @@ add item to PATH:
 * hold RMB to mouselook
 * scrollwheel to change FOV
 
-## Sources
+## Sources ##
 
 * CPP/OBJ/... – TUL ITE/PG2 (Z drive)
 * Shaders     – Steve Jones
@@ -28,7 +27,7 @@ add item to PATH:
 * Sounds      –
 * Music       – The Synapse (Hong Kong Streets) by Alexander Brandon
 
-## Assignment
+## Assignment ##
 
 ESSENTIALS:
 * [X] 3D GL Core profile + shaders at least 4.5, GL debug
@@ -37,8 +36,8 @@ ESSENTIALS:
 * [ ] event processing (camera, object, app behaviour...): mouse (both axes, wheel), keyboard
 * [ ] multiple different independently moving 3D models, at leats two loaded from file
 * [X] at least three different textures (or subtextures from texture atlas etc.)
-* [ ] lighting model, at least 3 lights (1x ambient, 1x directional, 1x reflector: at least one is moving; +possible other lights)
-* [ ] correct full scale transparency (at least one transparent object; NOT if(alpha<0.1) {discard;} )
+* [ ] lighting model, at least 3 lights (ambient+directional+reflector: at least one is moving; + possible other lights)
+* [X] correct full scale transparency (at least one transparent object; NOT if(alpha<0.1) {discard;} )
 
 EXTRAS:
 * [ ] height map textured by height & proper player height coords
