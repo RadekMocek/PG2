@@ -202,6 +202,9 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
     glm::vec3 normal{};
     unsigned int indices_counter = 0;
 
+    std::map<std::pair<unsigned int, unsigned int>, glm::vec3> normal_sums;
+    std::pair<unsigned int, unsigned int> pair, pair0, pair1, pair2, pair3;
+
     for (unsigned int x_coord = 0; x_coord < (hmap.cols - mesh_step_size); x_coord += mesh_step_size) {
         for (unsigned int z_coord = 0; z_coord < (hmap.rows - mesh_step_size); z_coord += mesh_step_size) {
 			// Get The (X, Y, Z) Value For The Bottom Left Vertex = 0
@@ -232,7 +235,7 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             normalA = glm::normalize(glm::cross(p1 - p0, p2 - p0));
             normalB = glm::normalize(glm::cross(p2 - p0, p3 - p0));
             normal = (normalA + normalB) / 2.0f;
-
+            
             // place vertices and ST to mesh
             mesh_vertices.emplace_back(Vertex{ p0, -normal, tc0 });
             mesh_vertices.emplace_back(Vertex{ p1, -normal, tc1 });
@@ -247,7 +250,27 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             mesh_vertex_indices.emplace_back(indices_counter - 4);
             mesh_vertex_indices.emplace_back(indices_counter - 1);
             mesh_vertex_indices.emplace_back(indices_counter - 2);
+
+            // normal averaging
+            pair0 = { x_coord, z_coord };
+            pair1 = { x_coord + mesh_step_size, z_coord };
+            pair2 = { x_coord + mesh_step_size, z_coord + mesh_step_size };
+            pair3 = { x_coord, z_coord + mesh_step_size };
+            if (!normal_sums.count(pair0)) normal_sums[pair0] = glm::vec3(0.0f, 0.0f, 0.0f);
+            if (!normal_sums.count(pair1)) normal_sums[pair1] = glm::vec3(0.0f, 0.0f, 0.0f);
+            if (!normal_sums.count(pair2)) normal_sums[pair2] = glm::vec3(0.0f, 0.0f, 0.0f);
+            if (!normal_sums.count(pair3)) normal_sums[pair3] = glm::vec3(0.0f, 0.0f, 0.0f);
+            normal_sums[pair0] -= normal;
+            normal_sums[pair1] -= normal;
+            normal_sums[pair2] -= normal;
+            normal_sums[pair3] -= normal;
         }
+    }
+
+    // normal averaging, 2nd iter
+    for (auto& vertex : mesh_vertices) {
+        pair = { static_cast<unsigned int>(vertex.position.x), static_cast<unsigned int>(vertex.position.z) };
+        vertex.normal = glm::normalize(normal_sums[pair]);
     }
 
     print("HeightMap: height map vertices: " << mesh_vertices.size());
