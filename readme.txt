@@ -40,7 +40,7 @@ ESSENTIALS:
 * [X] correct full scale transparency (at least one transparent object; NOT if(alpha<0.1) {discard;} )
 
 EXTRAS:
-* [ ] height map textured by height & proper player height coords
+* [X] height map textured by height & proper player height coords
 * [ ] working collisions
 * [ ] particles
 * [ ] scripting (useful)

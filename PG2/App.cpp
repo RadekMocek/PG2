@@ -190,10 +190,30 @@ int App::Run(void)
             camera.position.x += camera_movement.x;
             camera.position.z += camera_movement.z;
 
-            // Heightmap collision
-            float heix = std::round((camera.position.x + HEIGHTMAP_SHIFT));
-            float heiz = std::round((camera.position.z + HEIGHTMAP_SHIFT));
-            camera.position.y = _heights[{heix, heiz}] * HEGHTMAP_SCALE + PLAYER_HEIGHT;
+            // Heightmap collision :: https://textbooks.cs.ksu.edu/cis580/15-heightmap-terrain/05-interpolating-heights/index.html
+            float hmx = camera.position.x + HEIGHTMAP_SHIFT;
+            float hmz = camera.position.z + HEIGHTMAP_SHIFT;
+            float hmy = 0.0f;
+            if (hmx - std::floor(hmx) < 0.5 && hmz - std::floor(hmz) < 0.5) {
+                // In the lower-left triangle
+                float x_fraction = hmx - std::floor(hmx);
+                float y_fraction = hmz - std::floor(hmz);
+                float common_height = _heights[{std::floor(hmx), std::floor(hmz)}];
+                float x_difference = _heights[{std::floor(hmx) + 1, std::floor(hmz)}] - common_height;
+                float y_difference = _heights[{std::floor(hmx), std::floor(hmz) + 1}] - common_height;
+                hmy = common_height + x_fraction * x_difference + y_fraction * y_difference;
+            }
+            else {
+                // In the upper-right triangle
+                float x_fraction = std::floor(hmx) + 1 - hmx;
+                float y_fraction = std::floor(hmz) + 1 - hmz;
+                float common_height = _heights[{std::floor(hmx) + 1, std::floor(hmz) + 1}];
+                float x_difference = common_height - _heights[{std::floor(hmx), std::floor(hmz) + 1}];
+                float y_difference = common_height - _heights[{std::floor(hmx) + 1, std::floor(hmz)}];
+                hmy = common_height - x_fraction * x_difference - y_fraction * y_difference;
+            }
+
+            camera.position.y = hmy * HEGHTMAP_SCALE + PLAYER_HEIGHT;
 
             // Create View Matrix according to camera settings
             glm::mat4 mx_view = camera.GetViewMatrix();
