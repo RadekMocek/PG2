@@ -23,8 +23,8 @@ void App::InitAssets()
 {
 	// == SHADERS ==
 	// Load shaders and create ShaderProgram
-	std::filesystem::path VS_path("./resources/uber.vert");
-	std::filesystem::path FS_path("./resources/uber.frag");
+	std::filesystem::path VS_path("./resources/shaders/uber.vert");
+	std::filesystem::path FS_path("./resources/shaders/uber.frag");
 	my_shader = ShaderProgram(VS_path, FS_path);
 
 	// == MODELS ==
@@ -68,7 +68,7 @@ void App::InitAssets()
 	std::filesystem::path heightspath("./resources/textures/heights.png");
 	std::filesystem::path texturepath("./resources/textures/tex_256.png");
 	auto model = Model(heightspath, texturepath, true);
-	model.position = glm::vec3(1.0f, 1.0f, 1.0f);
+	model.position = glm::vec3(-50.0f, -1.0f, -50.0f);
 	model.scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	model.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	scene_opaque.insert({ "heightmap", model });
