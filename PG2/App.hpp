@@ -40,15 +40,13 @@ private:
     float FOV = 110.0f;
     glm::mat4 mx_projection = glm::identity<glm::mat4>();
     static Camera camera;
-    static double last_cursor_xpos;
-    static double last_cursor_ypos;
 
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);
 
     void UpdateProjectionMatrix();
 
-    void GetInformation();
+    void PrintGLInfo();
 
     static void error_callback(int error, const char* description);
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);

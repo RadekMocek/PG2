@@ -19,10 +19,12 @@ public:
     GLfloat pitch = 0.0f;
     GLfloat roll = 0.0f;
 
-    // Camera options
+    // Player options
     GLfloat movement_speed_normal = 1.0f;
     GLfloat movement_speed_sprint = 5.0f;
-    GLfloat mouse_sensitivity = 0.25f;
+    // Camera options
+    GLfloat mouse_sensitivity_horizontal = 0.18f;
+    GLfloat mouse_sensitivity_vertical = 0.175f;
 
     Camera(glm::vec3 position);
     glm::mat4 GetViewMatrix();

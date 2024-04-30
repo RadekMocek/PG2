@@ -16,7 +16,7 @@ openCV not included, has to be installed separately:
 * F11  – fullscreen on/off
 * V    – vsync on/off
 
-* hold RMB to mouselook
+* mouselook
 * scrollwheel to change FOV
 
 ## Sources ##

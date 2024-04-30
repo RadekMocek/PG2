@@ -41,8 +41,6 @@ int App::window_width_return_from_fullscreen{};
 int App::window_height_return_from_fullscreen{};
 
 Camera App::camera = Camera(glm::vec3(0, 0, 1000));
-double App::last_cursor_xpos{};
-double App::last_cursor_ypos{};
 
 AudioSlave App::audio;
 
@@ -56,7 +54,7 @@ App::App()
 // App initialization, if returns true then run run()
 bool App::Init()
 {
-    try {
+    try {        
         // Set GLFW error callback
         glfwSetErrorCallback(error_callback);
 
@@ -70,6 +68,9 @@ bool App::Init()
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
         // Set OpenGL profile
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Core, comment this line for Compatible
+        
+        // Window is hidden until everything is initialized
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
         // Open window (GL canvas) with no special properties :: https://www.glfw.org/docs/latest/quick.html#quick_create_window
         window = glfwCreateWindow(window_width, window_height, "Moje krasne okno", NULL, NULL);
@@ -78,6 +79,9 @@ bool App::Init()
             return false;
         }
         glfwSetWindowUserPointer(window, this);
+
+        // Hide cursor
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
         // Fullscreen On/Off
         monitor = glfwGetPrimaryMonitor(); // Get primary monitor
@@ -125,9 +129,15 @@ bool App::Init()
 
         // Transparency blending function
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+        
+        //PrintGLInfo();
+        
         // First init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
+
+        // Show window after everything loads
+        glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
+        glfwShowWindow(window);
     }
     catch (std::exception const& e) {
         std::cerr << "Init failed : " << e.what() << "\n";
@@ -281,8 +291,9 @@ int App::Run(void)
         std::cerr << "App failed : " << e.what() << "\n";
         return EXIT_FAILURE;
     }
+    
+    PrintGLInfo();
 
-    GetInformation();
     std::cout << "Finished OK...\n";
     return EXIT_SUCCESS;
 }
@@ -315,7 +326,7 @@ void App::UpdateProjectionMatrix(void)
     );
 }
 
-void App::GetInformation()
+void App::PrintGLInfo()
 {
     std::cout << "\n=================== :: GL Info :: ===================\n";
     std::cout << "GL Vendor:\t" << glGetString(GL_VENDOR) << "\n";

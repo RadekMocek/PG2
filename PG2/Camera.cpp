@@ -63,12 +63,11 @@ glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
 
 void Camera::ProcessMouseMovement(GLfloat xoffset, GLfloat yoffset)
 {
-    xoffset *= this->mouse_sensitivity;
-    yoffset *= this->mouse_sensitivity;
+    xoffset *= this->mouse_sensitivity_horizontal;
+    yoffset *= this->mouse_sensitivity_vertical;
 
-    this->yaw += xoffset;
-    //this->pitch += yoffset;
-    this->pitch -= yoffset;
+    this->yaw -= xoffset;
+    this->pitch += yoffset;
 
     // Constraint Pitch
     if (this->pitch > 89.0f) this->pitch = 89.0f;

@@ -56,19 +56,13 @@ void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 void App::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    ///*
     auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
     this_inst->window_width = width;
     this_inst->window_height = height;
     // set viewport
     glViewport(0, 0, width, height);
-    //now your canvas has [0,0] in bottom left corner, and its size is [width x height] 
+    // now your canvas has [0,0] in bottom left corner, and its size is [width x height] 
     this_inst->UpdateProjectionMatrix();
-    /**/
-
-    /*
-    glViewport(0, 0, width, height);
-    /**/
 }
 
 void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
@@ -80,11 +74,6 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
 
 void App::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    ///*
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-        camera.ProcessMouseMovement(static_cast<GLfloat>(xpos - last_cursor_xpos) , static_cast<GLfloat>(ypos - last_cursor_ypos));
-    }
-    last_cursor_xpos = xpos;
-    last_cursor_ypos = ypos;
-    /**/
+    camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - xpos), static_cast<GLfloat>(window_height / 2.0 - ypos));
+    glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
 }
