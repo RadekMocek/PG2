@@ -68,8 +68,8 @@ void App::InitAssets()
 	std::filesystem::path heightspath("./resources/textures/heights.png");
 	std::filesystem::path texturepath("./resources/textures/tex_256.png");
 	auto model = Model(heightspath, texturepath, true);
-	model.position = glm::vec3(-50.0f, -1.0f, -50.0f);
-	model.scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	model.position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
+	model.scale = glm::vec3(HEGHTMAP_SCALE, HEGHTMAP_SCALE, HEGHTMAP_SCALE);
 	model.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	scene_opaque.insert({ "heightmap", model });
 

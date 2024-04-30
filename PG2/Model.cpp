@@ -230,7 +230,7 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             glm::vec2 tc2 = tc0 + glm::vec2((1.0f / 16), (1.0f / 16));  // add offset for top right corner
             glm::vec2 tc3 = tc0 + glm::vec2(0.0f, (1.0f / 16));         // add offset for bottom left corner
 
-            // RETARDED HEIGHT MAP ™ 1.2
+            // RETARDED HEIGHT MAP ™ 2.0
             // calculate normal vector            
             normalA = glm::normalize(glm::cross(p1 - p0, p2 - p0));
             normalB = glm::normalize(glm::cross(p2 - p0, p3 - p0));
@@ -256,10 +256,6 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             pair1 = { x_coord + mesh_step_size, z_coord };
             pair2 = { x_coord + mesh_step_size, z_coord + mesh_step_size };
             pair3 = { x_coord, z_coord + mesh_step_size };
-            if (!normal_sums.count(pair0)) normal_sums[pair0] = glm::vec3(0.0f, 0.0f, 0.0f);
-            if (!normal_sums.count(pair1)) normal_sums[pair1] = glm::vec3(0.0f, 0.0f, 0.0f);
-            if (!normal_sums.count(pair2)) normal_sums[pair2] = glm::vec3(0.0f, 0.0f, 0.0f);
-            if (!normal_sums.count(pair3)) normal_sums[pair3] = glm::vec3(0.0f, 0.0f, 0.0f);
             normal_sums[pair0] -= normal;
             normal_sums[pair1] -= normal;
             normal_sums[pair2] -= normal;
@@ -271,6 +267,8 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
     for (auto& vertex : mesh_vertices) {
         pair = { static_cast<unsigned int>(vertex.position.x), static_cast<unsigned int>(vertex.position.z) };
         vertex.normal = glm::normalize(normal_sums[pair]);
+
+        _heights[{vertex.position.x * HEGHTMAP_SCALE, vertex.position.z * HEGHTMAP_SCALE}] = vertex.position.y; // for heightmap collision
     }
 
     print("HeightMap: height map vertices: " << mesh_vertices.size());

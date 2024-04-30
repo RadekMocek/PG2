@@ -163,6 +163,9 @@ int App::Run(void)
         camera.position.y = 2.0f;
         camera.position.z = 5.0f;
 
+        // Heightmap _heights reference
+        auto& _heights = scene_opaque.find("heightmap")->second._heights;
+
         // Music
         audio.PlayMusic3D();
 
@@ -179,12 +182,20 @@ int App::Run(void)
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // === After clearing the canvas ===
-
-            // React to user :: Create View Matrix according to camera settings
             float delta_time = static_cast<float>(glfwGetTime() - last_frame_time);
             last_frame_time = glfwGetTime();
+            
+            // Player movement
             camera_movement = camera.ProcessInput(window, delta_time);
-            camera.position += camera_movement;
+            camera.position.x += camera_movement.x;
+            camera.position.z += camera_movement.z;
+
+            // Heightmap collision
+            float heix = std::round((camera.position.x + HEIGHTMAP_SHIFT));
+            float heiz = std::round((camera.position.z + HEIGHTMAP_SHIFT));
+            camera.position.y = _heights[{heix, heiz}] * HEGHTMAP_SCALE + PLAYER_HEIGHT;
+
+            // Create View Matrix according to camera settings
             glm::mat4 mx_view = camera.GetViewMatrix();
             
             // 3D Audio

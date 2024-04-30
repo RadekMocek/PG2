@@ -9,6 +9,9 @@
 #include "Camera.hpp"
 #include "AudioSlave.hpp"
 
+#define PLAYER_HEIGHT 1.0f
+#define HEIGHTMAP_SHIFT 50.0f
+
 class App {
 public:
     App();
