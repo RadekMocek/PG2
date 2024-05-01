@@ -31,9 +31,6 @@ private:
     glm::vec3 rotation_axes{};
 
     // Reading the file
-    std::string file_line;
-    std::vector<std::string> file_lines;
-    void FillFileLines(const std::filesystem::path& path_obj);
     void LoadOBJFile(const std::filesystem::path& file_name);
 
     // HeightMap

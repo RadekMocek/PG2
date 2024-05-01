@@ -34,21 +34,8 @@ void Model::Draw(ShaderProgram& shader)
     mesh.Draw(shader, mx_model);
 }
 
-void Model::FillFileLines(const std::filesystem::path& file_name)
-{
-    file_lines.clear();
-    std::ifstream file_reader(file_name);
-    while (getline(file_reader, file_line)) {
-        file_lines.push_back(file_line);
-    }
-    file_reader.close();
-}
-
 void Model::LoadOBJFile(const std::filesystem::path& file_name)
 {
-    FillFileLines(file_name);
-    print_loading("#");
-
     mesh_vertices.clear();
     mesh_vertex_indices.clear();
 
@@ -63,7 +50,9 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
 
     bool line_success;
 
-    for (const std::string& line : file_lines) {
+    std::string line;
+    std::ifstream file_reader(file_name);
+    while (getline(file_reader, line)) {
         if (!line.empty()) {
             line_success = true;
             first_two_chars = line.substr(0, 2);
@@ -142,6 +131,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
             }
         }
     }
+    file_reader.close();
     print_loading("#");
 
     // RETARDED DRAW ™ 2.0
