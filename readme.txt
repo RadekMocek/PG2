@@ -11,10 +11,12 @@ openCV not included, has to be installed separately:
 
 ## Controls ##
 
-* WASD – movement
-* F    – flashlight on/off
-* F11  – fullscreen on/off
-* V    – vsync on/off
+* W A S D – movement
+* Ctrl    – sprint     – toggle
+* Space   – jetpack    – hold
+* F       – flashlight – toggle
+* F11     – fullscreen – toggle
+* V       – vsync      – toggle
 
 * mouselook
 * scrollwheel to change FOV
@@ -24,6 +26,7 @@ openCV not included, has to be installed separately:
 * CPP/OBJ/... – TUL ITE/PG2 (Z drive)
 * Shaders     – Steve Jones
 * Textures    – RPGMaker tileset
+* Models      – https://free3d.com/3d-model/jukebox-bubbler-style-v2--835086.html
 * Sounds      –
 * Music       – The Synapse (Hong Kong Streets) by Alexander Brandon
 

@@ -6,6 +6,7 @@
 #include "Texture.hpp"
 
 #define print(x) //std::cout << x << "\n"
+#define print_loading(x) std::cout << x
 
 Model::Model(const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map)
 {
@@ -46,6 +47,7 @@ void Model::FillFileLines(const std::filesystem::path& file_name)
 void Model::LoadOBJFile(const std::filesystem::path& file_name)
 {
     FillFileLines(file_name);
+    print_loading("#");
 
     mesh_vertices.clear();
     mesh_vertex_indices.clear();
@@ -75,7 +77,8 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
             // vt 0.5000 0.7500
             else if (first_three_chars == "vt ") {
                 uv = {};
-                (void)sscanf_s(line.c_str(), "vt %f %f", &uv.y, &uv.x);
+                (void)sscanf_s(line.c_str(), "vt %f %f", &uv.x, &uv.y);
+                uv.y = -uv.y; // DDS textures are inverted
                 texture_coordinates.push_back(uv);
             }
             // vn 0.7235898972 -0.6894102097 -0.03363365307
@@ -139,6 +142,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
             }
         }
     }
+    print_loading("#");
 
     // RETARDED DRAW ™ 2.0
     std::vector<glm::vec3> vertices_direct;
@@ -159,6 +163,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     auto n_direct_uvs = texture_coordinates_direct.size();
     auto n_direct_normals = vertex_normals_direct.size();
     /**/
+    print_loading("#");
 
     for (unsigned int u = 0; u < vertices_direct.size(); u++) {
         Vertex vertex{};
@@ -171,6 +176,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
 
     // What's said is said, what's done is done.
     print("LoadOBJFile: Loaded OBJ file " << file_name << "\n");
+    print_loading("#\n");
 }
 
 void Model::HeightMap_Load(const std::filesystem::path& file_name)

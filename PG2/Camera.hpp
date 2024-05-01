@@ -20,8 +20,8 @@ public:
     GLfloat roll = 0.0f;
 
     // Player options
-    GLfloat movement_speed_normal = 1.0f;
-    GLfloat movement_speed_sprint = 5.0f;
+    GLfloat movement_speed_normal = 3.0f;
+    GLfloat movement_speed_sprint = 6.2f;
     // Camera options
     GLfloat mouse_sensitivity_horizontal = 0.18f;
     GLfloat mouse_sensitivity_vertical = 0.175f;

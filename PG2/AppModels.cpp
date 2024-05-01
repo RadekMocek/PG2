@@ -1,7 +1,10 @@
 #include "App.hpp"
 
+#define print(x) std::cout << x << "\n"
+
 void App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, glm::vec3 scale, glm::vec4 rotation)
 {
+	print("Loading " << name << ":");
 	std::filesystem::path modelpath("./resources/objects/" + obj);
 	std::filesystem::path texturepath("./resources/textures/" + tex);
 	auto model = Model(modelpath, texturepath);
@@ -21,6 +24,7 @@ void App::CreateModel(std::string name, std::string obj, std::string tex, bool i
 // Load models, load textures, load shaders, initialize level, etc.
 void App::InitAssets()
 {
+	print("RAM OK\nROM OK");
 	// == SHADERS ==
 	// Load shaders and create ShaderProgram
 	std::filesystem::path VS_path("./resources/shaders/uber.vert");
@@ -58,6 +62,12 @@ void App::InitAssets()
 	rotation = glm::vec4(1.0f, 0.0f, 0.0f, 90.0f);
 	CreateModel("obj_glass2", "plane_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
 
+	// JUKEBOX
+	position = glm::vec3(4.0f, 0.0f, 8.0f);
+	scale = glm::vec3(0.125f, 0.125f, 0.125f);
+	rotation = glm::vec4(1.0f, 0.0f, 0.0f, -90.0f);
+	CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation);
+
 	// == MAZE ==
 	/*
 	cv::Mat maze = cv::Mat(10, 25, CV_8U);
@@ -65,6 +75,7 @@ void App::InitAssets()
 	/**/
 
 	// == HEIGHTMAP ==
+	print("Loading heightmap:");
 	std::filesystem::path heightspath("./resources/textures/heights.png");
 	std::filesystem::path texturepath("./resources/textures/tex_256.png");
 	auto model = Model(heightspath, texturepath, true);

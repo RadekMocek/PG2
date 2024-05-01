@@ -160,11 +160,15 @@ int App::Run(void)
         glm::vec3 camera_movement{};
 
         // Set camera position
-        camera.position.y = 2.0f;
-        camera.position.z = 5.0f;
+        camera.position.x = 4.0f;
+        camera.position.y = 1.0f;
+        camera.position.z = 11.0f;
 
         // Heightmap _heights reference
         auto& _heights = scene_opaque.find("heightmap")->second._heights;
+
+        // Jetpack
+        float falling_speed = 0;
 
         // Music
         audio.PlayMusic3D();
@@ -213,7 +217,23 @@ int App::Run(void)
                 hmy = common_height - x_fraction * x_difference - y_fraction * y_difference;
             }
 
-            camera.position.y = hmy * HEGHTMAP_SCALE + PLAYER_HEIGHT;
+            // Jetpack
+            float min_hei = hmy * HEGHTMAP_SCALE + PLAYER_HEIGHT;
+            if (camera_movement.y > 0.0f) {
+                camera.position.y += delta_time * 2.0f;
+                falling_speed = 0;
+                if (camera.position.y < min_hei) {
+                    camera.position.y = min_hei;
+                }
+            }
+            else {
+                falling_speed += delta_time * 6.5f;
+                camera.position.y -= delta_time * falling_speed;
+                if (camera.position.y < min_hei) {
+                    camera.position.y = min_hei;
+                    falling_speed = 0;
+                }
+            }
 
             // Create View Matrix according to camera settings
             glm::mat4 mx_view = camera.GetViewMatrix();
@@ -311,7 +331,7 @@ int App::Run(void)
             fps_counter_frames++;
             if (fps_counter_seconds >= 1) {
                 std::stringstream ss;
-                ss << fps_counter_frames << " FPS | " << FOV << " FOV";
+                ss << fps_counter_frames << " FPS | " << FOV << " FOV | X" << camera.position.x << " Z" << camera.position.z;
                 glfwSetWindowTitle(window, ss.str().c_str());
                 fps_counter_seconds = 0;
                 fps_counter_frames = 0;
