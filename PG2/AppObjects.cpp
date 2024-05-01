@@ -88,7 +88,9 @@ void App::InitAssets()
 	}
 }
 
-void App::UpdateModels()
+#define JUKEBOX_SPEED 2.0f
+
+void App::UpdateModels(float delta_time)
 {
 	glm::vec3 position{};
 	glm::vec3 scale{};
@@ -98,12 +100,19 @@ void App::UpdateModels()
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 45 * glfwGetTime());
 	scene_transparent.find("obj_teapot")->second.rotation = rotation;
 	
-	// rotate the jukebox
-	/*
-	rotation = glm::vec4(0.0f, 0.0f, 1.0f, 45 * glfwGetTime());
-	scene_opaque.find("obj_jukebox")->second.rotation = rotation;
-	/**/
-
-	// move green ball
-	scene_opaque.find("obj_sphere_0")->second.position = ball_position;
+	// JUKEBOX
+	// - rotate towards player
+	auto& obj_jukebox = scene_opaque.find("obj_jukebox")->second;	
+	float angles = glm::degrees(atan2(-jukebox_to_player.y, jukebox_to_player.x)) + 90;
+	rotation = glm::vec4(0.0f, 0.0f, 1.0f, angles);
+	obj_jukebox.rotation = rotation;
+	// - move towards player
+	if (glm::length(jukebox_to_player) > 2.0f) {		
+		position = obj_jukebox.position;
+		position.x += jukebox_to_player_n.x * delta_time * JUKEBOX_SPEED;
+		position.z += jukebox_to_player_n.y * delta_time * JUKEBOX_SPEED;
+		position.x = std::clamp(position.x, -3.0f, 7.0f);
+		position.z = std::clamp(position.z, 0.0f, 14.0f);
+		obj_jukebox.position = position;
+	}
 }

@@ -171,6 +171,9 @@ int App::Run(void)
         // Heightmap _heights reference
         auto& _heights = scene_opaque.find("heightmap")->second._heights;
 
+        // Object references
+        auto& obj_jukebox = scene_opaque.find("obj_jukebox")->second;
+
         // Jetpack
         float falling_speed = 0;
 
@@ -238,7 +241,7 @@ int App::Run(void)
                 }
             }
             else {
-                falling_speed += delta_time * 6.5f;
+                falling_speed += delta_time * 9.81f;
                 camera.position.y -= delta_time * falling_speed;
                 if (camera.position.y < min_hei) {
                     camera.position.y = min_hei;
@@ -250,14 +253,13 @@ int App::Run(void)
             glm::mat4 mx_view = camera.GetViewMatrix();
             
             // 3D Audio
-            camera.UpdateListenerPosition(audio);
-
-            // Misc Input
-            ball_movement = BallMovement(delta_time);
-            ball_position += ball_movement;
+            camera.UpdateListenerPosition(audio, camera.position - obj_jukebox.position);
 
             // Set Model Matrix
-            UpdateModels();
+            jukebox_to_player.x = camera.position.x - obj_jukebox.position.x;
+            jukebox_to_player.y = camera.position.z - obj_jukebox.position.z;
+            jukebox_to_player_n = glm::normalize(jukebox_to_player);
+            UpdateModels(delta_time);
 
             // Activate shader
             my_shader.Activate();
@@ -282,11 +284,14 @@ int App::Run(void)
             my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
             my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.2f, 0.2f, 0.2f));
 
-            // - POINT LIGHT #0 :: GREEN-ISH
-            my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.1f));
-            my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
-            my_shader.SetUniform("u_point_lights[0].position", ball_position);
-            //my_shader.SetUniform("u_point_lights[0].position", glm::vec3(0.0f, 0.0f, 0.0f));
+            // - POINT LIGHT :: JUKEBOX
+            my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 0.8f, 0.8f));
+            my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
+            glm::vec3 point_light_pos = obj_jukebox.position;
+            point_light_pos.y += 1.0f;
+            point_light_pos.x += 0.7f * jukebox_to_player_n.x;
+            point_light_pos.z += 0.7f * jukebox_to_player_n.y;
+            my_shader.SetUniform("u_point_lights[0].position", point_light_pos);
             my_shader.SetUniform("u_point_lights[0].constant", 1.0f);
             my_shader.SetUniform("u_point_lights[0].linear", 0.22f);
             my_shader.SetUniform("u_point_lights[0].exponent", 0.20f);
@@ -340,13 +345,15 @@ int App::Run(void)
             std::chrono::duration<double> fps_elapsed_seconds = fps_frame_end_timestamp - fps_frame_start_timestamp;
             fps_counter_seconds += fps_elapsed_seconds.count();
             fps_counter_frames++;
-            if (fps_counter_seconds >= 1) {
-                std::stringstream ss;
-                ss << fps_counter_frames << " FPS | " << FOV << " FOV | X" << camera.position.x << " Z" << camera.position.z;
-                glfwSetWindowTitle(window, ss.str().c_str());
+            if (fps_counter_seconds >= 1) {                
+                FPS = fps_counter_frames;
                 fps_counter_seconds = 0;
                 fps_counter_frames = 0;
             }
+            // Window title
+            std::stringstream ss;
+            ss << FPS << " FPS | " << FOV << " FOV | X" << camera.position.x << " Z" << camera.position.z;
+            glfwSetWindowTitle(window, ss.str().c_str());
         }
     }
     catch (std::exception const& e) {

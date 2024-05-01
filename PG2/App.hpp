@@ -18,7 +18,7 @@ public:
     void InitAssets();
     int Run();
     void CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, glm::vec3 scale, glm::vec4 rotation);
-    void UpdateModels();
+    void UpdateModels(float delta_time);
 
     ~App();
 private:
@@ -39,6 +39,7 @@ private:
     static int window_height_return_from_fullscreen;
 
     float FOV = 110.0f;
+    int FPS = 0;
     glm::mat4 mx_projection = glm::identity<glm::mat4>();
     static Camera camera;
 
@@ -62,7 +63,7 @@ private:
 
     static int is_flashlight_on;
 
-    // AppMisc.cpp
-    glm::vec3 ball_position = glm::vec3(0, 0, 0);
-    glm::vec3 BallMovement(GLfloat delta_time);
+    // Objects
+    glm::vec2 jukebox_to_player{};
+    glm::vec2 jukebox_to_player_n{};
 };

@@ -1,3 +1,4 @@
+/*
 #include "App.hpp"
 
 glm::vec3 App::BallMovement(GLfloat delta_time)
@@ -27,3 +28,4 @@ glm::vec3 App::BallMovement(GLfloat delta_time)
 	}
 	return direction == zero ? zero : glm::normalize(direction) * delta_time;
 }
+/**/

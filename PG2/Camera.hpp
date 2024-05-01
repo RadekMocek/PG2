@@ -33,7 +33,7 @@ public:
 
     void ToggleSprint();
 
-    void UpdateListenerPosition(AudioSlave& audio);
+    void UpdateListenerPosition(AudioSlave& audio, glm::vec3 listener_position);
 private:
     glm::vec3 world_up;
 

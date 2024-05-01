@@ -39,7 +39,7 @@ ESSENTIALS:
 * [ ] event processing (camera, object, app behaviour...): mouse (both axes, wheel), keyboard
 * [ ] multiple different independently moving 3D models, at leats two loaded from file
 * [X] at least three different textures (or subtextures from texture atlas etc.)
-* [ ] lighting model, at least 3 lights (ambient+directional+reflector: at least one is moving; + possible other lights)
+* [X] lighting model, at least 3 lights (ambient+directional+reflector: at least one is moving; + possible other lights)
 * [X] correct full scale transparency (at least one transparent object; NOT if(alpha<0.1) {discard;} )
 
 EXTRAS:

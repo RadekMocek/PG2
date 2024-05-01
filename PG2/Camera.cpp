@@ -89,7 +89,7 @@ void Camera::ToggleSprint()
     is_sprint_toggled = !is_sprint_toggled;
 }
 
-void Camera::UpdateListenerPosition(AudioSlave& audio)
+void Camera::UpdateListenerPosition(AudioSlave& audio, glm::vec3 listener_position)
 {
-    audio.UpdateListenerPosition(position, front, world_up);
+    audio.UpdateListenerPosition(listener_position, front, world_up);
 }
