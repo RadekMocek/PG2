@@ -49,7 +49,7 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
 void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
-    this_inst->FOV += 10.0f * static_cast<float>(yoffset);
+    this_inst->FOV -= 10.0f * static_cast<float>(yoffset);
     this_inst->FOV = std::clamp(this_inst->FOV, 70.0f, 160.0f); // limit FOV to reasonable values...
     this_inst->UpdateProjectionMatrix();
 }
@@ -72,9 +72,12 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
     }
 }
 
-// TODO (frfr): Issue: stuttered mouse movement when vsync=0; sus mouse movement when vsync=1
 void App::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
+    /*
     camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - xpos), static_cast<GLfloat>(window_height / 2.0 - ypos));
     glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
+    /**/
+
+    // Logic was moved to App::Update because of stutter
 }

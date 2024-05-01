@@ -1,3 +1,5 @@
+#include <opencv2/opencv.hpp>
+
 #include "App.hpp"
 
 #define print(x) std::cout << x << "\n"
@@ -11,7 +13,8 @@ void App::CreateModel(std::string name, std::string obj, std::string tex, bool i
 
 	model.position = position;
 	model.scale = scale;
-	model.rotation = rotation;
+	model.init_rotation = rotation;
+	model.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
 	if (is_opaque) {
 		scene_opaque.insert({ name, model});
@@ -68,12 +71,6 @@ void App::InitAssets()
 	rotation = glm::vec4(1.0f, 0.0f, 0.0f, -90.0f);
 	CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation);
 
-	// == MAZE ==
-	/*
-	cv::Mat maze = cv::Mat(10, 25, CV_8U);
-	MazeGenerate(maze);
-	/**/
-
 	// == HEIGHTMAP ==
 	print("Loading heightmap:");
 	std::filesystem::path heightspath("./resources/textures/heights.png");
@@ -81,6 +78,7 @@ void App::InitAssets()
 	auto model = Model(heightspath, texturepath, true);
 	model.position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
 	model.scale = glm::vec3(HEGHTMAP_SCALE, HEGHTMAP_SCALE, HEGHTMAP_SCALE);
+	model.init_rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	model.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	scene_opaque.insert({ "heightmap", model });
 
@@ -99,6 +97,12 @@ void App::UpdateModels()
 	// rotate the teapot
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 45 * glfwGetTime());
 	scene_transparent.find("obj_teapot")->second.rotation = rotation;
+	
+	// rotate the jukebox
+	/*
+	rotation = glm::vec4(0.0f, 0.0f, 1.0f, 45 * glfwGetTime());
+	scene_opaque.find("obj_jukebox")->second.rotation = rotation;
+	/**/
 
 	// move green ball
 	scene_opaque.find("obj_sphere_0")->second.position = ball_position;

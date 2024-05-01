@@ -17,6 +17,7 @@ public:
     
     glm::vec3 position{};
     glm::vec3 scale{};
+    glm::vec4 init_rotation{}; // axes xyz + angle
     glm::vec4 rotation{}; // axes xyz + angle
     float _distance_from_camera; // for sorting transparent objects
     std::map<std::pair<float, float>, float> _heights; // for heightmap collision
@@ -29,6 +30,7 @@ private:
 
     glm::mat4 mx_model{};
     glm::vec3 rotation_axes{};
+    glm::vec3 init_rotation_axes{};
 
     // Reading the file
     void LoadOBJFile(const std::filesystem::path& file_name);

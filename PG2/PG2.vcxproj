@@ -148,7 +148,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppCallbacks.cpp" />
     <ClCompile Include="AppMisc.cpp" />
-    <ClCompile Include="AppModels.cpp" />
+    <ClCompile Include="AppObjects.cpp" />
     <ClCompile Include="AudioSlave.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="gl_err_callback.cpp" />

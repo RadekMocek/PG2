@@ -81,7 +81,8 @@ bool App::Init()
         glfwSetWindowUserPointer(window, this);
 
         // Hide cursor
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); // <- weird mouselook behavior
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // <- ok
 
         // Fullscreen On/Off
         monitor = glfwGetPrimaryMonitor(); // Get primary monitor
@@ -164,6 +165,9 @@ int App::Run(void)
         camera.position.y = 1.0f;
         camera.position.z = 11.0f;
 
+        // Mouselook
+        double cursor_x, cursor_y;
+
         // Heightmap _heights reference
         auto& _heights = scene_opaque.find("heightmap")->second._heights;
 
@@ -194,31 +198,38 @@ int App::Run(void)
             camera.position.x += camera_movement.x;
             camera.position.z += camera_movement.z;
 
+            // Mouselook
+            glfwGetCursorPos(window, &cursor_x, &cursor_y);
+            camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - cursor_x), static_cast<GLfloat>(window_height / 2.0 - cursor_y));
+            glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
+
             // Heightmap collision :: https://textbooks.cs.ksu.edu/cis580/15-heightmap-terrain/05-interpolating-heights/index.html
-            float hmx = camera.position.x + HEIGHTMAP_SHIFT;
-            float hmz = camera.position.z + HEIGHTMAP_SHIFT;
-            float hmy = 0.0f;
-            if (hmx - std::floor(hmx) < 0.5 && hmz - std::floor(hmz) < 0.5) {
+            float hm_x_f = camera.position.x + HEIGHTMAP_SHIFT;
+            float hm_z_f = camera.position.z + HEIGHTMAP_SHIFT;
+            float hm_y_f = 0.0f;
+            float hm_x_i = std::floor(hm_x_f);
+            float hm_z_i = std::floor(hm_z_f);
+            if (hm_x_f - hm_x_i < 0.5f && hm_z_f - hm_z_i < 0.5f) {
                 // In the lower-left triangle
-                float x_fraction = hmx - std::floor(hmx);
-                float y_fraction = hmz - std::floor(hmz);
-                float common_height = _heights[{std::floor(hmx), std::floor(hmz)}];
-                float x_difference = _heights[{std::floor(hmx) + 1, std::floor(hmz)}] - common_height;
-                float y_difference = _heights[{std::floor(hmx), std::floor(hmz) + 1}] - common_height;
-                hmy = common_height + x_fraction * x_difference + y_fraction * y_difference;
+                float x_fraction = hm_x_f - hm_x_i;
+                float y_fraction = hm_z_f - hm_z_i;
+                float common_height = _heights[{hm_x_i, hm_z_i}];
+                float x_difference = _heights[{hm_x_i + 1, hm_z_i}] - common_height;
+                float y_difference = _heights[{hm_x_i, hm_z_i + 1}] - common_height;
+                hm_y_f = common_height + x_fraction * x_difference + y_fraction * y_difference;
             }
             else {
                 // In the upper-right triangle
-                float x_fraction = std::floor(hmx) + 1 - hmx;
-                float y_fraction = std::floor(hmz) + 1 - hmz;
-                float common_height = _heights[{std::floor(hmx) + 1, std::floor(hmz) + 1}];
-                float x_difference = common_height - _heights[{std::floor(hmx), std::floor(hmz) + 1}];
-                float y_difference = common_height - _heights[{std::floor(hmx) + 1, std::floor(hmz)}];
-                hmy = common_height - x_fraction * x_difference - y_fraction * y_difference;
+                float x_fraction = hm_x_i + 1 - hm_x_f;
+                float y_fraction = hm_z_i + 1 - hm_z_f;
+                float common_height = _heights[{hm_x_i + 1, hm_z_i + 1}];
+                float x_difference = common_height - _heights[{hm_x_i, hm_z_i + 1}];
+                float y_difference = common_height - _heights[{hm_x_i + 1, hm_z_i}];
+                hm_y_f = common_height - x_fraction * x_difference - y_fraction * y_difference;
             }
 
             // Jetpack
-            float min_hei = hmy * HEGHTMAP_SCALE + PLAYER_HEIGHT;
+            float min_hei = hm_y_f * HEGHTMAP_SCALE + PLAYER_HEIGHT;
             if (camera_movement.y > 0.0f) {
                 camera.position.y += delta_time * 2.0f;
                 falling_speed = 0;

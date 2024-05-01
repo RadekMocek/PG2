@@ -2,8 +2,6 @@
 
 #include <map>
 
-#include <opencv2/opencv.hpp>
-
 #include "Model.hpp"
 #include "ShaderProgram.hpp"
 #include "Camera.hpp"
@@ -65,8 +63,6 @@ private:
     static int is_flashlight_on;
 
     // AppMisc.cpp
-    uchar MapGet(cv::Mat& map, int x, int y);
-    void MazeGenerate(cv::Mat& map);
     glm::vec3 ball_position = glm::vec3(0, 0, 0);
     glm::vec3 BallMovement(GLfloat delta_time);
 };

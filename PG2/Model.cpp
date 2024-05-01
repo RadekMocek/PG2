@@ -28,6 +28,10 @@ void Model::Draw(ShaderProgram& shader)
 
     mx_model = glm::translate(mx_model, position);
     mx_model = glm::scale(mx_model, scale);
+
+    init_rotation_axes = glm::vec3(init_rotation.x, init_rotation.y, init_rotation.z);
+    mx_model = glm::rotate(mx_model, glm::radians(init_rotation.w), init_rotation_axes);
+
     rotation_axes = glm::vec3(rotation.x, rotation.y, rotation.z);
     mx_model = glm::rotate(mx_model, glm::radians(rotation.w), rotation_axes);
 
