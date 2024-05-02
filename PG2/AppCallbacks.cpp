@@ -73,8 +73,9 @@ void App::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
+    auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        //std::cout << "Left click!\n";
+        this_inst->Shoot();
     }
 }
 
@@ -86,5 +87,5 @@ void App::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
     glfwSetCursorPos(window, this_inst->window_width / 2.0, this_inst->window_height / 2.0);
     /**/
 
-    // Logic was moved to App::Update because of mouse look stutter
+    // Logic was moved to App::Run because of mouse look stutter
 }

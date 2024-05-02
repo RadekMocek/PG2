@@ -70,5 +70,7 @@ private:
     glm::vec2 jukebox_to_player_n{};
 
     // Projectiles
+    int projectile_n = 0;
     Model* projectiles[N_PROJECTILES]{};
+    void Shoot();
 };

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <glm/glm.hpp> // Haluz
-#include <GL/glew.h> // Haluz
+#include <glm/glm.hpp>
+#include <GL/glew.h>
 
 #include <filesystem>
 
@@ -23,8 +23,6 @@ public:
 	void SetUniform(const std::string& name, const glm::mat3 val);
 	void SetUniform(const std::string& name, const glm::mat4 val);
 
-	//...
-
 private:
 	GLuint ID{ 0 }; // default = 0, empty shader
 	std::string GetShaderInfoLog(const GLuint obj);   // check for shader compilation error; if any, print compiler output  
@@ -32,5 +30,5 @@ private:
 
 	GLuint CompileShader(const std::filesystem::path& source_file, const GLenum type); // try to load and compile shader
 	GLuint LinkShader(const std::vector<GLuint> shader_ids);                           // try to link all shader IDs to final program
-	std::string TextFileRead(const std::filesystem::path& filename);                    // load text file
+	std::string TextFileRead(const std::filesystem::path& filename);                   // load text file
 };
