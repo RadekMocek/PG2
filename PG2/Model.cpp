@@ -10,7 +10,7 @@
 #define print(x) //std::cout << x << "\n"
 #define print_loading(x) std::cout << x
 
-Model::Model(const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map)
+Model::Model(std::string name, const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map) : name(name)
 {
     if (!is_height_map) {
         LoadOBJFile(path_main);

@@ -1,4 +1,4 @@
-// Basic includes
+// C++
 #include <iostream>
 #include <chrono>
 #include <stack>
@@ -118,8 +118,7 @@ bool App::Init()
         // First init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
 
-        // Show window after everything loads
-        glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
+        // Show window after everything loads        
         glfwShowWindow(window);
     }
     catch (std::exception const& e) {
@@ -151,10 +150,7 @@ int App::Run(void)
         double cursor_x, cursor_y;
 
         // Heightmap _heights reference
-        auto& _heights = scene_opaque.find("heightmap")->second._heights;
-
-        // Object references
-        auto& obj_jukebox = scene_opaque.find("obj_jukebox")->second;
+        auto& _heights = obj_heightmap->_heights;
 
         // Jetpack
         float falling_speed = 0;
@@ -235,13 +231,14 @@ int App::Run(void)
             glm::mat4 mx_view = camera.GetViewMatrix();
             
             // 3D Audio
-            camera.UpdateListenerPosition(audio, camera.position - obj_jukebox.position);
+            camera.UpdateListenerPosition(audio, camera.position - obj_jukebox->position);
 
-            // Set Model Matrix
-            jukebox_to_player.x = camera.position.x - obj_jukebox.position.x;
-            jukebox_to_player.y = camera.position.z - obj_jukebox.position.z;
+            // Update objects
+            jukebox_to_player.x = camera.position.x - obj_jukebox->position.x;
+            jukebox_to_player.y = camera.position.z - obj_jukebox->position.z;
             jukebox_to_player_n = glm::normalize(jukebox_to_player);
             UpdateModels(delta_time);
+            UpdateProjectiles(delta_time);
 
             // Activate shader
             my_shader.Activate();
@@ -269,7 +266,7 @@ int App::Run(void)
             // - POINT LIGHT :: JUKEBOX
             my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 0.8f, 0.8f));
             my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
-            glm::vec3 point_light_pos = obj_jukebox.position;
+            glm::vec3 point_light_pos = obj_jukebox->position;
             point_light_pos.y += 1.0f;
             point_light_pos.x += 0.7f * jukebox_to_player_n.x;
             point_light_pos.z += 0.7f * jukebox_to_player_n.y;
@@ -293,7 +290,7 @@ int App::Run(void)
             // Draw the scene
             // - Draw opaque objects
             for (auto& [key, value] : scene_opaque) {
-                value.Draw(my_shader);
+                value->Draw(my_shader);
             }
             // - Draw transparent objects
             glEnable(GL_BLEND);         // enable blending
@@ -301,15 +298,15 @@ int App::Run(void)
             glDepthMask(GL_FALSE);      // set Z to read-only
             // - - Calculate distace from camera for all transparent objects
             for (auto& transparent_pair : scene_transparent_pairs) {
-                transparent_pair->second._distance_from_camera = glm::length(camera.position - transparent_pair->second.position);
+                transparent_pair->second->_distance_from_camera = glm::length(camera.position - transparent_pair->second->position);
             }
             // - - Sort all transparent objects in vector by their distance from camera (far to near)
-			std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(), [](std::pair<const std::string, Model>*& a, std::pair<const std::string, Model>*& b) {
-				return a->second._distance_from_camera > b->second._distance_from_camera;
+			std::sort(scene_transparent_pairs.begin(), scene_transparent_pairs.end(), [](std::pair<const std::string, Model*>*& a, std::pair<const std::string, Model*>*& b) {
+				return a->second->_distance_from_camera > b->second->_distance_from_camera;
 			});
             // - - Draw all transparent objects in sorted order
             for (auto& transparent_pair : scene_transparent_pairs) {
-                transparent_pair->second.Draw(my_shader);
+                transparent_pair->second->Draw(my_shader);
             }
             glDisable(GL_BLEND);
             glEnable(GL_CULL_FACE);

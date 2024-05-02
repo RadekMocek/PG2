@@ -1,5 +1,5 @@
-///*
 #pragma once
+
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 
@@ -13,4 +13,3 @@ GLuint TextureInit(const char* filepath);
 GLuint TextureGen(cv::Mat& image);
 
 #endif
-/**/

@@ -12,7 +12,9 @@
 class Model
 {
 public:
-    Model(const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map = false);
+    std::string name;
+
+    Model(std::string name, const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map = false);
     void Draw(ShaderProgram& shader);
     
     glm::vec3 position{};
@@ -27,7 +29,6 @@ public:
     float coll_radius{};
 private:
     Mesh mesh;
-    std::string name;
 
     std::vector<Vertex> mesh_vertices{};
     std::vector<GLuint> mesh_vertex_indices{};

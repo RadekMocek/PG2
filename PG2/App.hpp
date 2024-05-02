@@ -19,14 +19,14 @@ public:
     bool Init();
     void InitAssets();
     int Run();
-    void CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, glm::vec3 scale, glm::vec4 rotation);
+    Model* CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, glm::vec3 scale, glm::vec4 rotation, bool collision);
     void UpdateModels(float delta_time);
 
     ~App();
 private:
-    std::map<std::string, Model> scene_opaque;
-    std::map<std::string, Model> scene_transparent;
-    std::vector<std::pair<const std::string, Model>*> scene_transparent_pairs; // for sorting
+    std::map<std::string, Model*> scene_opaque;
+    std::map<std::string, Model*> scene_transparent;
+    std::vector<std::pair<const std::string, Model*>*> scene_transparent_pairs; // for sorting
 
     bool is_vsync_on{};
     bool is_fullscreen_on = false;
@@ -43,7 +43,7 @@ private:
     float FOV = 110.0f;
     int FPS = 0;
     glm::mat4 mx_projection = glm::identity<glm::mat4>();
-    Camera camera = Camera(glm::vec3(0, 0, 0));;
+    Camera camera = Camera(glm::vec3(0, 0, 0));
 
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);
@@ -66,11 +66,21 @@ private:
     int is_flashlight_on = 1;
 
     // Objects
+    Model* obj_heightmap;
+    Model* obj_jukebox;
+
     glm::vec2 jukebox_to_player{};
     glm::vec2 jukebox_to_player_n{};
 
+    // Collision
+    std::vector<Model*> collisions;
+
     // Projectiles
+    const float projectile_speed = 1.0f;
     int projectile_n = 0;
     Model* projectiles[N_PROJECTILES]{};
+    glm::vec3 projectile_directions[N_PROJECTILES]{};
+    bool is_projectile_moving[N_PROJECTILES]{};
     void Shoot();
+    void UpdateProjectiles(float delta_time);
 };
