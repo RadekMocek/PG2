@@ -47,7 +47,7 @@ private:
     Camera camera = Camera(glm::vec3(0, 0, 0));
 
     GLFWwindow* window = nullptr;
-    glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);
+    glm::vec4 clear_color = glm::vec4(243 / 255.0f, 196 / 255.0f, 128 / 255.0f, 0.0f);
 
     void UpdateProjectionMatrix();
 
@@ -70,6 +70,7 @@ private:
     Model* obj_jukebox{};
     glm::vec2 jukebox_to_player{};
     glm::vec2 jukebox_to_player_n{};
+    int is_jukebox_on = 1;
 
     // Heightmap
     std::map<std::pair<float, float>, float>* _heights{};

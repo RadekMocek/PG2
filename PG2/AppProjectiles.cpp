@@ -34,8 +34,28 @@ void App::UpdateProjectiles(float delta_time)
 			// - Objects collision check
 			for (const auto model : collisions) {
 				if (model->Coll_CheckPoint(position)) {
-					print("PROJECTILE HIT " << model->name);
+					const auto& hit_name = model->name;
+					print("PROJECTILE HIT " << hit_name);
 					hit = true;
+
+					// Projectile hit glass cube – destroy it & play sound
+					if (hit_name.substr(0, 15) == "obj_glass_cube_") {
+						// Remove cube from possible collisions vector
+						collisions.erase(std::remove(collisions.begin(), collisions.end(), model), collisions.end());
+						// Remove cube from the scene
+						scene_transparent.erase(hit_name);
+						// Remove cube from helper vector for sorting transparent objects (by clearing the whole thing and regenerating it)
+						scene_transparent_pairs.clear();
+						for (auto i = scene_transparent.begin(); i != scene_transparent.end(); i++) {
+							scene_transparent_pairs.push_back(&*i);
+						}
+					}
+					// Projectile hit jukebox – on/off light+music
+					else if (hit_name == "obj_jukebox") {
+						is_jukebox_on = (is_jukebox_on + 1) % 2;
+					}
+
+					break;
 				}
 			}
 

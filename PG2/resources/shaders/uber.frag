@@ -49,6 +49,7 @@ struct PointLight
 	vec3 position;
 	vec3 diffuse;
 	vec3 specular;
+	int on;
 
 	float constant;
 	float linear;
@@ -110,7 +111,7 @@ void main()
 	out_color += calcDirectionalLightColor(u_directional_light, normal, frag2camera);
 
 	// Point lights
-	for (int i = 0; i < MAX_POINT_LIGHTS; i++) out_color += calcPointLightColor(u_point_lights[i], normal, o_fragment_position, frag2camera);  
+	for (int i = 0; i < MAX_POINT_LIGHTS; i++) if (u_point_lights[i].on == 1) out_color += calcPointLightColor(u_point_lights[i], normal, o_fragment_position, frag2camera);  
 
 	// Spotlight
 	if (u_spotlight.on == 1) out_color += calcSpotLightColor(u_spotlight, normal, o_fragment_position, frag2camera);

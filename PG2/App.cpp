@@ -235,26 +235,27 @@ int App::Run(void)
             my_shader.SetUniform("u_material.specular", glm::vec3(0.7f, 0.7f, 0.7f));
             my_shader.SetUniform("u_material.shininess", 96.0f);
 
-            // - DIRECTION (SUN O))))
+            // - DIRECTION :: SUN O)))
             my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
             my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
             my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.2f, 0.2f, 0.2f));
 
             // - POINT LIGHT :: JUKEBOX
-            my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 0.8f, 0.8f));
+            my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 1.0f));
             my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
+            my_shader.SetUniform("u_point_lights[0].on", is_jukebox_on);
             glm::vec3 point_light_pos = obj_jukebox->position;
             point_light_pos.y += 1.0f;
             point_light_pos.x += 0.7f * jukebox_to_player_n.x;
             point_light_pos.z += 0.7f * jukebox_to_player_n.y;
             my_shader.SetUniform("u_point_lights[0].position", point_light_pos);
             my_shader.SetUniform("u_point_lights[0].constant", 1.0f);
-            my_shader.SetUniform("u_point_lights[0].linear", 0.22f);
-            my_shader.SetUniform("u_point_lights[0].exponent", 0.20f);
+            my_shader.SetUniform("u_point_lights[0].linear", 1.0f);
+            my_shader.SetUniform("u_point_lights[0].exponent", 0.5f);
 
             // - SPOTLIGHT
-            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-            my_shader.SetUniform("u_spotlight.specular", glm::vec3(0.9f, 0.9f, 0.9f));
+            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.7f, 0.7f, 0.7f));
+            my_shader.SetUniform("u_spotlight.specular", glm::vec3(0.8f, 0.8f, 0.8f));
             my_shader.SetUniform("u_spotlight.position", camera.position);
             my_shader.SetUniform("u_spotlight.direction", camera.front);
             my_shader.SetUniform("u_spotlight.cos_inner_cone", glm::cos(glm::radians(20.0f)));
