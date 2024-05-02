@@ -11,15 +11,17 @@ openCV not included, has to be installed separately:
 
 ## Controls ##
 
-* W A S D – movement
-* Ctrl    – sprint     – toggle
-* Space   – jetpack    – hold
-* F       – flashlight – toggle
-* F11     – fullscreen – toggle
-* V       – vsync      – toggle
-
-* mouselook
-* scrollwheel to change FOV
+* Keyboard
+  * W A S D – movement
+  * Ctrl    – sprint     – toggle
+  * Space   – jetpack    – hold
+  * F       – flashlight – toggle
+  * F11     – fullscreen – toggle
+  * V       – vsync      – toggle
+* Mouse
+  * LMB     – shoot projectile
+  * RMB     – enable/disable mouselook (you can move/resize window while mouselook is disabled)
+  * scrollwheel to change FOV
 
 ## Sources ##
 
@@ -37,8 +39,8 @@ ESSENTIALS:
 * [X] 3D GL Core profile + shaders at least 4.5, GL debug
 * [X] high performance => at least 60 FPS
 * [X] allow VSync control, fullscreen vs. windowed switching (restore window position & size)
-* [ ] event processing (camera, object, app behaviour...): mouse (both axes, wheel), keyboard
-* [ ] multiple different independently moving 3D models, at leats two loaded from file
+* [X] event processing (camera, object, app behaviour...): mouse (both axes, wheel), keyboard
+* [X] multiple different independently moving 3D models, at leats two loaded from file
 * [X] at least three different textures (or subtextures from texture atlas etc.)
 * [X] lighting model, at least 3 lights (ambient+directional+reflector: at least one is moving; + possible other lights)
 * [X] correct full scale transparency (at least one transparent object; NOT if(alpha<0.1) {discard;} )

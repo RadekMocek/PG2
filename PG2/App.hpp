@@ -30,6 +30,7 @@ private:
 
     bool is_vsync_on{};
     bool is_fullscreen_on = false;
+    bool is_mouselook_on = true;
     
     GLFWmonitor* monitor{};
     const GLFWvidmode* mode{};
@@ -66,8 +67,8 @@ private:
     int is_flashlight_on = 1;
 
     // Objects
-    Model* obj_heightmap;
-    Model* obj_jukebox;
+    Model* obj_heightmap{};
+    Model* obj_jukebox{};
 
     glm::vec2 jukebox_to_player{};
     glm::vec2 jukebox_to_player_n{};

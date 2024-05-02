@@ -77,6 +77,16 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         this_inst->Shoot();
     }
+
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+        this_inst->is_mouselook_on = !this_inst->is_mouselook_on;
+        if (this_inst->is_mouselook_on) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+        else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
 }
 
 void App::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)

@@ -180,9 +180,11 @@ int App::Run(void)
             camera.position.z += camera_movement.z;
 
             // Mouselook
-            glfwGetCursorPos(window, &cursor_x, &cursor_y);
-            camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - cursor_x), static_cast<GLfloat>(window_height / 2.0 - cursor_y));
-            glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
+            if (is_mouselook_on) {
+                glfwGetCursorPos(window, &cursor_x, &cursor_y);
+                camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - cursor_x), static_cast<GLfloat>(window_height / 2.0 - cursor_y));
+                glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
+            }
 
             // Heightmap collision :: https://textbooks.cs.ksu.edu/cis580/15-heightmap-terrain/05-interpolating-heights/index.html
             float hm_x_f = camera.position.x + HEIGHTMAP_SHIFT;
