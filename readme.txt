@@ -9,15 +9,22 @@ openCV not included, has to be installed separately:
     add item to PATH:
         %OPENCV_DIR%\x64\vc16\bin
 
+## Features ##
+
+* Shooting jukebox will turn it on/off
+* Shooting glass cubes will destroy them
+* Jetpack
+
 ## Controls ##
 
 * Keyboard
   * W A S D – movement
-  * Ctrl    – sprint     – toggle
-  * Space   – jetpack    – hold
-  * F       – flashlight – toggle
-  * F11     – fullscreen – toggle
-  * V       – vsync      – toggle
+  * Ctrl    – sprint            – toggle
+  * Space   – jetpack           – hold
+  * F       – flashlight        – toggle
+  * F11     – fullscreen        – toggle
+  * V       – vsync             – toggle
+  * R       – reset glass cubes
 * Mouse
   * LMB     – shoot projectile
   * RMB     – enable/disable mouselook (you can move/resize window while mouselook is disabled)
@@ -30,7 +37,7 @@ openCV not included, has to be installed separately:
 * Textures    – RPGMaker tileset
 * Models      – https://free3d.com/3d-model/jukebox-bubbler-style-v2--835086.html
               – https://free3d.com/3d-model/table-with-cloth-57780.html
-* Sounds      –
+* Sounds      – https://www.zapsplat.com/music/empty-glass-bottle-drop-into-a-plastic-bin-and-then-smash-against-others-10/
 * Music       – The Synapse (Hong Kong Streets) by Alexander Brandon
 
 ## Assignment ##

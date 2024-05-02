@@ -40,19 +40,28 @@ void App::UpdateProjectiles(float delta_time)
 
 					// Projectile hit glass cube – destroy it & play sound
 					if (hit_name.substr(0, 15) == "obj_glass_cube_") {
-						// Remove cube from possible collisions vector
-						collisions.erase(std::remove(collisions.begin(), collisions.end(), model), collisions.end());
-						// Remove cube from the scene
-						scene_transparent.erase(hit_name);
-						// Remove cube from helper vector for sorting transparent objects (by clearing the whole thing and regenerating it)
-						scene_transparent_pairs.clear();
-						for (auto i = scene_transparent.begin(); i != scene_transparent.end(); i++) {
-							scene_transparent_pairs.push_back(&*i);
+						if (!HIDE_CUBES_INSTEAD_DESTROY) {
+							// Remove cube from possible collisions vector
+							collisions.erase(std::remove(collisions.begin(), collisions.end(), model), collisions.end());
+							// Remove cube from the scene
+							scene_transparent.erase(hit_name);
+							// Remove cube from helper vector for sorting transparent objects (by clearing the whole thing and regenerating it)
+							scene_transparent_pairs.clear();
+							for (auto i = scene_transparent.begin(); i != scene_transparent.end(); i++) {
+								scene_transparent_pairs.push_back(&*i);
+							}
 						}
+						else {
+							// Only hide the cube, so it can be easily respawned by pressing the 'R' key
+							model->position.y -= HIDE_CUBE_Y;
+						}
+						// Play broken glass audio
+						audio.Play3DOneShot("snd_glass", model->position);
 					}
 					// Projectile hit jukebox – on/off light+music
 					else if (hit_name == "obj_jukebox") {
 						is_jukebox_on = (is_jukebox_on + 1) % 2;
+						audio.UpdateMusicVolume(static_cast<float>(is_jukebox_on));
 					}
 
 					break;

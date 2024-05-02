@@ -4,6 +4,11 @@
 
 #define print(x) std::cout << x << "\n"
 
+#define FASTER_JUKEBOX !false
+#define DEBUG_BOUNDINGS false
+
+#define JUKEBOX_SPEED 2.0f
+
 Model* App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb)
 {
 	if (name.substr(0, 15) != "obj_projectile_") print("Loading " << name << ":");
@@ -46,8 +51,12 @@ void App::InitAssets()
 	position = glm::vec3(4.0f, 0.0f, 8.0f);
 	scale = 0.125f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	//obj_jukebox = CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation, true, false);
-	obj_jukebox = CreateModel("obj_jukebox", "bunny_tri_vnt.obj", "jukebox.jpg", true, position, scale, rotation, true, false); // for testing (faster loading)	
+	if (!FASTER_JUKEBOX) {
+		obj_jukebox = CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation, true, false);
+	}
+	else {
+		obj_jukebox = CreateModel("obj_jukebox", "cube_triangles_normals_tex.obj", "jukebox.jpg", true, position, scale, rotation, true, false); // for testing (faster loading)	
+	}
 	// Table
 	position = glm::vec3(1.0f, 0.0f, 6.0f);
 	scale = 0.015f;
@@ -64,11 +73,11 @@ void App::InitAssets()
 		projectiles[i] = obj_projectile_x;
 	}
 	// Testing AABB spheres
-	/*
-	auto obj_table = scene_opaque.find("obj_table")->second;
-	CreateModel("obj_test_0", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_min, scale, rotation, false, false);
-	CreateModel("obj_test_1", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_max, scale, rotation, false, false);
-	/**/
+	if (DEBUG_BOUNDINGS) {
+		auto obj_table = scene_opaque.find("obj_table")->second;
+		CreateModel("obj_test_0", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_min, scale, rotation, false, false);
+		CreateModel("obj_test_1", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_max, scale, rotation, false, false);
+	}
 
 	// = TRANSPARENT MODELS =
 	// Cubes
@@ -81,12 +90,12 @@ void App::InitAssets()
 	position.x += 0.8f;
 	CreateModel("obj_glass_cube_b", "cube_triangles_normals_tex.obj", "Blue.png", false, position, scale, rotation, true, false);
 	// Testing bounding sphere
-	/*
-	position = glm::vec3(0.0f, 0.0f, 0.0f);
-	scale = 0.2f;
-	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_sphere", "sphere_tri_vnt.obj", "Green.png", false, position, scale, rotation, false, false);
-	/**/
+	if (DEBUG_BOUNDINGS) {
+		position = glm::vec3(0.0f, 0.0f, 0.0f);
+		scale = 0.2f;
+		rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+		CreateModel("obj_sphere", "sphere_tri_vnt.obj", "Green.png", false, position, scale, rotation, false, false);
+	}
 
 	// == HEIGHTMAP ==
 	print("Loading heightmap ...");
@@ -105,15 +114,13 @@ void App::InitAssets()
 	}
 }
 
-#define JUKEBOX_SPEED 2.0f
-
 void App::UpdateModels(float delta_time)
 {
 	glm::vec3 position{};
 	float scale{};
 	glm::vec4 rotation{};
 
-	// Glass cubes rotation
+	// GLASS CUBES rotation
 	auto cube_pair = scene_transparent.find("obj_glass_cube_r");
 	if (cube_pair != scene_transparent.end()) cube_pair->second->rotation = glm::vec4(0.0f, 1.0f, 0.0f, 23 * glfwGetTime());
 	cube_pair = scene_transparent.find("obj_glass_cube_g");
@@ -137,11 +144,11 @@ void App::UpdateModels(float delta_time)
 
 	// --------------------
 	// Bounding sphere test
-	/*
-	auto model_to_check = scene_opaque.find("obj_jukebox")->second;
-	position = model_to_check->position + model_to_check->coll_bs_center;
-	scale = model_to_check->coll_bs_radius;
-	scene_transparent.find("obj_sphere")->second->position = position;
-	scene_transparent.find("obj_sphere")->second->scale = scale;
-	/**/
+	if (DEBUG_BOUNDINGS) {
+		auto model_to_check = scene_opaque.find("obj_jukebox")->second;
+		position = model_to_check->position + model_to_check->coll_bs_center;
+		scale = model_to_check->coll_bs_radius;
+		scene_transparent.find("obj_sphere")->second->position = position;
+		scene_transparent.find("obj_sphere")->second->scale = scale;
+	}
 }

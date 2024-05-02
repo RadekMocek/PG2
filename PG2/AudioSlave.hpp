@@ -18,10 +18,14 @@ public:
 	AudioSlave();
 
 	void UpdateListenerPosition(glm::vec3 position, glm::vec3 front, glm::vec3 world_up);
+	void UpdateMusicPosition(glm::vec3 position);
+	
+	void UpdateMusicVolume(float amount);
 
+	void Play2DOneShot(std::string sound_name);
+	void Play3DOneShot(std::string sound_name, glm::vec3 position);
 	void PlayWalk();
 
-	void PlayMusic2D();
 	void PlayMusic3D();
 
 	~AudioSlave();

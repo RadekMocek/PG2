@@ -12,6 +12,9 @@
 
 #define N_PROJECTILES 10
 
+#define HIDE_CUBES_INSTEAD_DESTROY true
+#define HIDE_CUBE_Y 10.0f
+
 class App {
 public:
     App();

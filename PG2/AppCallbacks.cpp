@@ -36,12 +36,22 @@ void App::key_callback(GLFWwindow* window, int key, int scancode, int action, in
             this_inst->is_vsync_on = !this_inst->is_vsync_on;
             glfwSwapInterval(this_inst->is_vsync_on);
             std::cout << "VSync: " << this_inst->is_vsync_on << "\n";
-            this_inst->audio.PlayWalk();
             break;
 
         case GLFW_KEY_F:
             // Flashlight on/off
             this_inst->is_flashlight_on = (this_inst->is_flashlight_on + 1) % 2;
+            break;
+
+        case GLFW_KEY_R:
+            // Reset glass cubes
+            if (HIDE_CUBES_INSTEAD_DESTROY) {
+                for (const auto& pair : this_inst->scene_transparent) {
+                    if (pair.first.substr(0, 15) == "obj_glass_cube_" && pair.second->position.y < 0.0f) {
+                        pair.second->position.y += HIDE_CUBE_Y;
+                    }
+                }
+            }
             break;
         }
     }

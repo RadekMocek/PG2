@@ -155,9 +155,6 @@ int App::Run(void)
         // Music
         audio.PlayMusic3D();
 
-        // Misc
-        glm::vec3 ball_movement{};
-
         // Main loop
         while (!glfwWindowShouldClose(window)) {
             // Time/FPS measure start
@@ -205,10 +202,7 @@ int App::Run(void)
             }
 
             // Create View Matrix according to camera settings
-            glm::mat4 mx_view = camera.GetViewMatrix();
-            
-            // 3D Audio
-            camera.UpdateListenerPosition(audio, camera.position - obj_jukebox->position);
+            glm::mat4 mx_view = camera.GetViewMatrix();            
 
             // Update objects
             jukebox_to_player.x = camera.position.x - obj_jukebox->position.x;
@@ -216,6 +210,10 @@ int App::Run(void)
             jukebox_to_player_n = glm::normalize(jukebox_to_player);
             UpdateModels(delta_time);
             UpdateProjectiles(delta_time);
+
+            // 3D Audio
+            camera.UpdateListenerPosition(audio);
+            audio.UpdateMusicPosition(obj_jukebox->position);
 
             // Activate shader
             my_shader.Activate();
