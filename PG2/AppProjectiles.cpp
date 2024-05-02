@@ -22,17 +22,21 @@ void App::UpdateProjectiles(float delta_time)
 	for (int i = 0; i < N_PROJECTILES; i++) {
 		if (is_projectile_moving[i]) {
 			auto name = "obj_projectile_" + std::to_string(i);
-			auto& projectile = scene_opaque.find(name)->second;
-			
+			auto projectile = scene_opaque.find(name)->second;
+			auto position = projectile->position;
+
 			// Projectile movement
 			projectile->position += projectile_speed * delta_time * projectile_directions[i];
 
-			// Projectile collision check
-			/*
+			// Projectile collision check			
 			for (const auto model : collisions) {
-				print(model->name);
+				
+				if (glm::distance(position, model->position + model->coll_center) < model->coll_radius) {
+					print("HIT " << model->name << " " << glm::distance(position, model->coll_center) << " " << model->coll_radius);
+					is_projectile_moving[i] = false;
+				}
+
 			}
-			/**/
 		}
 	}
 }

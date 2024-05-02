@@ -10,7 +10,12 @@
 #define print(x) //std::cout << x << "\n"
 #define print_loading(x) std::cout << x
 
-Model::Model(std::string name, const std::filesystem::path& path_main, const std::filesystem::path& path_tex, bool is_height_map) : name(name)
+Model::Model(std::string name, const std::filesystem::path& path_main, const std::filesystem::path& path_tex, glm::vec3 position, float scale, glm::vec4 init_rotation, bool is_height_map, bool use_aabb) :
+    name(name),
+    position(position),
+    scale(scale),
+    init_rotation(init_rotation),
+    use_aabb(use_aabb)
 {
     if (!is_height_map) {
         LoadOBJFile(path_main);
@@ -26,17 +31,19 @@ Model::Model(std::string name, const std::filesystem::path& path_main, const std
 
 void Model::Draw(ShaderProgram& shader)
 {
+    // Einheitsmatrix
     mx_model = glm::identity<glm::mat4>();
-
+    // Move object
     mx_model = glm::translate(mx_model, position);
-    mx_model = glm::scale(mx_model, scale);
-
+    // Scale object (scale in all three dimensions must be the same in this "engine")
+    mx_model = glm::scale(mx_model, glm::vec3(scale));
+    // Initial rotation (should be set only once when creating the Model)
     init_rotation_axes = glm::vec3(init_rotation.x, init_rotation.y, init_rotation.z);
     mx_model = glm::rotate(mx_model, glm::radians(init_rotation.w), init_rotation_axes);
-
+    // Additional rotation
     rotation_axes = glm::vec3(rotation.x, rotation.y, rotation.z);
     mx_model = glm::rotate(mx_model, glm::radians(rotation.w), rotation_axes);
-
+    // Draw
     mesh.Draw(shader, mx_model);
 }
 
@@ -140,27 +147,44 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     file_reader.close();
     print_loading("#");
 
-    // Bounding sphere
-    ///*
-    int d = 3; // dimension
-    auto n = vertices.size(); // number of points
-    float** ap = new float* [n];
-    for (int i = 0; i < n; i++) {
-        float* p = new float[d];
-        p[0] = vertices[i].x;
-        p[1] = vertices[i].y;
-        p[2] = vertices[i].z;
-        ap[i] = p;
+    // Collision
+    // - Bounding sphere
+    if (!use_aabb) {
+        int d = 3; // dimension
+        auto n = vertices.size(); // number of points
+        float** ap = new float* [n];
+        for (int i = 0; i < n; i++) {
+            float* p = new float[d];
+            p[0] = vertices[i].x;
+            p[1] = vertices[i].y;
+            p[2] = vertices[i].z;
+            ap[i] = p;
+        }
+        typedef float* const* PointIterator;
+        typedef const float* CoordIterator;
+        typedef Miniball::Miniball <Miniball::CoordAccessor<PointIterator, CoordIterator>> MB;
+        MB mb(d, ap, ap + n);
+        const float* center = mb.center();
+        for (int i = 0; i < d; ++i, ++center) coll_center[i] = *center;
+        coll_center *= scale;
+        coll_radius = sqrt(mb.squared_radius()) * scale;
     }
-    typedef float* const* PointIterator;
-    typedef const float* CoordIterator;
-    typedef Miniball::Miniball <Miniball::CoordAccessor<PointIterator, CoordIterator>> MB;
-    MB mb(d, ap, ap + n);
-    const float* center = mb.center();
-    for (int i = 0; i < d; ++i, ++center) coll_center[i] = *center;
-    coll_radius = sqrt(mb.squared_radius());
+    // - AABB
+    else {
+        aabb_min = vertices[0];
+        aabb_max = vertices[0];
+        for (const auto& point : vertices) {
+            if (point.x < aabb_min.x) aabb_min.x = point.x;
+            if (point.y < aabb_min.y) aabb_min.y = point.y;
+            if (point.z < aabb_min.z) aabb_min.z = point.z;
+            if (point.x > aabb_max.x) aabb_max.x = point.x;
+            if (point.y > aabb_max.y) aabb_max.y = point.y;
+            if (point.z > aabb_max.z) aabb_max.z = point.z;
+        }
+        aabb_min *= scale;
+        aabb_max *= scale;
+    }
     print_loading("#");
-    /**/
 
     // RETARDED DRAW ™ 2.0
     std::vector<glm::vec3> vertices_direct;

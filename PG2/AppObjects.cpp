@@ -4,17 +4,12 @@
 
 #define print(x) std::cout << x << "\n"
 
-Model* App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, glm::vec3 scale, glm::vec4 rotation, bool collision)
+Model* App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb)
 {
 	print("Loading " << name << ":");
 	std::filesystem::path modelpath("./resources/objects/" + obj);
 	std::filesystem::path texturepath("./resources/textures/" + tex);
-	auto model = new Model(name, modelpath, texturepath);
-
-	model->position = position;
-	model->scale = scale;
-	model->init_rotation = rotation;
-	model->rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	auto model = new Model(name, modelpath, texturepath, position, scale, rotation, false, use_aabb);
 
 	if (is_opaque) {
 		scene_opaque.insert({ name, model});
@@ -42,59 +37,64 @@ void App::InitAssets()
 
 	// == MODELS ==
 	glm::vec3 position{};
-	glm::vec3 scale{};
+	float scale{};
 	glm::vec4 rotation{};
 
 	// = OPAQUE MODELS =
 	// Jukebox
 	position = glm::vec3(4.0f, 0.0f, 8.0f);
-	scale = glm::vec3(0.125f);
+	scale = 0.125f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	//CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation, true);
-	obj_jukebox = CreateModel("obj_jukebox", "bunny_tri_vnt.obj", "jukebox.jpg", true, position, scale, rotation, true); // for testing (faster loading)	
+	//obj_jukebox = CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation, true);
+	obj_jukebox = CreateModel("obj_jukebox", "bunny_tri_vnt.obj", "jukebox.jpg", true, position, scale, rotation, true, false); // for testing (faster loading)	
 	// Table
 	position = glm::vec3(1.0f, 0.0f, 6.0f);
-	scale = glm::vec3(0.015f);
+	scale = 0.015f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_table", "table.obj", "table.png", true, position, scale, rotation, true);
+	CreateModel("obj_table", "table.obj", "table.png", true, position, scale, rotation, true, true);
 	// Projectiles
 	position = glm::vec3(0.0f, 0.0f, 3.0f);
-	scale = glm::vec3(0.125f);
+	scale = 0.125f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	for (int i = 0; i < N_PROJECTILES; i++) {
 		auto name = "obj_projectile_" + std::to_string(i);
-		auto obj_projectile_x = CreateModel(name, "sphere_tri_vnt.obj", "Red.png", true, position, scale, rotation, false);
+		auto obj_projectile_x = CreateModel(name, "sphere_tri_vnt.obj", "Red.png", true, position, scale, rotation, false, false);
 		projectiles[i] = obj_projectile_x;
 		position.x++;
 	}
+	// Testing AABB spheres
+	///*
+	auto obj_table = scene_opaque.find("obj_table")->second;
+	CreateModel("obj_test_0", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->aabb_min, scale, rotation, false, false);
+	CreateModel("obj_test_1", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->aabb_max, scale, rotation, false, false);
+	/**/
 
 	// = TRANSPARENT MODELS =
 	// Cubes
-	scale = glm::vec3(0.5f);
+	scale = 0.5f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	position = glm::vec3(0.2f, 1.0f, 6.0f);
-	CreateModel("obj_glass_cube_r", "cube_triangles_normals_tex.obj", "Red.png", false, position, scale, rotation, true);
+	CreateModel("obj_glass_cube_r", "cube_triangles_normals_tex.obj", "Red.png", false, position, scale, rotation, true, false);
 	position.x += 0.8f;
-	CreateModel("obj_glass_cube_g", "cube_triangles_normals_tex.obj", "Green.png", false, position, scale, rotation, true);
+	CreateModel("obj_glass_cube_g", "cube_triangles_normals_tex.obj", "Green.png", false, position, scale, rotation, true, false);
 	position.x += 0.8f;
-	CreateModel("obj_glass_cube_b", "cube_triangles_normals_tex.obj", "Blue.png", false, position, scale, rotation, true);
+	CreateModel("obj_glass_cube_b", "cube_triangles_normals_tex.obj", "Blue.png", false, position, scale, rotation, true, false);
 	// Testing sphere
-	/*
+	///*
 	position = glm::vec3(0.0f, 0.0f, 0.0f);
-	scale = glm::vec3(0.2f);
+	scale = 0.2f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_sphere", "sphere_tri_vnt.obj", "Green.png", false, position, scale, rotation, false);
+	CreateModel("obj_sphere", "sphere_tri_vnt.obj", "Green.png", false, position, scale, rotation, false, false);
 	/**/
 
 	// == HEIGHTMAP ==
 	print("Loading heightmap:");
 	std::filesystem::path heightspath("./resources/textures/heights.png");
 	std::filesystem::path texturepath("./resources/textures/tex_256.png");
-	obj_heightmap = new Model("heightmap", heightspath, texturepath, true);
-	obj_heightmap->position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
-	obj_heightmap->scale = glm::vec3(HEGHTMAP_SCALE);
-	obj_heightmap->init_rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	obj_heightmap->rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
+	scale = HEGHTMAP_SCALE;
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	obj_heightmap = new Model("heightmap", heightspath, texturepath, position, scale, rotation, true, false);
 	scene_opaque.insert({ "obj_heightmap", obj_heightmap });
 
 	// == for TRANSPARENT OBJECTS sorting ==	
@@ -108,7 +108,7 @@ void App::InitAssets()
 void App::UpdateModels(float delta_time)
 {
 	glm::vec3 position{};
-	glm::vec3 scale{};
+	float scale{};
 	glm::vec4 rotation{};
 
 	// Glass cubes rotation
@@ -133,13 +133,14 @@ void App::UpdateModels(float delta_time)
 
 	// --------------------
 	// Bounding sphere test
-	/*
-	float sphere_scale = 0.125f;
-	//sphere_scale = 0.5f;
-	//obj_jukebox = scene_transparent.find("obj_glass_cube_b")->second;
-	position = obj_jukebox->position +sphere_scale * obj_jukebox->coll_center;
-	scale = glm::vec3(sphere_scale * obj_jukebox->coll_radius);
+	///*
+	auto model_to_check = scene_opaque.find("obj_jukebox")->second;
+
+	position = model_to_check->position + model_to_check->coll_center;
+	scale = model_to_check->coll_radius;
 	scene_transparent.find("obj_sphere")->second->position = position;
 	scene_transparent.find("obj_sphere")->second->scale = scale;
+
+	//print(scene_transparent.find("obj_sphere")->second->position.x << " " << scene_transparent.find("obj_sphere")->second->position.y << " " << scene_transparent.find("obj_sphere")->second->position.z << " | " << scene_transparent.find("obj_sphere")->second->scale);
 	/**/
 }

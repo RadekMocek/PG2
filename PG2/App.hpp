@@ -19,7 +19,7 @@ public:
     bool Init();
     void InitAssets();
     int Run();
-    Model* CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, glm::vec3 scale, glm::vec4 rotation, bool collision);
+    Model* CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb);
     void UpdateModels(float delta_time);
 
     ~App();
@@ -77,7 +77,7 @@ private:
     std::vector<Model*> collisions;
 
     // Projectiles
-    const float projectile_speed = 1.0f;
+    const float projectile_speed = 2.0f;
     int projectile_n = 0;
     Model* projectiles[N_PROJECTILES]{};
     glm::vec3 projectile_directions[N_PROJECTILES]{};
