@@ -2,6 +2,8 @@
 #include <fstream>
 #include <string>
 
+#include "Miniball.hpp"
+
 #include "Model.hpp"
 #include "Texture.hpp"
 
@@ -137,6 +139,28 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     }
     file_reader.close();
     print_loading("#");
+
+    // Bounding sphere
+    ///*
+    int d = 3; // dimension
+    auto n = vertices.size(); // number of points
+    float** ap = new float* [n];
+    for (int i = 0; i < n; i++) {
+        float* p = new float[d];
+        p[0] = vertices[i].x;
+        p[1] = vertices[i].y;
+        p[2] = vertices[i].z;
+        ap[i] = p;
+    }
+    typedef float* const* PointIterator;
+    typedef const float* CoordIterator;
+    typedef Miniball::Miniball <Miniball::CoordAccessor<PointIterator, CoordIterator>> MB;
+    MB mb(d, ap, ap + n);
+    const float* center = mb.center();
+    for (int i = 0; i < d; ++i, ++center) coll_center[i] = *center;
+    coll_radius = sqrt(mb.squared_radius());
+    print_loading("#");
+    /**/
 
     // RETARDED DRAW ™ 2.0
     std::vector<glm::vec3> vertices_direct;

@@ -10,6 +10,8 @@
 #define PLAYER_HEIGHT 1.0f
 #define HEIGHTMAP_SHIFT 50.0f
 
+#define N_PROJECTILES 3
+
 class App {
 public:
     App();
@@ -66,4 +68,7 @@ private:
     // Objects
     glm::vec2 jukebox_to_player{};
     glm::vec2 jukebox_to_player_n{};
+
+    // Projectiles
+    Model* projectiles[N_PROJECTILES]{};
 };

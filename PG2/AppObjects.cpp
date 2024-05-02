@@ -39,37 +39,47 @@ void App::InitAssets()
 	glm::vec3 scale{};
 	glm::vec4 rotation{};
 
-	// BUNNY
-	position = glm::vec3(1.0f, 1.0f, 1.0f);
-	scale = glm::vec3(0.5f, 0.5f, 0.5f);
-	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_bunny", "bunny_tri_vnt.obj", "box_rgb888.png", true, position, scale, rotation);
-	
-	// TEAPOT
-	position = glm::vec3(2.0f, 2.0f, 2.0f);
-	scale = glm::vec3(0.2f, 0.2f, 0.2f);
-	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_teapot", "teapot_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
-	
-	// GREEN BALL
-	position = glm::vec3(0.0f, 0.0f, 0.0f);
-	scale = glm::vec3(0.2f, 0.2f, 0.2f);
-	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_sphere_0", "sphere_tri_vnt.obj", "Green.png", true, position, scale, rotation);
-
-	// GLASS PANE
-	position = glm::vec3(0.0f, 3.0f, 4.0f);
-	rotation = glm::vec4(1.0f, 0.0f, 0.0f, 90.0f);
-	CreateModel("obj_glass", "plane_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
-	position = glm::vec3(1.0f, 4.0f, 3.0f);
-	rotation = glm::vec4(1.0f, 0.0f, 0.0f, 90.0f);
-	CreateModel("obj_glass2", "plane_tri_vnt.obj", "Glass.png", false, position, scale, rotation);
-
-	// JUKEBOX
+	// = OPAQUE MODELS =
+	// Jukebox
 	position = glm::vec3(4.0f, 0.0f, 8.0f);
-	scale = glm::vec3(0.125f, 0.125f, 0.125f);
-	rotation = glm::vec4(1.0f, 0.0f, 0.0f, -90.0f);
+	scale = glm::vec3(0.125f);
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation);
+	//CreateModel("obj_jukebox", "bunny_tri_vnt.obj", "jukebox.jpg", true, position, scale, rotation); // for testing (faster loading)
+	// Table
+	position = glm::vec3(1.0f, 0.0f, 6.0f);
+	scale = glm::vec3(0.015f);
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	CreateModel("obj_table", "table.obj", "table.png", true, position, scale, rotation);
+
+	// Bullets
+	position = glm::vec3(0.0f, 0.0f, 3.0f);
+	scale = glm::vec3(0.125f);
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	for (int i = 0; i < N_PROJECTILES; i++) {
+		auto name = "obj_projectile_" + i;
+		CreateModel(name, "sphere_tri_vnt.obj", "Red.png", true, position, scale, rotation);
+		projectiles[i] = &(scene_opaque.find(name)->second);
+		position.x++;
+	}
+
+	// = TRANSPARENT MODELS =
+	// Cubes
+	scale = glm::vec3(0.5f);
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	position = glm::vec3(0.2f, 1.0f, 6.0f);
+	CreateModel("obj_glass_cube_r", "cube_triangles_normals_tex.obj", "Red.png", false, position, scale, rotation);
+	position.x += 0.8f;
+	CreateModel("obj_glass_cube_g", "cube_triangles_normals_tex.obj", "Green.png", false, position, scale, rotation);
+	position.x += 0.8f;
+	CreateModel("obj_glass_cube_b", "cube_triangles_normals_tex.obj", "Blue.png", false, position, scale, rotation);
+	// Testing sphere
+	/*
+	position = glm::vec3(0.0f, 0.0f, 0.0f);
+	scale = glm::vec3(0.2f);
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+	CreateModel("obj_sphere", "sphere_tri_vnt.obj", "Green.png", false, position, scale, rotation);
+	/**/
 
 	// == HEIGHTMAP ==
 	print("Loading heightmap:");
@@ -77,7 +87,7 @@ void App::InitAssets()
 	std::filesystem::path texturepath("./resources/textures/tex_256.png");
 	auto model = Model(heightspath, texturepath, true);
 	model.position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
-	model.scale = glm::vec3(HEGHTMAP_SCALE, HEGHTMAP_SCALE, HEGHTMAP_SCALE);
+	model.scale = glm::vec3(HEGHTMAP_SCALE);
 	model.init_rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	model.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	scene_opaque.insert({ "heightmap", model });
@@ -96,18 +106,19 @@ void App::UpdateModels(float delta_time)
 	glm::vec3 scale{};
 	glm::vec4 rotation{};
 
-	// rotate the teapot
-	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 45 * glfwGetTime());
-	scene_transparent.find("obj_teapot")->second.rotation = rotation;
-	
+	// Glass cubes rotation
+	scene_transparent.find("obj_glass_cube_r")->second.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 23 * glfwGetTime());
+	scene_transparent.find("obj_glass_cube_g")->second.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 45 * glfwGetTime());
+	scene_transparent.find("obj_glass_cube_b")->second.rotation = glm::vec4(0.0f, 1.0f, 0.0f, 90 * glfwGetTime());
+
 	// JUKEBOX
 	// - rotate towards player
-	auto& obj_jukebox = scene_opaque.find("obj_jukebox")->second;	
+	auto& obj_jukebox = scene_opaque.find("obj_jukebox")->second;
 	float angles = glm::degrees(atan2(-jukebox_to_player.y, jukebox_to_player.x)) + 90;
-	rotation = glm::vec4(0.0f, 0.0f, 1.0f, angles);
+	rotation = glm::vec4(0.0f, 1.0f, 0.0f, angles);
 	obj_jukebox.rotation = rotation;
 	// - move towards player
-	if (glm::length(jukebox_to_player) > 2.0f) {		
+	if (glm::length(jukebox_to_player) > 2.0f) {
 		position = obj_jukebox.position;
 		position.x += jukebox_to_player_n.x * delta_time * JUKEBOX_SPEED;
 		position.z += jukebox_to_player_n.y * delta_time * JUKEBOX_SPEED;
@@ -115,4 +126,16 @@ void App::UpdateModels(float delta_time)
 		position.z = std::clamp(position.z, 0.0f, 14.0f);
 		obj_jukebox.position = position;
 	}
+
+	// --------------------
+	// Bounding sphere test
+	/*
+	float sphere_scale = 0.125f;
+	//sphere_scale = 0.5f;
+	//obj_jukebox = scene_transparent.find("obj_glass_cube_b")->second;
+	position = obj_jukebox.position +sphere_scale * obj_jukebox.coll_center;
+	scale = glm::vec3(sphere_scale * obj_jukebox.coll_radius);
+	scene_transparent.find("obj_sphere")->second.position = position;
+	scene_transparent.find("obj_sphere")->second.scale = scale;
+	/**/
 }

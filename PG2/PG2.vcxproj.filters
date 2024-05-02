@@ -42,7 +42,7 @@
     <ClCompile Include="AppCallbacks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AppMisc.cpp">
+    <ClCompile Include="AppProjectiles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
@@ -81,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AudioSlave.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Miniball.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

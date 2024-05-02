@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppCallbacks.cpp" />
-    <ClCompile Include="AppMisc.cpp" />
+    <ClCompile Include="AppProjectiles.cpp" />
     <ClCompile Include="AppObjects.cpp" />
     <ClCompile Include="AudioSlave.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -164,6 +164,7 @@
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="gl_err_callback.hpp" />
     <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="Miniball.hpp" />
     <ClInclude Include="Model.hpp" />
     <ClInclude Include="ShaderProgram.hpp" />
     <ClInclude Include="Texture.hpp" />

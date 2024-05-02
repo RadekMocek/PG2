@@ -27,6 +27,7 @@ openCV not included, has to be installed separately:
 * Shaders     – Steve Jones
 * Textures    – RPGMaker tileset
 * Models      – https://free3d.com/3d-model/jukebox-bubbler-style-v2--835086.html
+              – https://free3d.com/3d-model/table-with-cloth-57780.html
 * Sounds      –
 * Music       – The Synapse (Hong Kong Streets) by Alexander Brandon
 

@@ -161,9 +161,9 @@ int App::Run(void)
         glm::vec3 camera_movement{};
 
         // Set camera position
-        camera.position.x = 4.0f;
+        camera.position.x = 1.0f;
         camera.position.y = 1.0f;
-        camera.position.z = 11.0f;
+        camera.position.z = 1.0f;
 
         // Mouselook
         double cursor_x, cursor_y;

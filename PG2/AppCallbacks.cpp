@@ -67,8 +67,8 @@ void App::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void App::mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
-        //std::cout << "Right click!\n";
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        //std::cout << "Left click!\n";
     }
 }
 
