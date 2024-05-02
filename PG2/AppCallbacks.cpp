@@ -9,40 +9,46 @@ void App::error_callback(int error, const char* description)
 
 void App::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
     if ((action == GLFW_PRESS) || (action == GLFW_REPEAT)) {
         switch (key) {
         case GLFW_KEY_ESCAPE:
+            // Exit The App
             glfwSetWindowShouldClose(window, GLFW_TRUE);
             break;
+
         case GLFW_KEY_F11:
-            is_fullscreen_on = !is_fullscreen_on;
-            if (is_fullscreen_on) {
-                glfwGetWindowPos(window, &window_xcor, &window_ycor);
-                glfwGetWindowSize(window, &window_width_return_from_fullscreen, &window_height_return_from_fullscreen);
-                if (window_height_return_from_fullscreen == 0) window_height_return_from_fullscreen++;
-                glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+            // Fullscreen on/off
+            this_inst->is_fullscreen_on = !this_inst->is_fullscreen_on;
+            if (this_inst->is_fullscreen_on) {
+                glfwGetWindowPos(window, &this_inst->window_xcor, &this_inst->window_ycor);
+                glfwGetWindowSize(window, &this_inst->window_width_return_from_fullscreen, &this_inst->window_height_return_from_fullscreen);
+                if (this_inst->window_height_return_from_fullscreen == 0) this_inst->window_height_return_from_fullscreen++; // Prevent zero height window
+                glfwSetWindowMonitor(window, this_inst->monitor, 0, 0, this_inst->mode->width, this_inst->mode->height, this_inst->mode->refreshRate);
             }
             else {
-                glfwSetWindowMonitor(window, nullptr, window_xcor, window_ycor, window_width_return_from_fullscreen, window_height_return_from_fullscreen, 0);
+                glfwSetWindowMonitor(window, nullptr, this_inst->window_xcor, this_inst->window_ycor, this_inst->window_width_return_from_fullscreen, this_inst->window_height_return_from_fullscreen, 0);
             }
             break;
+
         case GLFW_KEY_V:
-            is_vsync_on = !is_vsync_on;
-            glfwSwapInterval(is_vsync_on);
-            std::cout << "VSync: " << is_vsync_on << "\n";
-
-            audio.PlayWalk();
-
+            // Vsync on/off
+            this_inst->is_vsync_on = !this_inst->is_vsync_on;
+            glfwSwapInterval(this_inst->is_vsync_on);
+            std::cout << "VSync: " << this_inst->is_vsync_on << "\n";
+            this_inst->audio.PlayWalk();
             break;
+
         case GLFW_KEY_F:
-            is_flashlight_on = (is_flashlight_on + 1) % 2;
+            // Flashlight on/off
+            this_inst->is_flashlight_on = (this_inst->is_flashlight_on + 1) % 2;
             break;
         }
     }
     
     // Minecraft sprint
     if (action == GLFW_PRESS && (key == GLFW_KEY_LEFT_CONTROL || key == GLFW_KEY_RIGHT_CONTROL)) {
-        camera.ToggleSprint();
+        this_inst->camera.ToggleSprint();
     }
 }
 
@@ -75,9 +81,10 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
 void App::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     /*
-    camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - xpos), static_cast<GLfloat>(window_height / 2.0 - ypos));
-    glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
+    auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
+    this_inst->camera.ProcessMouseMovement(static_cast<GLfloat>(this_inst->window_width / 2.0 - xpos), static_cast<GLfloat>(this_inst->window_height / 2.0 - ypos));
+    glfwSetCursorPos(window, this_inst->window_width / 2.0, this_inst->window_height / 2.0);
     /**/
 
-    // Logic was moved to App::Update because of stutter
+    // Logic was moved to App::Update because of mouse look stutter
 }

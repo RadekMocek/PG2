@@ -44,8 +44,8 @@ void App::InitAssets()
 	position = glm::vec3(4.0f, 0.0f, 8.0f);
 	scale = glm::vec3(0.125f);
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation);
-	//CreateModel("obj_jukebox", "bunny_tri_vnt.obj", "jukebox.jpg", true, position, scale, rotation); // for testing (faster loading)
+	//CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation);
+	CreateModel("obj_jukebox", "bunny_tri_vnt.obj", "jukebox.jpg", true, position, scale, rotation); // for testing (faster loading)
 	// Table
 	position = glm::vec3(1.0f, 0.0f, 6.0f);
 	scale = glm::vec3(0.015f);

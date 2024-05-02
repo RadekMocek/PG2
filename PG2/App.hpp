@@ -28,22 +28,22 @@ private:
     std::map<std::string, Model> scene_transparent;
     std::vector<std::pair<const std::string, Model>*> scene_transparent_pairs; // for sorting
 
-    static bool is_vsync_on;
-    static bool is_fullscreen_on;
+    bool is_vsync_on{};
+    bool is_fullscreen_on = false;
     
-    static GLFWmonitor* monitor;
-    static const GLFWvidmode* mode;
-    static int window_xcor;
-    static int window_ycor;
-    static int window_width;
-    static int window_height;
-    static int window_width_return_from_fullscreen;
-    static int window_height_return_from_fullscreen;
+    GLFWmonitor* monitor{};
+    const GLFWvidmode* mode{};
+    int window_xcor{};
+    int window_ycor{};
+    int window_width = 1280;
+    int window_height = 800;
+    int window_width_return_from_fullscreen{};
+    int window_height_return_from_fullscreen{};
 
     float FOV = 110.0f;
     int FPS = 0;
     glm::mat4 mx_projection = glm::identity<glm::mat4>();
-    static Camera camera;
+    Camera camera = Camera(glm::vec3(0, 0, 0));;
 
     GLFWwindow* window = nullptr;
     glm::vec4 clear_color = glm::vec4(0, 0, 0, 0);
@@ -61,9 +61,9 @@ private:
 
     ShaderProgram my_shader;
 
-    static AudioSlave audio;
+    AudioSlave audio;
 
-    static int is_flashlight_on;
+    int is_flashlight_on = 1;
 
     // Objects
     glm::vec2 jukebox_to_player{};

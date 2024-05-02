@@ -28,24 +28,6 @@
 
 #define print(x) std::cout << x << "\n"
 
-// Static
-bool App::is_vsync_on = false;
-bool App::is_fullscreen_on = false;
-GLFWmonitor* App::monitor;
-const GLFWvidmode* App::mode;
-int App::window_xcor{};
-int App::window_ycor{};
-int App::window_width = 1280;
-int App::window_height = 800;
-int App::window_width_return_from_fullscreen{};
-int App::window_height_return_from_fullscreen{};
-
-Camera App::camera = Camera(glm::vec3(0, 0, 1000));
-
-AudioSlave App::audio;
-
-int App::is_flashlight_on = 1;
-
 App::App()
 {
     std::cout << "Constructed...\n--------------\n";
