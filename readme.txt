@@ -47,7 +47,7 @@ ESSENTIALS:
 
 EXTRAS:
 * [X] height map textured by height & proper player height coords
-* [ ] working collisions
+* [~] working collisions
 * [ ] particles
 * [ ] scripting (useful)
 * [ ] audio (better than just background)

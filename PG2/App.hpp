@@ -10,7 +10,7 @@
 #define PLAYER_HEIGHT 1.0f
 #define HEIGHTMAP_SHIFT 50.0f
 
-#define N_PROJECTILES 3
+#define N_PROJECTILES 10
 
 class App {
 public:
@@ -67,17 +67,19 @@ private:
     int is_flashlight_on = 1;
 
     // Objects
-    Model* obj_heightmap{};
     Model* obj_jukebox{};
-
     glm::vec2 jukebox_to_player{};
     glm::vec2 jukebox_to_player_n{};
+
+    // Heightmap
+    std::map<std::pair<float, float>, float>* _heights{};
+    float GetHeightmapY(float position_x, float position_z) const;
 
     // Collision
     std::vector<Model*> collisions;
 
     // Projectiles
-    const float projectile_speed = 2.0f;
+    const float projectile_speed = 10.0f;
     int projectile_n = 0;
     Model* projectiles[N_PROJECTILES]{};
     glm::vec3 projectile_directions[N_PROJECTILES]{};

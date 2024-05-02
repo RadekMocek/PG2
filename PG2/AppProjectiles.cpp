@@ -29,13 +29,26 @@ void App::UpdateProjectiles(float delta_time)
 			projectile->position += projectile_speed * delta_time * projectile_directions[i];
 
 			// Projectile collision check			
-			for (const auto model : collisions) {
-				
-				if (glm::distance(position, model->position + model->coll_center) < model->coll_radius) {
-					print("HIT " << model->name << " " << glm::distance(position, model->coll_center) << " " << model->coll_radius);
-					is_projectile_moving[i] = false;
-				}
+			bool hit = false;
 
+			// - Objects collision check
+			for (const auto model : collisions) {
+				if (model->Coll_CheckPoint(position)) {
+					print("PROJECTILE HIT " << model->name);
+					hit = true;
+				}
+			}
+
+			// - Heightmap collision check
+			if (position.y < GetHeightmapY(position.x, position.z)) {
+				print("PROJECTILE HIT ground");
+				hit = true;
+			}
+
+			// - Hide if hit
+			if (hit) {
+				is_projectile_moving[i] = false;
+				projectile->position = glm::vec3(0.0f, -10.0f, 0.0f);
 			}
 		}
 	}

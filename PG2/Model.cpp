@@ -165,24 +165,24 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
         typedef Miniball::Miniball <Miniball::CoordAccessor<PointIterator, CoordIterator>> MB;
         MB mb(d, ap, ap + n);
         const float* center = mb.center();
-        for (int i = 0; i < d; ++i, ++center) coll_center[i] = *center;
-        coll_center *= scale;
-        coll_radius = sqrt(mb.squared_radius()) * scale;
+        for (int i = 0; i < d; ++i, ++center) coll_bs_center[i] = *center;
+        coll_bs_center *= scale;
+        coll_bs_radius = sqrt(mb.squared_radius()) * scale;
     }
     // - AABB
     else {
-        aabb_min = vertices[0];
-        aabb_max = vertices[0];
+        coll_aabb_min = vertices[0];
+        coll_aabb_max = vertices[0];
         for (const auto& point : vertices) {
-            if (point.x < aabb_min.x) aabb_min.x = point.x;
-            if (point.y < aabb_min.y) aabb_min.y = point.y;
-            if (point.z < aabb_min.z) aabb_min.z = point.z;
-            if (point.x > aabb_max.x) aabb_max.x = point.x;
-            if (point.y > aabb_max.y) aabb_max.y = point.y;
-            if (point.z > aabb_max.z) aabb_max.z = point.z;
+            if (point.x < coll_aabb_min.x) coll_aabb_min.x = point.x;
+            if (point.y < coll_aabb_min.y) coll_aabb_min.y = point.y;
+            if (point.z < coll_aabb_min.z) coll_aabb_min.z = point.z;
+            if (point.x > coll_aabb_max.x) coll_aabb_max.x = point.x;
+            if (point.y > coll_aabb_max.y) coll_aabb_max.y = point.y;
+            if (point.z > coll_aabb_max.z) coll_aabb_max.z = point.z;
         }
-        aabb_min *= scale;
-        aabb_max *= scale;
+        coll_aabb_min *= scale;
+        coll_aabb_max *= scale;
     }
     print_loading("#");
 
@@ -334,4 +334,23 @@ glm::vec2 Model::HeightMap_GetSubtexByHeight(float height)
     else if (height > 0.5) return HeightMap_GetSubtexST(7, 1);
     else if (height > 0.3) return HeightMap_GetSubtexST(4, 1);
     else return HeightMap_GetSubtexST(1, 1);
+}
+
+bool Model::Coll_CheckPoint(glm::vec3 point) const
+{
+    // Bounding sphere
+    if (!use_aabb) {
+        return glm::distance(point, position + coll_bs_center) < coll_bs_radius;
+    }
+    // AABB
+    else {
+        return
+            point.x <= position.x + coll_aabb_max.x &&
+            point.x >= position.x + coll_aabb_min.x &&
+            point.y <= position.y + coll_aabb_max.y &&
+            point.y >= position.y + coll_aabb_min.y &&
+            point.z <= position.z + coll_aabb_max.z &&
+            point.z >= position.z + coll_aabb_min.z
+            ;
+    }
 }

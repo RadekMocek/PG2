@@ -53,20 +53,19 @@ void App::InitAssets()
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	CreateModel("obj_table", "table.obj", "table.png", true, position, scale, rotation, true, true);
 	// Projectiles
-	position = glm::vec3(0.0f, 0.0f, 3.0f);
+	position = glm::vec3(0.0f, -10.0f, 0.0f); // Hidden
 	scale = 0.125f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	for (int i = 0; i < N_PROJECTILES; i++) {
 		auto name = "obj_projectile_" + std::to_string(i);
 		auto obj_projectile_x = CreateModel(name, "sphere_tri_vnt.obj", "Red.png", true, position, scale, rotation, false, false);
 		projectiles[i] = obj_projectile_x;
-		position.x++;
 	}
 	// Testing AABB spheres
 	///*
 	auto obj_table = scene_opaque.find("obj_table")->second;
-	CreateModel("obj_test_0", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->aabb_min, scale, rotation, false, false);
-	CreateModel("obj_test_1", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->aabb_max, scale, rotation, false, false);
+	CreateModel("obj_test_0", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_min, scale, rotation, false, false);
+	CreateModel("obj_test_1", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_max, scale, rotation, false, false);
 	/**/
 
 	// = TRANSPARENT MODELS =
@@ -94,8 +93,9 @@ void App::InitAssets()
 	position = glm::vec3(-HEIGHTMAP_SHIFT, 0.0f, -HEIGHTMAP_SHIFT);
 	scale = HEGHTMAP_SCALE;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-	obj_heightmap = new Model("heightmap", heightspath, texturepath, position, scale, rotation, true, false);
+	auto obj_heightmap = new Model("heightmap", heightspath, texturepath, position, scale, rotation, true, false);
 	scene_opaque.insert({ "obj_heightmap", obj_heightmap });
+	_heights = &obj_heightmap->_heights;
 
 	// == for TRANSPARENT OBJECTS sorting ==	
 	for (auto i = scene_transparent.begin(); i != scene_transparent.end(); i++) {
@@ -126,8 +126,7 @@ void App::UpdateModels(float delta_time)
 		position = obj_jukebox->position;
 		position.x += jukebox_to_player_n.x * delta_time * JUKEBOX_SPEED;
 		position.z += jukebox_to_player_n.y * delta_time * JUKEBOX_SPEED;
-		position.x = std::clamp(position.x, -3.0f, 7.0f);
-		position.z = std::clamp(position.z, 0.0f, 14.0f);
+		position.y = GetHeightmapY(position.x, position.z);
 		obj_jukebox->position = position;
 	}
 
@@ -136,8 +135,8 @@ void App::UpdateModels(float delta_time)
 	///*
 	auto model_to_check = scene_opaque.find("obj_jukebox")->second;
 
-	position = model_to_check->position + model_to_check->coll_center;
-	scale = model_to_check->coll_radius;
+	position = model_to_check->position + model_to_check->coll_bs_center;
+	scale = model_to_check->coll_bs_radius;
 	scene_transparent.find("obj_sphere")->second->position = position;
 	scene_transparent.find("obj_sphere")->second->scale = scale;
 

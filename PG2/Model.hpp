@@ -29,11 +29,13 @@ public:
     // Collision
     bool use_aabb;
     // - Bounding sphere
-    glm::vec3 coll_center{};
-    float coll_radius{};
+    glm::vec3 coll_bs_center{};
+    float coll_bs_radius{};
     // - AABB
-    glm::vec3 aabb_min{};
-    glm::vec3 aabb_max{};
+    glm::vec3 coll_aabb_min{};
+    glm::vec3 coll_aabb_max{};
+    // - Mehods
+    bool Coll_CheckPoint(glm::vec3 point) const;
 private:
     Mesh mesh;
 
