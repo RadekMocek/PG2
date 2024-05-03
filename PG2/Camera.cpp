@@ -4,7 +4,7 @@
 
 #include "Camera.hpp"
 
-#define print(x) std::cout << x << "\n"
+#define print(x) //std::cout << x << "\n"
 
 Camera::Camera(glm::vec3 position) : position(position)
 {
@@ -22,26 +22,26 @@ glm::mat4 Camera::GetViewMatrix()
 
 glm::vec3 Camera::ProcessInput(GLFWwindow* window, GLfloat delta_time)
 {
-    glm::vec3 direction(0,0,0);
-    glm::vec3 zero(0,0,0);
+    glm::vec3 direction(0, 0, 0);
+    glm::vec3 zero(0, 0, 0);
 
-    glm::vec3 pseudo_front(front.x, 0, front.z);
-    glm::vec3 pseudo_right(right.x, 0, right.z);
+    glm::vec3 horizont_front(front.x, 0, front.z);
+    glm::vec3 horizont_right(right.x, 0, right.z);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        direction += pseudo_front;
+        direction += horizont_front;
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        direction += -pseudo_front;
+        direction += -horizont_front;
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        direction += -pseudo_right;
+        direction += -horizont_right;
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        direction += pseudo_right;
+        direction += horizont_right;
     }
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {

@@ -16,7 +16,7 @@ public:
 
     Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLuint>& indices, GLuint texture_id);
     void Draw(ShaderProgram& shader, glm::mat4 mx_model);
-    void Clear(void);
+    void Clear();
 
     // Tell the compiler to do what it would have if we didn't define a ctor:
     Mesh() = default;

@@ -26,7 +26,7 @@
 #include "gl_err_callback.hpp"
 #include "ShaderProgram.hpp"
 
-#define print(x) std::cout << x << "\n"
+#define print(x)// std::cout << x << "\n"
 
 App::App()
 {
@@ -108,12 +108,10 @@ bool App::Init()
         glEnable(GL_LINE_SMOOTH);
         glEnable(GL_POLYGON_SMOOTH);
 
-        glEnable(GL_CULL_FACE); // assuming ALL objects are non-transparent 
+        glEnable(GL_CULL_FACE);
 
         // Transparency blending function
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        
-        //PrintGLInfo();
         
         // First init OpenGL, THAN init assets: valid context MUST exist
         InitAssets();
@@ -132,31 +130,42 @@ bool App::Init()
 int App::Run(void)
 {
     try {
+        double current_timestamp = glfwGetTime();
+        double last_frame_time = current_timestamp;
+
+        // FPS counting
         double fps_counter_seconds = 0;
         int fps_counter_frames = 0;
 
+        // Init view
         UpdateProjectionMatrix();
         glViewport(0, 0, window_width, window_height);
-        camera.position = glm::vec3(0, 0, 0);
-        double last_frame_time = glfwGetTime();
-        glm::vec3 camera_movement{};
 
-        // Set camera position
+        // Camera
         camera.position.x = 1.0f;
         camera.position.y = 1.0f;
         camera.position.z = 1.0f;
+        glm::vec3 camera_movement{};
 
         // Mouselook
         double cursor_x, cursor_y;
 
+        // Walking sound
+        double walk_last_played_timestamp = current_timestamp;
+        const double walk_play_delay_normal = 0.4;
+        const double walk_play_delay_sprint = 0.2;
+
         // Jetpack
         float falling_speed = 0;
+        bool is_grounded = true;
 
-        // Music
+        // Jukebox
         audio.PlayMusic3D();
 
         // Main loop
         while (!glfwWindowShouldClose(window)) {
+            current_timestamp = glfwGetTime();
+
             // Time/FPS measure start
             auto fps_frame_start_timestamp = std::chrono::steady_clock::now();
 
@@ -165,41 +174,59 @@ int App::Run(void)
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // === After clearing the canvas ===
-            float delta_time = static_cast<float>(glfwGetTime() - last_frame_time);
-            last_frame_time = glfwGetTime();
+            float delta_time = static_cast<float>(current_timestamp - last_frame_time);
+            last_frame_time = current_timestamp;
             
             // Player movement
             camera_movement = camera.ProcessInput(window, delta_time);
             camera.position.x += camera_movement.x;
             camera.position.z += camera_movement.z;
 
-            // Mouselook
+            // Movement sound
+            if ((camera_movement.x != 0 || camera_movement.z != 0) && is_grounded) {
+                if ((!camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_normal)
+                    || (camera.is_sprint_toggled && current_timestamp > walk_last_played_timestamp + walk_play_delay_sprint)) {
+                    audio.PlayWalk(); // Play step sound if grounded and walking and we didn't play the sound for the duration of delay (sprinting == shorter delay)
+                    walk_last_played_timestamp = current_timestamp;
+                }
+            }
+            else {
+                walk_last_played_timestamp = current_timestamp; // Consistent delay for first step sound after movement starts
+            }
+
+            // Mouselook – get cursor's offset from window center and the move it back to center
             if (is_mouselook_on) {
                 glfwGetCursorPos(window, &cursor_x, &cursor_y);
                 camera.ProcessMouseMovement(static_cast<GLfloat>(window_width / 2.0 - cursor_x), static_cast<GLfloat>(window_height / 2.0 - cursor_y));
                 glfwSetCursorPos(window, window_width / 2.0, window_height / 2.0);
             }
 
-            // Heightmap collision
+            // Heightmap collision – for our X and Z get Y coordinate for ground level
             auto heightmap_y = GetHeightmapY(camera.position.x, camera.position.z);
 
             // Jetpack
-            float min_hei = heightmap_y + PLAYER_HEIGHT;
-            if (camera_movement.y > 0.0f) {
-                camera.position.y += delta_time * 2.0f;
+            float min_hei = heightmap_y + PLAYER_HEIGHT;// Camera's smallest Y coordinate possible
+            if (camera_movement.y > 0.0f) {             // If holding space
+                camera.position.y += delta_time * 2.0f; // Go up
                 falling_speed = 0;
-                if (camera.position.y < min_hei) {
+                if (camera.position.y < min_hei) {      // For going up steep hills, so we cannot go into the hill
                     camera.position.y = min_hei;
                 }
+                is_grounded = false;
             }
-            else {
-                falling_speed += delta_time * 9.81f;
-                camera.position.y -= delta_time * falling_speed;
-                if (camera.position.y < min_hei) {
+            else {                                              // If not holding space
+                falling_speed += delta_time * 9.81f;            // Gravity
+                camera.position.y -= delta_time * falling_speed;// Fall
+                if (camera.position.y < min_hei) {              // Do not fall through ground
                     camera.position.y = min_hei;
                     falling_speed = 0;
+                    if (!is_grounded) {                         // Landing sound
+                        audio.PlayWalk();
+                    }
+                    is_grounded = true;
                 }
             }
+            audio.UpdateJetpackVolume(camera_movement.y > 0.0f);
 
             // Create View Matrix according to camera settings
             glm::mat4 mx_view = camera.GetViewMatrix();            
@@ -242,7 +269,7 @@ int App::Run(void)
             my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 1.0f));
             my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
             my_shader.SetUniform("u_point_lights[0].on", is_jukebox_on);
-            glm::vec3 point_light_pos = obj_jukebox->position;
+            glm::vec3 point_light_pos = obj_jukebox->position; // Light position infront of the jukebox
             point_light_pos.y += 1.0f;
             point_light_pos.x += 0.7f * jukebox_to_player_n.x;
             point_light_pos.z += 0.7f * jukebox_to_player_n.y;

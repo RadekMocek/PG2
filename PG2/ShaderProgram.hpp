@@ -8,12 +8,12 @@
 class ShaderProgram {
 public:
 	// you can add more constructors for pipeline with GS, TS etc.
-	ShaderProgram(void) = default; //does nothing
+	ShaderProgram() = default; // does nothing (tell the compiler to do what it would have if we didn't define a ctor)
 	ShaderProgram(const std::filesystem::path& VS_file, const std::filesystem::path& FS_file); // load, compile, and link shader
 
-	void Activate(void);
-	void Deactivate(void);
-	void Clear(void);
+	void Activate();
+	void Deactivate();
+	void Clear();
 
 	// set uniform according to name :: https://docs.gl/gl4/glUniform
 	void SetUniform(const std::string& name, const float val);

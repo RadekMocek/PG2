@@ -37,7 +37,10 @@ openCV not included, has to be installed separately:
 * Textures    – RPGMaker tileset
 * Models      – https://free3d.com/3d-model/jukebox-bubbler-style-v2--835086.html
               – https://free3d.com/3d-model/table-with-cloth-57780.html
-* Sounds      – https://www.zapsplat.com/music/empty-glass-bottle-drop-into-a-plastic-bin-and-then-smash-against-others-10/
+* Sounds      – Minecraft bow, sand step
+              – https://www.zapsplat.com/music/empty-glass-bottle-drop-into-a-plastic-bin-and-then-smash-against-others-10/
+              – https://www.zapsplat.com/music/football-soccer-ball-single-bounce-on-gravel-ground-2/
+              – https://www.zapsplat.com/music/loop-sequence-of-a-turbine-in-idle-or-steadily-powered-5/
 * Music       – The Synapse (Hong Kong Streets) by Alexander Brandon
 
 ## Assignment ##
@@ -57,7 +60,7 @@ EXTRAS:
 * [~] working collisions
 * [ ] particles
 * [ ] scripting (useful)
-* [ ] audio (better than just background)
+* [X] audio (better than just background)
 
 INSTAFAIL:
 * using GLUT, GL compatible profile

@@ -20,11 +20,12 @@ public:
     GLfloat roll = 0.0f;
 
     // Player options
-    GLfloat movement_speed_normal = 3.0f;
-    GLfloat movement_speed_sprint = 6.2f;
-    // Camera options
-    GLfloat mouse_sensitivity_horizontal = 0.18f;
-    GLfloat mouse_sensitivity_vertical = 0.175f;
+    const GLfloat movement_speed_normal = 3.0f;
+    const GLfloat movement_speed_sprint = 6.2f;
+    
+    // Mouse options
+    const GLfloat mouse_sensitivity_horizontal = 0.18f;
+    const GLfloat mouse_sensitivity_vertical = 0.175f;
 
     Camera(glm::vec3 position);
     glm::mat4 GetViewMatrix();
@@ -34,10 +35,10 @@ public:
     void ToggleSprint();
 
     void UpdateListenerPosition(AudioSlave& audio);
-private:
-    glm::vec3 world_up;
 
     bool is_sprint_toggled;
+private:
+    glm::vec3 world_up;
 
     void UpdateCameraVectors();
 };

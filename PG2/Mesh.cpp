@@ -27,17 +27,13 @@ Mesh::Mesh(GLenum primitive_type, std::vector<Vertex>& vertices, std::vector<GLu
     // Fill-in data into the EBO
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
-    //GLint attrib_location;
-    //attrib_location = glGetAttribLocation(shader_prog_ID, "aPos"); //name in shader src
+    // Set and enable the Vertex Attribute for position
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, position)));
-    // Enable the Vertex Attribute for position
     glEnableVertexAttribArray(0);
     // Set end enable Vertex Attribute for Normal
-    //attrib_location = glGetAttribLocation(shader_prog_ID, "aNormal"); //name in shader src
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, normal)));
     glEnableVertexAttribArray(1);
     // Set end enable Vertex Attribute for Texture Coordinates
-    //attrib_location = glGetAttribLocation(shader_prog_ID, "aTex"); //name in shader src
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(0 + offsetof(Vertex, tex_coords)));
     glEnableVertexAttribArray(2);
 
@@ -52,7 +48,7 @@ void Mesh::Draw(ShaderProgram& shader, glm::mat4 mx_model)
     if (texture_id > 0) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture_id);
-        shader.SetUniform("u_material.textura", 0);
+        shader.SetUniform("u_material.textura", 0); // We're only using texturing unit no. 0
     }
     shader.SetUniform("u_mx_model", mx_model);
     glBindVertexArray(VAO);
@@ -60,20 +56,18 @@ void Mesh::Draw(ShaderProgram& shader, glm::mat4 mx_model)
     glBindVertexArray(0);
 }
 
-void Mesh::Clear(void)
+void Mesh::Clear()
 {
     vertices.clear();
     indices.clear();
-    //texture_id = 0;
     primitive_type = GL_POINTS;
 
     // delete all allocations 
     //glDeleteBuffers... //VBO a EBO
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
-    //glDeleteVertexArrays... // VAO
-    //glDeleteVertexArrays(1, &VAO);
 
+    //glDeleteVertexArrays... // VAO
     if (VAO) { glDeleteVertexArrays(1, &VAO); VAO = 0; }
     if (texture_id) { glDeleteTextures(1, &texture_id); texture_id = 0; }
 

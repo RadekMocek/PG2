@@ -19,14 +19,13 @@ Model::Model(std::string name, const std::filesystem::path& path_main, const std
 {
     if (!is_height_map) {
         LoadOBJFile(path_main);
-        GLuint texture_id = TextureInit(path_tex.string().c_str());
-        mesh = Mesh(GL_TRIANGLES, mesh_vertices, mesh_vertex_indices, texture_id);
     }
     else {
-        HeightMap_Load(path_main);
-        GLuint texture_id = TextureInit(path_tex.string().c_str());
-        mesh = Mesh(GL_TRIANGLES, mesh_vertices, mesh_vertex_indices, texture_id);
+        HeightMap_Load(path_main);        
     }
+
+    GLuint texture_id = TextureInit(path_tex.string().c_str());
+    mesh = Mesh(GL_TRIANGLES, mesh_vertices, mesh_vertex_indices, texture_id);
 }
 
 void Model::Draw(ShaderProgram& shader)
@@ -52,6 +51,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     mesh_vertices.clear();
     mesh_vertex_indices.clear();
 
+    // [1] Read the file and fill vectors
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec2> texture_coordinates;
     std::vector<glm::vec3> vertex_normals;
@@ -147,7 +147,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     file_reader.close();
     print_loading("#");
 
-    // Collision
+    // [2] Calculate collision sphere/box
     // - Bounding sphere
     if (!use_aabb) {
         int d = 3; // dimension
@@ -165,28 +165,29 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
         typedef Miniball::Miniball <Miniball::CoordAccessor<PointIterator, CoordIterator>> MB;
         MB mb(d, ap, ap + n);
         const float* center = mb.center();
-        for (int i = 0; i < d; ++i, ++center) coll_bs_center[i] = *center;
-        coll_bs_center *= scale;
-        coll_bs_radius = sqrt(mb.squared_radius()) * scale;
+        for (int i = 0; i < d; ++i, ++center) collision_bs_center[i] = *center;
+        collision_bs_center *= scale;
+        collision_bs_radius = sqrt(mb.squared_radius()) * scale;
     }
     // - AABB
     else {
-        coll_aabb_min = vertices[0];
-        coll_aabb_max = vertices[0];
+        collision_aabb_min = vertices[0];
+        collision_aabb_max = vertices[0];
         for (const auto& point : vertices) {
-            if (point.x < coll_aabb_min.x) coll_aabb_min.x = point.x;
-            if (point.y < coll_aabb_min.y) coll_aabb_min.y = point.y;
-            if (point.z < coll_aabb_min.z) coll_aabb_min.z = point.z;
-            if (point.x > coll_aabb_max.x) coll_aabb_max.x = point.x;
-            if (point.y > coll_aabb_max.y) coll_aabb_max.y = point.y;
-            if (point.z > coll_aabb_max.z) coll_aabb_max.z = point.z;
+            if (point.x < collision_aabb_min.x) collision_aabb_min.x = point.x;
+            if (point.y < collision_aabb_min.y) collision_aabb_min.y = point.y;
+            if (point.z < collision_aabb_min.z) collision_aabb_min.z = point.z;
+            if (point.x > collision_aabb_max.x) collision_aabb_max.x = point.x;
+            if (point.y > collision_aabb_max.y) collision_aabb_max.y = point.y;
+            if (point.z > collision_aabb_max.z) collision_aabb_max.z = point.z;
         }
-        coll_aabb_min *= scale;
-        coll_aabb_max *= scale;
+        collision_aabb_min *= scale;
+        collision_aabb_max *= scale;
     }
     print_loading("#");
 
     // RETARDED DRAW ™ 2.0
+    // - [3] Indirect -> direct
     std::vector<glm::vec3> vertices_direct;
     std::vector<glm::vec2> texture_coordinates_direct;
     std::vector<glm::vec3> vertex_normals_direct;
@@ -207,6 +208,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     /**/
     print_loading("#");
 
+    // - [4] vectors to Vertex vector
     for (unsigned int u = 0; u < vertices_direct.size(); u++) {
         Vertex vertex{};
         vertex.position = vertices_direct[u];
@@ -214,9 +216,7 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
         if (u < n_direct_normals) vertex.normal = vertex_normals_direct[u];
         mesh_vertices.push_back(vertex);
         mesh_vertex_indices.push_back(u);
-    }  
-
-    // What's said is said, what's done is done.
+    }
     print("LoadOBJFile: Loaded OBJ file " << file_name << "\n");
     print_loading("#\n");
 }
@@ -279,18 +279,18 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             glm::vec2 tc3 = tc0 + glm::vec2(0.0f, (1.0f / 16));         // add offset for bottom left corner
 
             // RETARDED HEIGHT MAP ™ 2.0
-            // calculate normal vector            
+            // - calculate normal vector            
             normalA = glm::normalize(glm::cross(p1 - p0, p2 - p0));
             normalB = glm::normalize(glm::cross(p2 - p0, p3 - p0));
             normal = (normalA + normalB) / 2.0f;
             
-            // place vertices and ST to mesh
+            // - place vertices and ST to mesh
             mesh_vertices.emplace_back(Vertex{ p0, -normal, tc0 });
             mesh_vertices.emplace_back(Vertex{ p1, -normal, tc1 });
             mesh_vertices.emplace_back(Vertex{ p2, -normal, tc2 });
             mesh_vertices.emplace_back(Vertex{ p3, -normal, tc3 });
 
-            // place indices
+            // - place indices
             indices_counter += 4;
             mesh_vertex_indices.emplace_back(indices_counter - 4);
             mesh_vertex_indices.emplace_back(indices_counter - 2);
@@ -299,7 +299,7 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
             mesh_vertex_indices.emplace_back(indices_counter - 1);
             mesh_vertex_indices.emplace_back(indices_counter - 2);
 
-            // normal averaging
+            // - normal averaging
             pair0 = { x_coord, z_coord };
             pair1 = { x_coord + mesh_step_size, z_coord };
             pair2 = { x_coord + mesh_step_size, z_coord + mesh_step_size };
@@ -311,10 +311,10 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
         }
     }
 
-    // normal averaging, 2nd iter
+    // - normal averaging, 2nd iter
     for (auto& vertex : mesh_vertices) {
         pair = { static_cast<unsigned int>(vertex.position.x), static_cast<unsigned int>(vertex.position.z) };
-        vertex.normal = glm::normalize(normal_sums[pair]);
+        vertex.normal = glm::normalize(normal_sums[pair]); // no need to divide by four, we can just normalize
 
         _heights[{vertex.position.x * HEGHTMAP_SCALE, vertex.position.z * HEGHTMAP_SCALE}] = vertex.position.y; // for heightmap collision
     }
@@ -324,7 +324,7 @@ void Model::HeightMap_Load(const std::filesystem::path& file_name)
 
 glm::vec2 Model::HeightMap_GetSubtexST(const int x, const int y)
 {
-    return glm::vec2((x * 1.0f / 16), (y * 1.0f / 16));
+    return glm::vec2((x * 1.0f / 16), (y * 1.0f / 16)); // Expects tilemap with 16 rows&cols; interpolation is dealt with via bleeding pixels
 }
 
 glm::vec2 Model::HeightMap_GetSubtexByHeight(float height)
@@ -336,21 +336,26 @@ glm::vec2 Model::HeightMap_GetSubtexByHeight(float height)
     else return HeightMap_GetSubtexST(1, 1);
 }
 
-bool Model::Coll_CheckPoint(glm::vec3 point) const
+bool Model::Collision_CheckPoint(glm::vec3 point) const
 {
     // Bounding sphere
     if (!use_aabb) {
-        return glm::distance(point, position + coll_bs_center) < coll_bs_radius;
+        return glm::distance(point, position + collision_bs_center) < collision_bs_radius;
     }
     // AABB
     else {
         return
-            point.x <= position.x + coll_aabb_max.x &&
-            point.x >= position.x + coll_aabb_min.x &&
-            point.y <= position.y + coll_aabb_max.y &&
-            point.y >= position.y + coll_aabb_min.y &&
-            point.z <= position.z + coll_aabb_max.z &&
-            point.z >= position.z + coll_aabb_min.z
+            point.x <= position.x + collision_aabb_max.x &&
+            point.x >= position.x + collision_aabb_min.x &&
+            point.y <= position.y + collision_aabb_max.y &&
+            point.y >= position.y + collision_aabb_min.y &&
+            point.z <= position.z + collision_aabb_max.z &&
+            point.z >= position.z + collision_aabb_min.z
             ;
     }
+}
+
+void Model::Clear()
+{
+    mesh.Clear();
 }

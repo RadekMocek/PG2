@@ -1,15 +1,13 @@
-//#include <glm/glm.hpp> 
-#include <glm/ext.hpp>
-#include <string>
-//#include <filesystem>
-
-//#include <GL/glew.h> 
-
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
+#include <string>
+
+#include <glm/ext.hpp>
 
 #include "ShaderProgram.hpp"
+
+#define print(x) //std::cout << x << "\n"
 
 ShaderProgram::ShaderProgram(const std::filesystem::path& VS_file, const std::filesystem::path& FS_file)
 {
@@ -19,12 +17,12 @@ ShaderProgram::ShaderProgram(const std::filesystem::path& VS_file, const std::fi
 	shader_ids.push_back(CompileShader(FS_file, GL_FRAGMENT_SHADER));
 
 	ID = LinkShader(shader_ids);
-	//std::cout << "Instantiated shader ID=" << ID << "\n";
+	print("Instantiated shader ID=" << ID);
 }
 
 void ShaderProgram::Activate(void)
 {
-	//std::cout << "Activating shader ID=" << ID << "\n";
+	print("Activating shader ID=" << ID);
 	glUseProgram(ID);
 }
 

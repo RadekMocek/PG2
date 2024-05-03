@@ -10,8 +10,8 @@
 #define JUKEBOX_SPEED 2.0f
 
 Model* App::CreateModel(std::string name, std::string obj, std::string tex, bool is_opaque, glm::vec3 position, float scale, glm::vec4 rotation, bool collision, bool use_aabb)
-{
-	if (name.substr(0, 15) != "obj_projectile_") print("Loading " << name << ":");
+{	
+	if (name.substr(0, 15) != "obj_projectile_") print("Loading " << name << ":"); // Print object name we're currently loading except projectiles
 
 	std::filesystem::path modelpath("./resources/objects/" + obj);
 	std::filesystem::path texturepath("./resources/textures/" + tex);
@@ -24,7 +24,7 @@ Model* App::CreateModel(std::string name, std::string obj, std::string tex, bool
 		scene_transparent.insert({ name, model });
 	}
 
-	if (collision) {
+	if (collision) { // Can projectile collide with this object ?
 		collisions.push_back(model);
 	}
 
@@ -55,7 +55,7 @@ void App::InitAssets()
 		obj_jukebox = CreateModel("obj_jukebox", "jukebox.obj", "jukebox.jpg", true, position, scale, rotation, true, false);
 	}
 	else {
-		obj_jukebox = CreateModel("obj_jukebox", "cube_triangles_normals_tex.obj", "jukebox.jpg", true, position, scale, rotation, true, false); // for testing (faster loading)	
+		obj_jukebox = CreateModel("obj_jukebox", "cube_triangles_normals_tex.obj", "jukebox.jpg", true, position, 0.5f, rotation, true, false); // for testing (faster loading)	
 	}
 	// Table
 	position = glm::vec3(1.0f, 0.0f, 6.0f);
@@ -65,22 +65,22 @@ void App::InitAssets()
 	// Projectiles
 	print("Loading projectiles:");
 	position = glm::vec3(0.0f, -10.0f, 0.0f); // Hidden
-	scale = 0.125f;
+	scale = 0.05f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	for (int i = 0; i < N_PROJECTILES; i++) {
 		auto name = "obj_projectile_" + std::to_string(i);
 		auto obj_projectile_x = CreateModel(name, "sphere_tri_vnt.obj", "Red.png", true, position, scale, rotation, false, false);
 		projectiles[i] = obj_projectile_x;
 	}
-	// Testing AABB spheres
+	// Testing AABB spheres (visualize AABB collider around object (table))
 	if (DEBUG_BOUNDINGS) {
 		auto obj_table = scene_opaque.find("obj_table")->second;
-		CreateModel("obj_test_0", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_min, scale, rotation, false, false);
-		CreateModel("obj_test_1", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->coll_aabb_max, scale, rotation, false, false);
+		CreateModel("obj_test_0", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->collision_aabb_min, scale, rotation, false, false);
+		CreateModel("obj_test_1", "sphere_tri_vnt.obj", "Green.png", true, obj_table->position + obj_table->collision_aabb_max, scale, rotation, false, false);
 	}
 
 	// = TRANSPARENT MODELS =
-	// Cubes
+	// Glass cubes on the table
 	scale = 0.5f;
 	rotation = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 	position = glm::vec3(0.2f, 1.0f, 6.0f);
@@ -89,7 +89,7 @@ void App::InitAssets()
 	CreateModel("obj_glass_cube_g", "cube_triangles_normals_tex.obj", "Green.png", false, position, scale, rotation, true, false);
 	position.x += 0.8f;
 	CreateModel("obj_glass_cube_b", "cube_triangles_normals_tex.obj", "Blue.png", false, position, scale, rotation, true, false);
-	// Testing bounding sphere
+	// Testing bounding sphere (visualize bounding sphere collider around object)
 	if (DEBUG_BOUNDINGS) {
 		position = glm::vec3(0.0f, 0.0f, 0.0f);
 		scale = 0.2f;
@@ -110,7 +110,7 @@ void App::InitAssets()
 
 	// == for TRANSPARENT OBJECTS sorting ==	
 	for (auto i = scene_transparent.begin(); i != scene_transparent.end(); i++) {
-		scene_transparent_pairs.push_back(&*i);
+		scene_transparent_pairs.push_back(&*i); // Add pairs to vector because map cannot be sorted
 	}
 }
 
@@ -143,11 +143,11 @@ void App::UpdateModels(float delta_time)
 	}
 
 	// --------------------
-	// Bounding sphere test
+	// Bounding sphere test (visualize bounding sphere collider around object)
 	if (DEBUG_BOUNDINGS) {
 		auto model_to_check = scene_opaque.find("obj_jukebox")->second;
-		position = model_to_check->position + model_to_check->coll_bs_center;
-		scale = model_to_check->coll_bs_radius;
+		position = model_to_check->position + model_to_check->collision_bs_center;
+		scale = model_to_check->collision_bs_radius;
 		scene_transparent.find("obj_sphere")->second->position = position;
 		scene_transparent.find("obj_sphere")->second->scale = scale;
 	}
