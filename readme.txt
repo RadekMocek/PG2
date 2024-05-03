@@ -2,12 +2,12 @@
 
 ## Dependencies ##
 
-openCV not included, has to be installed separately:
-    add system variable:
-        Name:  OPENCV_DIR
-        Value: ...\opencv\build
-    add item to PATH:
-        %OPENCV_DIR%\x64\vc16\bin
+* openCV 4.9.0 not included, has to be installed separately:
+      add system variable:
+          Name:  OPENCV_DIR
+          Value: ...\opencv\build
+      add item to PATH:
+          %OPENCV_DIR%\x64\vc16\bin
 
 ## Features ##
 
@@ -57,7 +57,7 @@ ESSENTIALS:
 
 EXTRAS:
 * [X] height map textured by height & proper player height coords
-* [~] working collisions
+* [~] working collisions (only particles x environment)
 * [ ] particles
 * [ ] scripting (useful)
 * [X] audio (better than just background)

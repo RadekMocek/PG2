@@ -153,7 +153,7 @@ int App::Run(void)
         // Walking sound
         double walk_last_played_timestamp = current_timestamp;
         const double walk_play_delay_normal = 0.4;
-        const double walk_play_delay_sprint = 0.2;
+        const double walk_play_delay_sprint = 0.25;
 
         // Jetpack
         float falling_speed = 0;
@@ -225,6 +225,9 @@ int App::Run(void)
                     }
                     is_grounded = true;
                 }
+                else if (is_grounded && camera.position.y - min_hei > 1.0f) {
+                    is_grounded = false;                        // Do not make step sounds if transitioned from walking to falling w/o jetpack
+                }
             }
             audio.UpdateJetpackVolume(camera_movement.y > 0.0f);
 
@@ -251,23 +254,24 @@ int App::Run(void)
 
             // UBER
             my_shader.SetUniform("u_ambient_alpha", 0.0f);
-            my_shader.SetUniform("u_diffuse_alpha", 0.66f);
-            my_shader.SetUniform("u_specular_alpha", 0.0f);
+            my_shader.SetUniform("u_diffuse_alpha", 0.7f);
             my_shader.SetUniform("u_camera_position", camera.position);
 
             // - AMBIENT
-            my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-            my_shader.SetUniform("u_material.specular", glm::vec3(0.7f, 0.7f, 0.7f));
+            my_shader.SetUniform("u_material.ambient", glm::vec3(0.1f));
+
+            // - MATERIAL SPECULAR
+            my_shader.SetUniform("u_material.specular", glm::vec3(1.0f));
             my_shader.SetUniform("u_material.shininess", 96.0f);
 
             // - DIRECTION :: SUN O)))
             my_shader.SetUniform("u_directional_light.direction", glm::vec3(0.0f, -0.9f, -0.17f));
-            my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
-            my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.2f, 0.2f, 0.2f));
+            my_shader.SetUniform("u_directional_light.diffuse", glm::vec3(0.8f));
+            my_shader.SetUniform("u_directional_light.specular", glm::vec3(0.14f));
 
             // - POINT LIGHT :: JUKEBOX
             my_shader.SetUniform("u_point_lights[0].diffuse", glm::vec3(0.0f, 1.0f, 1.0f));
-            my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(0.0f, 0.0f, 0.0f));
+            my_shader.SetUniform("u_point_lights[0].specular", glm::vec3(0.07f));
             my_shader.SetUniform("u_point_lights[0].on", is_jukebox_on);
             glm::vec3 point_light_pos = obj_jukebox->position; // Light position infront of the jukebox
             point_light_pos.y += 1.0f;
@@ -279,8 +283,8 @@ int App::Run(void)
             my_shader.SetUniform("u_point_lights[0].exponent", 0.5f);
 
             // - SPOTLIGHT
-            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.7f, 0.7f, 0.7f));
-            my_shader.SetUniform("u_spotlight.specular", glm::vec3(0.8f, 0.8f, 0.8f));
+            my_shader.SetUniform("u_spotlight.diffuse", glm::vec3(0.7f));
+            my_shader.SetUniform("u_spotlight.specular", glm::vec3(0.56f));
             my_shader.SetUniform("u_spotlight.position", camera.position);
             my_shader.SetUniform("u_spotlight.direction", camera.front);
             my_shader.SetUniform("u_spotlight.cos_inner_cone", glm::cos(glm::radians(20.0f)));
@@ -334,7 +338,7 @@ int App::Run(void)
             }
             // Window title
             std::stringstream ss;
-            ss << FPS << " FPS | " << FOV << " FOV | X" << camera.position.x << " Z" << camera.position.z;
+            ss << FPS << " FPS | " << FOV << " FOV | X" << camera.position.x << " Y" << camera.position.y << " Z" << camera.position.z;
             glfwSetWindowTitle(window, ss.str().c_str());
         }
     }

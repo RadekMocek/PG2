@@ -4,8 +4,8 @@
 
 #define print(x) std::cout << x << "\n"
 
-#define FASTER_JUKEBOX !false
-#define DEBUG_BOUNDINGS false
+#define FASTER_JUKEBOX false	// If true, replace jukebox model with box (faster loading)
+#define DEBUG_BOUNDINGS false	// If true, show "gizmos" that visualize bounding sphere / AABB
 
 #define JUKEBOX_SPEED 2.0f
 

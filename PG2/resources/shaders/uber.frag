@@ -1,17 +1,16 @@
 #version 460 core
 
-// Inspired by "lighting_dir_point_spot.frag by Steve Jones, Game Institute"
+// Inspired by "lighting_dir_point_spot.frag" by Steve Jones, Game Institute
 
 // VS -> FS
 in vec3 o_fragment_position;
 in vec3 o_normal;
 in vec2 o_texture_coordinate;
 
-//
+// CPP -> FS
 uniform vec3 u_camera_position;
 uniform float u_ambient_alpha;
 uniform float u_diffuse_alpha;
-uniform float u_specular_alpha;
 
 // FS ->
 out vec4 frag_color;
@@ -20,7 +19,7 @@ out vec4 frag_color;
 struct Material 
 {
     vec3 ambient;
-    sampler2D textura;
+    sampler2D textura; // texture unit
     vec3 specular;
     float shininess;
 };
@@ -37,9 +36,9 @@ uniform DirectionalLight u_directional_light;
 vec4 calcDirectionalLightColor(DirectionalLight directional_light, vec3 normal, vec3 frag2camera)
 {
 	vec3 frag2light = normalize(-directional_light.direction);
-    vec4 diffuse = vec4(directional_light.diffuse * max(dot(normal, frag2light), 0.0), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
+    vec4 diffuse = vec4(directional_light.diffuse * max(dot(normal, frag2light), 0.0f), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
 	vec3 specular = directional_light.specular * u_material.specular * pow(max(dot(normal, normalize(frag2light + frag2camera)), 0.0f), u_material.shininess);
-	return (diffuse + vec4(specular, u_specular_alpha));
+	return (diffuse + vec4(specular, 0.0f));
 }
 
 // === Point lights ===
@@ -59,13 +58,13 @@ uniform PointLight u_point_lights[MAX_POINT_LIGHTS];
 vec4 calcPointLightColor(PointLight point_light, vec3 normal, vec3 fragment_position, vec3 frag2camera)
 {
 	vec3 frag2light = normalize(point_light.position - fragment_position);
-    vec4 diffuse = vec4(point_light.diffuse * max(dot(normal, frag2light), 0.0), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
+    vec4 diffuse = vec4(point_light.diffuse * max(dot(normal, frag2light), 0.0f), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
 	vec3 specular = point_light.specular * u_material.specular * pow(max(dot(normal, normalize(frag2light + frag2camera)), 0.0f), u_material.shininess);
 	float d = length(point_light.position - fragment_position);
 	float attenuation = 1.0f / (point_light.constant + point_light.linear * d + point_light.exponent * (d * d));
 	diffuse *= attenuation;
 	specular *= attenuation;
-	return (diffuse + vec4(specular, u_specular_alpha));
+	return (diffuse + vec4(specular, 0.0f));
 }
 
 // === Spotlight ===
@@ -87,14 +86,14 @@ uniform Spotlight u_spotlight;
 vec4 calcSpotLightColor(Spotlight spotlight, vec3 normal, vec3 fragment_position, vec3 frag2camera)
 {
 	vec3 frag2light = normalize(spotlight.position - fragment_position);
-    vec4 diffuse = vec4(u_spotlight.diffuse * max(dot(normal, frag2light), 0.0), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
+    vec4 diffuse = vec4(u_spotlight.diffuse * max(dot(normal, frag2light), 0.0f), u_diffuse_alpha) * texture(u_material.textura, o_texture_coordinate);
 	vec3 specular = u_spotlight.specular * u_material.specular * pow(max(dot(normal, normalize(frag2light + frag2camera)), 0.0f), u_material.shininess);
 	float d = length(spotlight.position - fragment_position);
 	float attenuation = 1.0f / (spotlight.constant + spotlight.linear * d + spotlight.exponent * (d * d));
 	float spotIntensity = smoothstep(spotlight.cos_outer_cone, spotlight.cos_inner_cone, dot(-frag2light, normalize(spotlight.direction)));
 	diffuse *= attenuation * spotIntensity;
 	specular *= attenuation * spotIntensity;	
-	return (diffuse + vec4(specular, u_specular_alpha));
+	return (diffuse + vec4(specular, 0.0f));
 }
 
 // === Main ===

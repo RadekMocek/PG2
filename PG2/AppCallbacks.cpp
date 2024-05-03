@@ -86,8 +86,14 @@ void App::mouse_button_callback(GLFWwindow* window, int button, int action, int 
     auto this_inst = static_cast<App*>(glfwGetWindowUserPointer(window));
     // LMB to shoot
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        this_inst->Shoot();
-        this_inst->audio.Play2DOneShot("snd_shoot");
+        if (this_inst->is_mouselook_on) {
+            this_inst->Shoot();
+            this_inst->audio.Play2DOneShot("snd_shoot");
+        }
+        else {
+            this_inst->is_mouselook_on = true;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
     }
     // RMB to toggle mouselook
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {

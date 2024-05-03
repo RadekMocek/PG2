@@ -1,6 +1,6 @@
 #version 460 core
 
-// Inspired by "lighting_dir_point_spot.vert by Steve Jones, Game Institute"
+// Inspired by "lighting_dir_point_spot.vert" by Steve Jones, Game Institute
 
 // Vertex attributes
 layout (location = 0) in vec4 a_position;
@@ -21,6 +21,7 @@ void main()
 {
     o_fragment_position = vec3(u_mx_model * a_position);
 
+    // https://computergraphics.stackexchange.com/questions/1502/why-is-the-transposed-inverse-of-the-model-view-matrix-used-to-transform-the-nor
     o_normal = mat3(transpose(inverse(u_mx_model))) * a_normal;
 
     o_texture_coordinate = a_texture_coordinate;

@@ -2,8 +2,8 @@
 
 #include "AudioSlave.hpp"
 
-#define MUSIC_VOLUME 0.2f
-#define JETPACK_VOLUME 0.1f
+#define MUSIC_VOLUME 0.3f
+#define JETPACK_VOLUME 0.15f
 
 AudioSlave::AudioSlave()
 {
@@ -14,18 +14,18 @@ AudioSlave::AudioSlave()
 
 	// Init SFXs
 	irrklang::ISoundSource* snd_step1 = engine->addSoundSourceFromFile("resources/sfx/sand2.ogg");
-	snd_step1->setDefaultVolume(0.2f);
+	snd_step1->setDefaultVolume(0.25f);
 	sounds.insert({ "snd_step1", snd_step1 });
 	
 	irrklang::ISoundSource* snd_step2 = engine->addSoundSourceFromFile("resources/sfx/sand3.ogg");
-	snd_step2->setDefaultVolume(0.2f);
+	snd_step2->setDefaultVolume(0.25f);
 	sounds.insert({ "snd_step2", snd_step2 });
 	
 	irrklang::ISoundSource* snd_glass = engine->addSoundSourceFromFile("resources/sfx/glass.mp3");
 	sounds.insert({ "snd_glass", snd_glass });
 	
 	irrklang::ISoundSource* snd_shoot = engine->addSoundSourceFromFile("resources/sfx/bow.ogg");
-	snd_shoot->setDefaultVolume(0.5f);
+	snd_shoot->setDefaultVolume(0.45f);
 	sounds.insert({ "snd_shoot", snd_shoot });
 
 	irrklang::ISoundSource* snd_hit = engine->addSoundSourceFromFile("resources/sfx/hit.mp3");
