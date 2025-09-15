@@ -1,3 +1,6 @@
+![showcase](./showcase.gif)
+
+```text
 .: PG2 :: OpenGL 3D app :.
 
 ## Dependencies ##
@@ -59,8 +62,9 @@ EXTRAS:
 * [X] height map textured by height & proper player height coords
 * [~] working collisions (only projectiles x environment)
 * [ ] particles
-* [ ] scripting (useful)
+* [ ] scripting (useful, e.g. Lua)
 * [X] audio (better than just background)
 
 INSTAFAIL:
 * using GLUT, GL compatible profile
+```
