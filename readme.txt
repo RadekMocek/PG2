@@ -1,11 +1,8 @@
-![showcase](./showcase.gif)
-
-```text
 .: PG2 :: OpenGL 3D app :.
 
 ## Dependencies ##
 
-* openCV 4.11.0 not included, has to be installed separately:
+* openCV 4.9.0 not included, has to be installed separately:
       add system variable:
           Name:  OPENCV_DIR
           Value: ...\opencv\build
@@ -62,9 +59,8 @@ EXTRAS:
 * [X] height map textured by height & proper player height coords
 * [~] working collisions (only projectiles x environment)
 * [ ] particles
-* [ ] scripting (useful, e.g. Lua)
+* [ ] scripting (useful)
 * [X] audio (better than just background)
 
 INSTAFAIL:
 * using GLUT, GL compatible profile
-```
