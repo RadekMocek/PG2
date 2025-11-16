@@ -86,9 +86,6 @@
     <ClInclude Include="AudioSlave.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Miniball.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\uber.frag">

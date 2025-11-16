@@ -35,8 +35,8 @@
 
 ## Sources ##
 
-* CPP/OBJ/... – TUL ITE/PG2 (Z drive)
-* Shaders     – Steve Jones
+* CPP/OBJ/... – TUL FM ITE/PG2 (special thanks to Jiří Jeníček)
+* Shaders     – Game Institute Inc., Steve Jones
 * Textures    – RPGMaker tileset
 * Models      – https://free3d.com/3d-model/jukebox-bubbler-style-v2--835086.html
               – https://free3d.com/3d-model/table-with-cloth-57780.html

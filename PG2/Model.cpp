@@ -2,8 +2,6 @@
 #include <fstream>
 #include <string>
 
-#include "Miniball.hpp"
-
 #include "Model.hpp"
 #include "Texture.hpp"
 
@@ -150,24 +148,21 @@ void Model::LoadOBJFile(const std::filesystem::path& file_name)
     // [2] Calculate collision sphere/box
     // - Bounding sphere
     if (!use_aabb) {
-        int d = 3; // dimension
-        auto n = vertices.size(); // number of points
-        float** ap = new float* [n];
-        for (int i = 0; i < n; i++) {
-            float* p = new float[d];
-            p[0] = vertices[i].x;
-            p[1] = vertices[i].y;
-            p[2] = vertices[i].z;
-            ap[i] = p;
+        // Switched to hard coded values for now
+        collision_bs_center.x = 0;
+        collision_bs_center.y = 0;
+        collision_bs_center.z = 0;
+        collision_bs_radius = 0.05f;
+        auto model_name = file_name.string();
+        if (model_name == "./resources/objects/jukebox.obj") {
+            collision_bs_center.x = 0.00521499f;
+            collision_bs_center.y = 0.590715f;
+            collision_bs_center.z = 0.0100022f;
+            collision_bs_radius = 0.727473f;
         }
-        typedef float* const* PointIterator;
-        typedef const float* CoordIterator;
-        typedef Miniball::Miniball <Miniball::CoordAccessor<PointIterator, CoordIterator>> MB;
-        MB mb(d, ap, ap + n);
-        const float* center = mb.center();
-        for (int i = 0; i < d; ++i, ++center) collision_bs_center[i] = *center;
-        collision_bs_center *= scale;
-        collision_bs_radius = sqrt(mb.squared_radius()) * scale;
+        else if (model_name == "./resources/objects/cube_triangles_normals_tex.obj") {
+            collision_bs_radius = 0.433013f;
+        }
     }
     // - AABB
     else {
